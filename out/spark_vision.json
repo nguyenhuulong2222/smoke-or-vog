@@ -1,0 +1,17 @@
+{
+  "model": "muse-spark-1.3",
+  "input": "https://kahuola.org/api/hazards/smoke-sat/frame?key=hawaii%2Fframes%2F20261031T2150Z.png (scan 2026-10-31T21:50:21.100Z, haze_pixels=0, state=no_qualifying_detection)",
+  "result": {
+    "caveats": "This is a sparse detection overlay; a black frame indicates no pixels met the haze detection threshold, not an independent visible-light confirmation of clear skies.",
+    "confidence": 0.99,
+    "evidence": [
+      "Entire frame is uniformly black with no bright, gray, or white pixels",
+      "No elongated plume southwest of Ka Lae / Kilauea region typical of vog on trade winds",
+      "No diffuse patches or transported smoke features elsewhere in lon -161 to -154, lat 18 to 23 domain"
+    ],
+    "haze_description": "No haze or plume visible. The frame is uniformly black with no detected haze pixels.",
+    "haze_present": false,
+    "image_type": "sparse satellite-derived haze detection overlay on black background over Hawaiian Islands (lon -161 to -154, lat 18 to 23)",
+    "likely_source": "none"
+  }
+}

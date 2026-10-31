@@ -1,0 +1,18 @@
+{
+  "model": "muse-spark-1.3",
+  "input": "../data/raw/validation/mauna_loa_modis.jpg",
+  "result": {
+    "caveats": "Heavy white cloud cover over the southern half of the Island of Hawaii obscures the vent-to-plume connection; single RGB frame without SO2/aerosol optical depth product cannot definitively separate thin cirrus/humidity from vog; wind direction not independently verified.",
+    "confidence": 0.7,
+    "evidence": [
+      "Orange-red thermal hotspot pixels over east-central Island of Hawaii consistent with Kilauea location",
+      "Diffuse translucent blue-gray veil over ocean to east and southeast-south of Hawaii Island distinct from bright white opaque clouds and deep-blue clear ocean",
+      "Haze is anchored to/broadly emanating from Hawaii Island rather than entering as long-range transported layer from outside domain",
+      "No dense brown/gray wildfire smoke plume or distant source region visible"
+    ],
+    "haze_description": "Broad thin diffuse blue-gray veil over ocean east to southeast and south of the Island of Hawaii, partly under/mixed with bright white low clouds covering the southern half of the island; not a sparse black-background mask, no opaque dense plume, appearance is translucent vog haze.",
+    "haze_present": true,
+    "image_type": "true-color daytime visible satellite imagery showing islands, ocean and clouds, not a sparse black-background haze mask",
+    "likely_source": "kilauea_vog"
+  }
+}
