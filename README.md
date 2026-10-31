@@ -70,19 +70,24 @@ prices on dev.meta.ai/docs/pricing-rate-limits.
 .venv/bin/python -m src.pipeline --case kilauea_20261017  # vog plume test case
 .venv/bin/python -m src.pipeline --case maui_20230808     # Maui wildfire smoke test case
 .venv/bin/python -m src.pipeline --case mauna_loa_20221201 # Mauna Loa eruption vog test case
-.venv/bin/python -m pytest                                # 29 offline tests, Meta API mocked
+.venv/bin/python -m src.alerts out/runs/<run_id>          # stage 5: 5-language alerts + cards
+.venv/bin/python -m pytest                                # 52 offline tests, Meta API mocked
 ```
 
 **Overall verdict rule (safety first):** each plume is classified separately. The overall
 verdict is the most hazardous class confirmed at confidence ≥ 0.70, in the order
 `wildfire_smoke > vog_* > dust > cloud`. Plumes below 0.70 are listed as *unconfirmed*.
 The verdict is `uncertain` only when no plume reaches 0.70 (`src/aggregate.py`).
+A **data-quality gate** also applies. A plume whose mask swallows an island, or is more than
+50% land (Natural Earth 10m land), can't be confirmed at any confidence. It's listed as
+unconfirmed with the reason.
 
-*Intended behaviour (Mauna Loa test case, 2022-12-01):* the classifier picks the right class
-(`vog_mauna_loa`) but only at 0.62. The vent area was under cloud, the visible haze was 320 km
-downwind, and Kīlauea was erupting at the same time. So the overall verdict is `uncertain`, and
-we don't lower the 0.70 threshold to make a test case pass. When the source can't be seen,
-honest uncertainty is the correct output.
+*Intended behaviour (Mauna Loa test case, 2022-12-01): `uncertain`.* The vent area was under
+cloud, the visible haze was about 320 km downwind near Oʻahu, and Kīlauea was erupting at the
+same time. Across runs the classifier gave `vog_mauna_loa` 0.62, then `uncertain` 0.38. One run
+reached 0.70, but only because SAM's "plume" was 68% of Hawaiʻi Island. The data-quality gate now
+blocks that case. We don't lower the 0.70 threshold to make a test case pass. When the source
+can't be seen, honest uncertainty is the correct output.
 
 **SAM is run in two passes:** pass 1 uses the Muse Spark box and point. Pass 2 re-prompts with
 the pass-1 mask's bounding box plus a 15% margin. Pass 2 is kept only if it's larger and still
@@ -90,7 +95,49 @@ coherent, with no ocean-wide spill.
 
 **Summit glow is not fire:** FIRMS detections inside the Kīlauea and Mauna Loa summit calderas
 (Kahu Ola `volcanic_zone` flag, or the same caldera boxes for historical data) are reported as
-`volcanic_thermal` and kept out of the fire clusters.
+`volcanic_thermal` and kept out of the fire clusters. Glow alone is not treated as proof of
+emissions.
+
+**Volcano status is official:** each run fetches the USGS HVO notice valid at the image time
+(HANS public search API). That gives the alert level, aviation color, an
+`erupting = yes | no | episodic_pause | unknown` flag, the activity summary, and the notice
+permalink, all stored in `00_context.json` and `04_classify.json`. Example: on 2023-08-08 HVO
+reported "Kīlauea volcano is not erupting", so Maui's haze is no longer attributed to Kīlauea.
+
+## Stage 5: alerts
+
+`python -m src.alerts out/runs/<run_id>` writes `alerts/alerts.json`, `alerts/background.png`
+and `alerts/alert_{en,vi,ilo,tl,haw}.png`:
+
+- **Muse Spark** writes one short alert per language: English, Vietnamese, Ilocano, Tagalog
+  and ʻŌlelo Hawaiʻi. Verdicts covered: `wildfire_smoke`, `vog_kilauea`, `vog_mauna_loa`, `dust`,
+  `uncertain`, `no_plume`.
+- **Health guidance comes only from official text** in
+  [`assets/health_sources.json`](assets/health_sources.json): Hawaiʻi DOH / IVHHN for vog, EPA
+  AirNow for smoke and particles. The model picks excerpts by index. The code rejects any
+  reference outside the verdict's sources, and attaches the verbatim English excerpt and source
+  URL to every action.
+- **Every alert carries** the confidence, "Satellite estimate, not an official warning." (in the
+  alert's language and in English), and the official link.
+- **Translation labels:** non-English alerts are marked `machine_translated`. Ilocano, Tagalog
+  and ʻŌlelo Hawaiʻi are also marked `needs_community_review`, and the cards show both badges.
+- **Cards:** Muse Image paints only a text-free background (the prompt says "no text"). All text
+  is drawn by PIL in bundled Noto Sans (SIL OFL), which renders Vietnamese diacritics and the
+  ʻokina/kahakō: "Kaʻū", "Hawaiʻi", "khói", "sương mù núi lửa"
+  ([`demo/font_check.png`](demo/font_check.png)).
+- **Affected places** are towns within 15 km of the plume mask (`plume_<id>_mask.png`).
+
+## Known limitations
+
+- Affected places are approximate: a fixed town list, 15 km from a satellite-derived mask.
+  This doesn't measure ground-level air quality.
+- Translations are machine-made. Ilocano, Tagalog and ʻŌlelo Hawaiʻi need review by community
+  speakers before any public use.
+- SAM concept prompts ("smoke", "haze", "volcanic plume") return nothing on 1 km satellite
+  imagery, so segmentation relies on Muse Spark's boxes.
+- The upwind end uses 10 m wind, not plume-level transport.
+- Verdicts near 0.70 can flip between runs (model sampling). The safety rule handles this by
+  reporting `uncertain` rather than guessing.
 
 Each run writes `out/runs/<case>_<UTC>/`:
 
@@ -112,12 +159,19 @@ A budget guard stops any run that would push total logged spend past $20.
 - Fire detections: NASA FIRMS (live via the Kahu Ola public API, historical via GIBS thermal-anomaly layers).
 - Haze signal: NOAA GOES-18 ADP, via the Kahu Ola public API (an estimate, not an official product).
 - Wind: [Open-Meteo](https://open-meteo.com/) (CC BY 4.0), forecast and historical archive APIs.
+- Volcano status: USGS Hawaiian Volcano Observatory notices via the HANS public API.
+- Land polygons: [Natural Earth](https://www.naturalearthdata.com/) 10m land (public domain),
+  rasterised to `assets/land_hawaii_1400x1000.png` by `scripts/build_land_mask.py`.
+- Health guidance excerpts: Hawaii Interagency Vog Information Dashboard (IVHHN / Hawaiʻi DOH),
+  <https://vog.ivhhn.org/>; U.S. EPA AirNow, <https://www.airnow.gov/>.
+- Font: Noto Sans, © The Noto Project Authors, SIL Open Font License (`assets/fonts/OFL.txt`).
 
 ## Layout
 
 ```
 src/            pipeline.py (chain), models.py (Meta API stages), sources.py (data),
-                aggregate.py (verdict rule), geo.py, common.py
+                aggregate.py (verdict rule), land.py, alerts.py (stage 5), geo.py, common.py
+assets/         health_sources.json, land mask, fonts
 tests/          pytest suite (no credits spent)
 scripts/        Step-3 smoke tests, effort_ab.py (classifier reasoning-effort A/B)
 demo/           curated runs with compressed images

@@ -15,112 +15,80 @@
     "plumes": [
       {
         "bbox": {
-          "x_max": 780,
-          "x_min": 410,
-          "y_max": 855,
-          "y_min": 590
+          "x_max": 765,
+          "x_min": 415,
+          "y_max": 875,
+          "y_min": 595
         },
         "inside_point": {
           "x": 620,
-          "y": 715
+          "y": 725
         },
-        "label": "broad gray haze west of the large island",
+        "label": "large diffuse gray haze west of the large island",
         "origin_point": {
-          "x": 760,
+          "x": 745,
           "y": 695
         },
         "visibility": "clear",
-        "visual_description": "broad diffuse light-gray haze covering ocean west of the southeastern large island"
+        "visual_description": "broad light-gray diffuse veil over ocean extending west and southwest from the western coast of the large southeastern island"
       },
       {
         "bbox": {
-          "x_max": 610,
-          "x_min": 270,
-          "y_max": 575,
-          "y_min": 385
+          "x_max": 625,
+          "x_min": 260,
+          "y_max": 565,
+          "y_min": 375
         },
         "inside_point": {
-          "x": 450,
-          "y": 490
+          "x": 440,
+          "y": 475
         },
-        "label": "elongated gray streak southwest of the central islands",
+        "label": "thin gray veil west of the central islands",
         "origin_point": {
-          "x": 595,
-          "y": 445
+          "x": 605,
+          "y": 450
         },
         "visibility": "faint",
-        "visual_description": "long narrow light-gray streak extending west-southwest from the central island group"
-      },
-      {
-        "bbox": {
-          "x_max": 430,
-          "x_min": 310,
-          "y_max": 340,
-          "y_min": 290
-        },
-        "inside_point": {
-          "x": 370,
-          "y": 313
-        },
-        "label": "faint gray veil west of the upper-central island",
-        "origin_point": {
-          "x": 423,
-          "y": 315
-        },
-        "visibility": "very_faint",
-        "visual_description": "small very faint gray veil extending west from the west coast of the upper-central island"
+        "visual_description": "elongated faint gray translucent streak extending west-northwest over ocean from the vicinity of the small central islands"
       }
     ],
-    "scene_description": "True-color satellite view of the main Hawaiian Islands from northwest to southeast with scattered white trade-wind cumulus and three gray haze plumes extending west to southwest over the dark ocean."
+    "scene_description": "True-color view of the Hawaiian Island chain with scattered small white trade cumulus north and south. Two diffuse gray haze veils are visible leeward over the ocean, the largest and densest west to southwest of the southeastern large island and a fainter elongated veil west of the central islands."
   },
   "pixels": [
     {
-      "label": "broad gray haze west of the large island",
+      "label": "large diffuse gray haze west of the large island",
       "box": [
-        574,
-        590,
-        1092,
-        855
+        581,
+        595,
+        1071,
+        875
       ],
       "inside": [
         868,
-        715
+        725
       ]
     },
     {
-      "label": "elongated gray streak southwest of the central islands",
+      "label": "thin gray veil west of the central islands",
       "box": [
-        378,
-        385,
-        854,
-        575
+        364,
+        375,
+        875,
+        565
       ],
       "inside": [
-        630,
-        490
-      ]
-    },
-    {
-      "label": "faint gray veil west of the upper-central island",
-      "box": [
-        434,
-        290,
-        602,
-        340
-      ],
-      "inside": [
-        518,
-        313
+        616,
+        475
       ]
     }
   ],
   "meta": {
     "model": "muse-spark-1.3",
     "effort": "medium",
-    "cost_usd": 0.012476,
+    "cost_usd": 0.009815,
     "input_tokens": 2208,
-    "cached_tokens": 0,
-    "output_tokens": 2286,
-    "reasoning_tokens": 1907
+    "cached_tokens": 2156,
+    "output_tokens": 2218,
+    "reasoning_tokens": 1911
   }
 }

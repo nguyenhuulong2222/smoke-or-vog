@@ -6,6 +6,10 @@ confidence >= CONFIRM_THRESHOLD. Hazard order:
 Ties within a rank go to the higher confidence. Plumes below the threshold
 (or classified "uncertain") are listed as unconfirmed. The overall verdict is
 "uncertain" only when no plume reaches the threshold.
+
+Data-quality gate: a plume whose segmentation is unreliable (e.g. the mask
+swallowed an island or is mostly land, see land.py) cannot be confirmed, whatever
+its confidence; it is listed as unconfirmed with the reason.
 """
 
 from __future__ import annotations
@@ -21,13 +25,21 @@ HAZARD_RANK = {
 }
 
 
-def aggregate(per_plume: list[dict], threshold: float = CONFIRM_THRESHOLD) -> dict:
+def aggregate(per_plume: list[dict], threshold: float = CONFIRM_THRESHOLD,
+              unreliable: dict[int, str] | None = None) -> dict:
+    """unreliable: {plume_id: reason} for plumes whose masks failed quality checks."""
+    unreliable = unreliable or {}
+
     def brief(p: dict) -> dict:
-        return {"plume_id": p.get("plume_id"), "class": p.get("class"),
-                "confidence": p.get("confidence"), "source_hint": p.get("source_hint")}
+        b = {"plume_id": p.get("plume_id"), "class": p.get("class"),
+             "confidence": p.get("confidence"), "source_hint": p.get("source_hint")}
+        if p.get("plume_id") in unreliable:
+            b["not_confirmed_because"] = unreliable[p["plume_id"]]
+        return b
 
     confirmed = [p for p in per_plume
-                 if p.get("class") != "uncertain" and (p.get("confidence") or 0) >= threshold]
+                 if p.get("class") != "uncertain" and (p.get("confidence") or 0) >= threshold
+                 and p.get("plume_id") not in unreliable]
     unconfirmed = [p for p in per_plume if p not in confirmed]
     confirmed.sort(key=lambda p: (HAZARD_RANK.get(p["class"], 0), p["confidence"]), reverse=True)
     unconfirmed.sort(key=lambda p: (HAZARD_RANK.get(p.get("class"), 0), p.get("confidence") or 0),

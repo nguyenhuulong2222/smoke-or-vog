@@ -5,23 +5,18 @@
       "time": "2023-08-08"
     },
     "spark_scene": {
-      "description": "True-color satellite view of the main Hawaiian Islands from northwest to southeast with scattered white trade-wind cumulus and three gray haze plumes extending west to southwest over the dark ocean.",
+      "description": "True-color view of the Hawaiian Island chain with scattered small white trade cumulus north and south. Two diffuse gray haze veils are visible leeward over the ocean, the largest and densest west to southwest of the southeastern large island and a fainter elongated veil west of the central islands.",
       "cloud_cover": "partly",
       "plumes": [
         {
-          "label": "broad gray haze west of the large island",
-          "visual_description": "broad diffuse light-gray haze covering ocean west of the southeastern large island",
+          "label": "large diffuse gray haze west of the large island",
+          "visual_description": "broad light-gray diffuse veil over ocean extending west and southwest from the western coast of the large southeastern island",
           "visibility": "clear"
         },
         {
-          "label": "elongated gray streak southwest of the central islands",
-          "visual_description": "long narrow light-gray streak extending west-southwest from the central island group",
+          "label": "thin gray veil west of the central islands",
+          "visual_description": "elongated faint gray translucent streak extending west-northwest over ocean from the vicinity of the small central islands",
           "visibility": "faint"
-        },
-        {
-          "label": "faint gray veil west of the upper-central island",
-          "visual_description": "small very faint gray veil extending west from the west coast of the upper-central island",
-          "visibility": "very_faint"
         }
       ]
     },
@@ -29,146 +24,114 @@
     "plumes": [
       {
         "plume_id": 1,
-        "spark_label": "broad gray haze west of the large island",
-        "sam_confidence": 0.74609375,
+        "spark_label": "large diffuse gray haze west of the large island",
+        "sam_confidence": 0.78125,
         "geometry": {
           "centroid": {
-            "lat": 19.285,
-            "lon": -156.763
+            "lat": 19.257,
+            "lon": -156.786
           },
           "bbox_lonlat": [
-            -158.225,
-            18.56,
-            -155.705,
+            -158.22,
+            18.49,
+            -155.845,
             20.11
           ],
-          "area_km2": 18618,
-          "length_km": 316,
+          "area_km2": 19149,
+          "length_km": 308,
           "upwind_end": {
-            "lat": 18.94,
-            "lon": -155.715
+            "lat": 18.93,
+            "lon": -155.92
           },
           "wind_site_used": "mauna_loa_summit",
           "upwind_end_distance_km": {
-            "kilauea_summit": 68.9,
-            "mauna_loa_summit": 60.5
+            "kilauea_summit": 85.3,
+            "mauna_loa_summit": 68.9
           },
           "nearest_fire_clusters": [
             {
               "near": "Mauna Loa summit (17 km)",
               "n": 21,
               "nearest_summit_km": 17.2,
-              "distance_km": 76.3
+              "distance_km": 85.9
             },
             {
               "near": "Kailua-Kona (52 km)",
               "n": 46,
               "nearest_summit_km": 60.5,
-              "distance_km": 119.3
+              "distance_km": 122.7
             },
             {
               "near": "Kailua-Kona (52 km)",
               "n": 206,
               "nearest_summit_km": 73.1,
-              "distance_km": 128.4
+              "distance_km": 128.8
             }
-          ]
+          ],
+          "land": {
+            "land_frac": 0.001,
+            "islands_covered": {
+              "Hawaiʻi": 0.001
+            },
+            "land_spill": false,
+            "islands_swallowed": []
+          }
         }
       },
       {
         "plume_id": 2,
-        "spark_label": "elongated gray streak southwest of the central islands",
-        "sam_confidence": 0.73828125,
+        "spark_label": "thin gray veil west of the central islands",
+        "sam_confidence": 0.73046875,
         "geometry": {
           "centroid": {
-            "lat": 20.529,
-            "lon": -157.823
+            "lat": 20.54,
+            "lon": -157.822
           },
           "bbox_lonlat": [
-            -159.2,
-            20.035,
+            -159.295,
+            20.1,
             -156.465,
-            21.09
+            21.155
           ],
-          "area_km2": 13897,
-          "length_km": 308,
+          "area_km2": 14363,
+          "length_km": 317,
           "upwind_end": {
-            "lat": 20.69,
-            "lon": -156.47
+            "lat": 20.695,
+            "lon": -156.475
           },
           "wind_site_used": "fire_cluster_2",
           "upwind_end_distance_km": {
-            "kilauea_summit": 189.1,
-            "mauna_loa_summit": 162.3
+            "kilauea_summit": 189.9,
+            "mauna_loa_summit": 163.1
           },
           "nearest_fire_clusters": [
             {
               "near": "Kula, Maui (3 km)",
               "n": 201,
               "nearest_summit_km": 165.2,
-              "distance_km": 22.0
+              "distance_km": 22.1
             },
             {
               "near": "Kailua-Kona (52 km)",
               "n": 206,
               "nearest_summit_km": 73.1,
-              "distance_km": 92.2
+              "distance_km": 93.0
             },
             {
               "near": "Kailua-Kona (52 km)",
               "n": 46,
               "nearest_summit_km": 60.5,
-              "distance_km": 110.5
+              "distance_km": 111.2
             }
-          ]
-        }
-      },
-      {
-        "plume_id": 3,
-        "spark_label": "faint gray veil west of the upper-central island",
-        "sam_confidence": 0.7421875,
-        "geometry": {
-          "centroid": {
-            "lat": 21.377,
-            "lon": -158.465
-          },
-          "bbox_lonlat": [
-            -158.925,
-            21.22,
-            -158.115,
-            21.575
           ],
-          "area_km2": 1266,
-          "length_km": 93,
-          "upwind_end": {
-            "lat": 21.315,
-            "lon": -158.125
-          },
-          "wind_site_used": "fire_cluster_2",
-          "upwind_end_distance_km": {
-            "kilauea_summit": 364.4,
-            "mauna_loa_summit": 332.7
-          },
-          "nearest_fire_clusters": [
-            {
-              "near": "Honolulu (21 km)",
-              "n": 44,
-              "nearest_summit_km": 331.2,
-              "distance_km": 16.4
+          "land": {
+            "land_frac": 0.0,
+            "islands_covered": {
+              "Lānaʻi": 0.005
             },
-            {
-              "near": "Kula, Maui (3 km)",
-              "n": 201,
-              "nearest_summit_km": 165.2,
-              "distance_km": 197.3
-            },
-            {
-              "near": "Kailua-Kona (52 km)",
-              "n": 206,
-              "nearest_summit_km": 73.1,
-              "distance_km": 272.0
-            }
-          ]
+            "land_spill": false,
+            "islands_swallowed": []
+          }
         }
       }
     ],
@@ -228,6 +191,32 @@
       "volcanic_note": "summit-caldera thermal detections (active vent glow), excluded from fire clusters"
     },
     "case_note": null,
+    "volcano_status": {
+      "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+      "valid_at": "2023-08-08T21:00:00+00:00",
+      "volcanoes": {
+        "kilauea": {
+          "alert_level": "ADVISORY",
+          "aviation_color": "YELLOW",
+          "erupting": "no",
+          "activity_summary": "Kīlauea volcano is not erupting. No significant changes have been observed at the summit or in either rift zone over the past week.",
+          "notice_type": "WU",
+          "notice_sent_utc": "2023-08-08 19:20:05",
+          "notice_id": "DOI-USGS-HVO-2023-08-08T12:04:28-07:00",
+          "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2023-08-08T12:04:28-07:00"
+        },
+        "mauna_loa": {
+          "alert_level": "NORMAL",
+          "aviation_color": "GREEN",
+          "erupting": "no",
+          "activity_summary": "",
+          "notice_type": "MU",
+          "notice_sent_utc": "2023-08-03 22:15:57",
+          "notice_id": "DOI-USGS-HVO-2023-08-03T14:27:00-07:00",
+          "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2023-08-03T14:27:00-07:00"
+        }
+      }
+    },
     "wind_10m": {
       "source": "Open-Meteo archive (ERA5-based reanalysis)",
       "sites": {
@@ -263,89 +252,72 @@
     }
   },
   "result": {
-    "caveats": "Mixed-source scene on 2023-08-08: active Kilauea vent and major Maui/Honolulu fires co-exist. SAM ocean-only segmentation creates 60+ km offsets from sources. Plume 1 may mix vog with Kona Hawaii Island fires; Mauna Loa flank cluster (n21, 17.2km from summit) may be lava not vegetation fire. Trade cumulus contaminates faint veil. ADP unavailable.",
+    "caveats": "Segmentation upwind ends are offshore and approximate; wind varies locally and with height. FIRMS counts are rendered marker pixels, not individual detections. Summit thermal glow (45 px at Kilauea) is excluded and not used as eruption proof. Plume 1 upwind is ~70-85 km from summits and >85 km from nearest listed fire pixels, so exact fire of origin cannot be isolated from this context alone.",
     "evidence": [
-      "Scene shows two distinct regimes: broad diffuse gray haze SW of Hawaii Island near summits and long narrow gray streak WSW from central islands far from summits",
-      "Kilauea summit has 45 thermal pixels excluded as volcanic_thermal_excluded indicating active vent supporting vog",
-      "Plume 2 upwind only 22.0 km from large Kula Maui fire cluster n201 and >160 km from summits supporting wildfire smoke",
-      "Single class cannot describe both vog-likely and smoke-likely plumes; dominant area (plume 1, 18618 km2) vs diagnostic disaster plume (plume 2) conflict"
+      "Both volcanoes officially not erupting at image time: Kilauea ADVISORY/YELLOW 'is not erupting', Mauna Loa NORMAL/GREEN 'erupting: no' on 2023-08-08",
+      "Two diffuse gray translucent veils leeward to west-southwest over ocean, not bright white textured trade cumulus seen elsewhere in image",
+      "Strong easterly 10-m flow ~30 km/h from ~83 deg at Maui fire site and ~31 km/h from 41 deg nearby, consistent with west / west-northwest elongation of veils",
+      "Multiple large FIRMS fire clusters on 2023-08-08: n=201 near Kula Maui, n=206 and n=46 near Kailua-Kona/Kohala Hawaii Island, n=21 near Mauna Loa flank, n=44 near Honolulu",
+      "Upwind ends are 69-85 km (plume 1) and 163-190 km (plume 2) from volcanic summits, not trailing from summit vents as expected for vog"
     ],
     "per_plume": [
       {
-        "class": "vog_kilauea",
-        "confidence": 0.65,
+        "class": "wildfire_smoke",
+        "confidence": 0.78,
         "evidence": [
-          "broad diffuse light-gray haze west of Big Island, not bright white textured cumulus",
-          "upwind end 68.9 km from Kilauea summit, 60.5 km from Mauna Loa summit, closer than to any fire cluster nearest 76.3 km",
-          "Kilauea summit 45 thermal pixels excluded from fires indicates active vent",
-          "Kilauea summit wind 33.0 kmh from 11 deg NNE drives SSW transport consistent with haze SW/west of island"
+          "Large broad light-gray diffuse veil west-southwest of Hawaii Island, not bright white cloud",
+          "Volcanoes not erupting per HVO, so not vog despite 68.9 km to Mauna Loa summit and 85.3 km to Kilauea summit from upwind end at 18.93N, -155.92W off SW coast",
+          "Coincident Hawaii Island wildfire activity: clusters n=206, n=46 near west Hawaii and n=21 Mauna Loa flank 17.2 km from summit (wildfire since no eruption)",
+          "Leeward position west of island under easterly trade flow favors smoke accumulation offshore"
         ],
         "plume_id": 1,
-        "source_hint": "Kilauea summit active vent"
+        "source_hint": "Hawaii Island leeward fires plus regional smoke transport; no eruption source"
       },
       {
         "class": "wildfire_smoke",
-        "confidence": 0.88,
+        "confidence": 0.9,
         "evidence": [
-          "long narrow light-gray streak extending west-southwest, distinct from scattered white trade cumulus",
-          "upwind end 189.1 km from Kilauea, 162.3 km from Mauna Loa ruling out vog",
-          "upwind end only 22.0 km from Kula Maui fire cluster n201 nearest_summit 165.2 km",
-          "fire_cluster_2 wind 30.5 kmh from 83 deg easterly aligns with WSW plume orientation and length 308 km"
+          "Elongated faint gray translucent streak extending west-northwest from vicinity of central islands",
+          "Upwind end 20.695N, -156.475W only 22.1 km from large Kula, Maui fire cluster n=201, nearest_summit 165.2 km, far from volcanoes (163.1 km Mauna Loa, 189.9 km Kilauea)",
+          "Wind at fire_cluster_2 30.5 km/h from 83 deg (east) directly aligns with west-northwest transport direction",
+          "Volcanoes not erupting, ruling out vog; color/texture gray veil not white cloud"
         ],
         "plume_id": 2,
-        "source_hint": "Kula, Maui fire cluster n201"
-      },
-      {
-        "class": "uncertain",
-        "confidence": 0.45,
-        "evidence": [
-          "small very faint gray veil west of upper-central island, area 1266 km2, visibility very_faint",
-          "upwind 364.4 km from Kilauea, 332.7 km from Mauna Loa, 16.4 km from Honolulu fire cluster n44 suggesting smoke",
-          "faintness and proximity to bright cumulus prevents firm smoke vs thin cloud/haze distinction"
-        ],
-        "plume_id": 3,
-        "source_hint": "Honolulu fire cluster n44 vs cloud contamination"
+        "source_hint": "Kula, Maui fire ~3 km away (n=201 cluster)"
       }
     ],
-    "source_hint": "mixed vog + wildfire smoke scene",
-    "model_overall_class": "uncertain",
-    "model_overall_confidence": 0.7,
+    "source_hint": "Maui Kula and Hawaii Island wildfire clusters on 2023-08-08; Kilauea and Mauna Loa not erupting",
+    "model_overall_class": "wildfire_smoke",
+    "model_overall_confidence": 0.85,
     "overall": {
       "class": "wildfire_smoke",
-      "confidence": 0.88,
+      "confidence": 0.9,
       "plume_id": 2,
       "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
       "confirmed": [
         {
           "plume_id": 2,
           "class": "wildfire_smoke",
-          "confidence": 0.88,
-          "source_hint": "Kula, Maui fire cluster n201"
-        }
-      ],
-      "unconfirmed": [
-        {
-          "plume_id": 1,
-          "class": "vog_kilauea",
-          "confidence": 0.65,
-          "source_hint": "Kilauea summit active vent"
+          "confidence": 0.9,
+          "source_hint": "Kula, Maui fire ~3 km away (n=201 cluster)"
         },
         {
-          "plume_id": 3,
-          "class": "uncertain",
-          "confidence": 0.45,
-          "source_hint": "Honolulu fire cluster n44 vs cloud contamination"
+          "plume_id": 1,
+          "class": "wildfire_smoke",
+          "confidence": 0.78,
+          "source_hint": "Hawaii Island leeward fires plus regional smoke transport; no eruption source"
         }
-      ]
+      ],
+      "unconfirmed": []
     }
   },
   "meta": {
     "model": "muse-spark-1.3",
     "effort": "medium",
-    "cost_usd": 0.026762,
-    "input_tokens": 3770,
+    "cost_usd": 0.015857,
+    "input_tokens": 3985,
     "cached_tokens": 0,
-    "output_tokens": 5188,
-    "reasoning_tokens": 4491
+    "output_tokens": 2559,
+    "reasoning_tokens": 1747
   }
 }

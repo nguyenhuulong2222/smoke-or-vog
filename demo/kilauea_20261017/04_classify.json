@@ -5,12 +5,12 @@
       "time": "2026-10-17T21:00:00Z"
     },
     "spark_scene": {
-      "description": "True-color satellite view of the main Hawaiian Islands from northwest to southeast over dark ocean with scattered white cumulus and cirrus clouds; the large southeastern island is partly cloud-covered with a faint translucent haze trailing south over the ocean.",
+      "description": "True-color satellite view of the main Hawaiian Islands with scattered white clouds over dark ocean; the largest island in the lower right has a pale diffuse trailing haze to its south.",
       "cloud_cover": "partly",
       "plumes": [
         {
-          "label": "pale blue-gray haze south of large island",
-          "visual_description": "thin pale blue-gray translucent haze extending south-southwest from the southern tip of the large southeastern island over the dark ocean, distinct from the brighter white clouds over land",
+          "label": "pale gray-blue plume south of the large island",
+          "visual_description": "diffuse pale blue-gray haze extending south-southwest from the southern coast of the large island over the ocean, fainter and bluer than the surrounding bright white clouds",
           "visibility": "faint"
         }
       ]
@@ -19,50 +19,58 @@
     "plumes": [
       {
         "plume_id": 1,
-        "spark_label": "pale blue-gray haze south of large island",
-        "sam_confidence": 0.78125,
+        "spark_label": "pale gray-blue plume south of the large island",
+        "sam_confidence": 0.76171875,
         "geometry": {
           "centroid": {
-            "lat": 18.718,
-            "lon": -155.664
+            "lat": 18.704,
+            "lon": -155.634
           },
           "bbox_lonlat": [
-            -156.27,
-            18.225,
-            -154.955,
-            19.25
+            -156.255,
+            18.23,
+            -154.96,
+            19.245
           ],
-          "area_km2": 9122,
-          "length_km": 179,
+          "area_km2": 9351,
+          "length_km": 177,
           "upwind_end": {
-            "lat": 18.86,
-            "lon": -156.16
+            "lat": 19.235,
+            "lon": -154.995
           },
-          "wind_site_used": "mauna_loa_summit",
+          "wind_site_used": "fire_cluster_1",
           "upwind_end_distance_km": {
-            "kilauea_summit": 110.3,
-            "mauna_loa_summit": 89.7
+            "kilauea_summit": 35.7,
+            "mauna_loa_summit": 69.6
           },
           "nearest_fire_clusters": [
-            {
-              "near": "Kīlauea summit (2 km)",
-              "n": 168,
-              "nearest_summit_km": 2.1,
-              "distance_km": 108.5
-            },
             {
               "near": "Kīlauea summit (4 km)",
               "n": 32,
               "nearest_summit_km": 4.4,
-              "distance_km": 113.7
+              "distance_km": 31.8
+            },
+            {
+              "near": "Kīlauea summit (2 km)",
+              "n": 168,
+              "nearest_summit_km": 2.1,
+              "distance_km": 37.4
             },
             {
               "near": "Honolulu (14 km)",
               "n": 49,
               "nearest_summit_km": 322.6,
-              "distance_km": 334.6
+              "distance_km": 389.4
             }
-          ]
+          ],
+          "land": {
+            "land_frac": 0.027,
+            "islands_covered": {
+              "Hawaiʻi": 0.024
+            },
+            "land_spill": false,
+            "islands_swallowed": []
+          }
         }
       }
     ],
@@ -115,6 +123,32 @@
       "volcanic_note": "summit-caldera thermal detections (active vent glow), excluded from fire clusters"
     },
     "case_note": null,
+    "volcano_status": {
+      "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+      "valid_at": "2026-10-17T21:00:00+00:00",
+      "volcanoes": {
+        "kilauea": {
+          "alert_level": "ADVISORY",
+          "aviation_color": "YELLOW",
+          "erupting": "episodic_pause",
+          "activity_summary": "Episode 55 of the ongoing Halemaʻumaʻu eruption ended abruptly at 9:03 a.m. HST on October 17, 2026. VAN is being reissued to drop the alert level from WATCH to ADVISORY and the color code from ORANGE to YELLOW.",
+          "notice_type": "VAN",
+          "notice_sent_utc": "2026-10-17 19:59:31",
+          "notice_id": "DOI-USGS-HVO-2026-10-17T19:56:12+00:00",
+          "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-17T19:56:12+00:00"
+        },
+        "mauna_loa": {
+          "alert_level": "NORMAL",
+          "aviation_color": "GREEN",
+          "erupting": "no",
+          "activity_summary": "Mauna Loa earthquake counts decreased in September compared to August, and minor inflation continues. Mauna Loa had a decrease in seismic activity compared to the previous month; a total of 53 earthquakes were detected in Mauna Loa's summit region during the September reporting period, after 87 in August. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+          "notice_type": "MU",
+          "notice_sent_utc": "2026-10-01 21:30:20",
+          "notice_id": "DOI-USGS-HVO-2026-10-01T01:33:14+00:00",
+          "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-01T01:33:14+00:00"
+        }
+      }
+    },
     "wind_10m": {
       "source": "Open-Meteo archive (ERA5-based reanalysis)",
       "sites": {
@@ -150,41 +184,41 @@
     }
   },
   "result": {
-    "caveats": "Big Island interior is partly cloud-covered so the over-land connection from summit to ocean haze is obscured; segmented upwind_end is ~90-110 km south of both summits and represents emergence from cloud, not true vent origin; Mauna Loa summit 10-m wind from 300 deg differs from Kilauea NE trades.",
+    "caveats": "Kilauea was in episodic_pause, Episode 55 ended at 9:03 a.m. HST ~2 hr before the 11:00 a.m. HST (21:00Z) image, so plume may be residual or passive degassing and emission rate is uncertain. Upwind end is 35.7 km from Kilauea summit on the SE coast, not at the vent, likely due to cloud over the island obscuring the over-land portion and segmentation starting offshore. Visibility is faint, limiting color discrimination. Summit/flank thermal clusters are lava/vent glow, not proof of emissions on their own.",
     "evidence": [
-      "thin pale blue-gray translucent haze extending south-southwest from southern tip of Big Island over dark ocean, distinct from bright white textured cumulus/cirrus over land - matches vog, not cloud or brown smoke",
-      "volcanic_thermal_excluded kilauea-summit 316 indicates active summit vent glow at Kilauea, providing SO2 source for vog",
-      "nearest FIRMS clusters n=168 at 2.1 km and n=32 at 4.4 km from Kilauea summit are flank lava, not vegetation wildfire; only distant Honolulu fires 334.6 km away are unrelated",
-      "10-m wind at Kilauea summit from 030 deg at 16.7 km/h (NE trades) blows toward SSW, consistent with 179-km plume oriented SSW from island",
-      "plume geometry area 9122 km2 length 179 km centroid 18.718,-155.664 is downwind ocean vog accumulation despite upwind_end 89.7 km from Mauna Loa and 110.3 km from Kilauea due to cloud masking"
+      "diffuse pale blue-gray haze extending south-southwest from southern Hawaii island over ocean, fainter and bluer than surrounding bright white clouds - typical vog, not bright textured cloud or brown smoke",
+      "177 km long plume orientation SSW is downwind of 10-m wind from 030 deg (NE) at 16.7 kmh at Kilauea summit",
+      "upwind end 35.7 km from Kilauea summit vs 69.6 km from Mauna Loa summit, favoring Kilauea; nearest non-volcanic fire cluster near Honolulu is 389.4 km distant",
+      "USGS HVO at image time: Kilauea ADVISORY/YELLOW episodic_pause with Episode 55 ending that morning plus 316 summit-caldera thermal exclusions indicating recent eruption/degassing, while Mauna Loa is NORMAL/GREEN not erupting"
     ],
     "per_plume": [
       {
         "class": "vog_kilauea",
-        "confidence": 0.75,
+        "confidence": 0.7,
         "evidence": [
-          "pale blue-gray translucent faint haze, not bright white cloud and not brown smoke",
-          "active Kilauea vent with 316 excluded summit thermals plus 168+32 near-summit lava pixels supports Kilauea vog source",
-          "Kilauea NE wind 030/16.7 kmh drives SSW transport matching visual orientation; Honolulu fire source >330 km distant impossible"
+          "pale gray-blue diffuse haze south of Hawaii island, bluer and fainter than white clouds",
+          "SSW extent consistent with NE wind from 30 deg transporting summit emissions to the south-southwest",
+          "upwind end SE coast 35.7 km from Kilauea, 69.6 km from Mauna Loa; 31-37 km from Kilauea summit lava thermal clusters (2-4 km from summit), no wildfire source upwind",
+          "Kilauea recently eruptive with pause 2 hr before image is plausible vog source; Mauna Loa not erupting"
         ],
         "plume_id": 1,
-        "source_hint": "Kilauea summit active vent"
+        "source_hint": "Kilauea summit"
       }
     ],
-    "source_hint": "Kilauea summit active vent",
+    "source_hint": "Kilauea summit",
     "model_overall_class": "vog_kilauea",
-    "model_overall_confidence": 0.75,
+    "model_overall_confidence": 0.7,
     "overall": {
       "class": "vog_kilauea",
-      "confidence": 0.75,
+      "confidence": 0.7,
       "plume_id": 1,
       "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
       "confirmed": [
         {
           "plume_id": 1,
           "class": "vog_kilauea",
-          "confidence": 0.75,
-          "source_hint": "Kilauea summit active vent"
+          "confidence": 0.7,
+          "source_hint": "Kilauea summit"
         }
       ],
       "unconfirmed": []
@@ -193,10 +227,10 @@
   "meta": {
     "model": "muse-spark-1.3",
     "effort": "medium",
-    "cost_usd": 0.014283,
-    "input_tokens": 3100,
+    "cost_usd": 0.015473,
+    "input_tokens": 3668,
     "cached_tokens": 0,
-    "output_tokens": 2449,
-    "reasoning_tokens": 1971
+    "output_tokens": 2562,
+    "reasoning_tokens": 2026
   }
 }

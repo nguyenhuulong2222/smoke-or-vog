@@ -22,7 +22,7 @@ from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
-from . import geo, models, sources
+from . import geo, land, models, sources
 from .aggregate import aggregate
 from .common import OUT, SAM_PER_IMAGE, check_budget, total_spend
 
@@ -217,6 +217,8 @@ def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes,
         if bb:
             conf = per.get(p["plume_id"], {}).get("confidence")
             label = f"#{p['plume_id']} {cls}" + (f" {conf:.2f}" if conf is not None else "")
+            if p.get("geometry", {}).get("land", {}).get("land_spill"):
+                label += " [LAND SPILL]"
             d.text((bb[0] + 4, max(0, bb[1] - 20)), label, fill=color + (255,), font=f,
                    stroke_width=2, stroke_fill=(0, 0, 0, 255))
         ue = p.get("geometry", {}).get("upwind_end_px")
@@ -285,10 +287,13 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
     for i, c in enumerate(firms["clusters"][:3]):
         wind_pts[f"fire_cluster_{i + 1}"] = (c["lat"], c["lon"])
     wind = sources.fetch_wind(wind_pts, None if not cfg["historical"] else when)
-    ctx0 = {"image": img_meta, "firms": firms, "wind": wind}
+    volcano = sources.fetch_volcano_status(None if not cfg["historical"] else when)
+    ctx0 = {"image": img_meta, "firms": firms, "wind": wind, "volcano_status": volcano}
     _save_json(rd / "00_context.json", ctx0)
     log["stages"]["0_context"] = {"image_time": t, "firms_clusters": len(firms["clusters"])}
-    print(f"  0 image {cfg['layer']} @ {t}; FIRMS clusters {len(firms['clusters'])}")
+    print(f"  0 image {cfg['layer']} @ {t}; FIRMS clusters {len(firms['clusters'])}; HVO " +
+          ", ".join(f"{k}={v.get('alert_level')}/{v.get('aviation_color')}/{v.get('erupting')}"
+                    for k, v in volcano["volcanoes"].items()))
 
     # ---- stage 1: ADP
     if cfg["historical"]:
@@ -395,7 +400,15 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
                 continue
             q1 = mask_quality(o1["mask"]) if o1 else {"area_px": 0, "edges_touched": 0}
             q2 = mask_quality(o2["mask"]) if o2 else {}
+            if o1:
+                q1["land"] = land.land_stats(o1["mask"])
+            if o2:
+                q2["land"] = land.land_stats(o2["mask"])
             pick, why = choose_pass(q1, q2) if o1 else ("pass2", "pass 1 had no mask")
+            if pick == "pass2" and o1 and o2:
+                spill = land.pass2_adds_land(q1["land"], q2["land"])
+                if spill:
+                    pick, why = "pass1", spill
             final_objs.append(o2 if pick == "pass2" else o1)
             refine_log.append({"plume_id": i, "spark_box": plumes_px[i - 1]["box"],
                                "pass2_box": pass2_px[i - 1]["box"], "pass1": q1, "pass2": q2,
@@ -443,6 +456,8 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
              for c in firms["clusters"]), key=lambda c: c["distance_km"])[:3]
         label = plumes_px[int(o["object_id"]) - 1]["label"] if chosen in ("box", "box+point") \
             and o["object_id"].isdigit() and int(o["object_id"]) <= len(plumes_px) else chosen
+        g["land"] = land.land_stats(o["mask"])
+        o["mask"].save(rd / f"plume_{i}_mask.png", optimize=True)
         plumes.append({"plume_id": i, "spark_label": label, "sam_confidence": o["confidence"],
                        "geometry": g, "mask": o["mask"]})
 
@@ -460,6 +475,7 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
                   "volcanic_thermal_excluded": firms.get("volcanic_thermal"),
                   "volcanic_note": firms.get("volcanic_note")},
         "case_note": cfg.get("note"),
+        "volcano_status": volcano,
         "wind_10m": wind,
         "adp": {k: adp.get(k) for k in ("state", "haze_pixels", "note", "meaning_of_absence")
                 if k in adp},
@@ -475,7 +491,9 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
         cls_meta = {"skipped": True, "cost_usd": 0}
     cls["model_overall_class"] = cls.pop("class")
     cls["model_overall_confidence"] = cls.pop("confidence")
-    cls["overall"] = aggregate(cls["per_plume"])
+    unreliable = {p["plume_id"]: r for p in plumes
+                  if (r := land.unreliable_reason(p["geometry"].get("land", {})))}
+    cls["overall"] = aggregate(cls["per_plume"], unreliable=unreliable)
     _save_json(rd / "04_classify.json", {"context": cls_ctx, "result": cls, "meta": cls_meta})
     log["stages"]["4_classify"] = {"overall": cls["overall"], **cls_meta}
     ov = cls["overall"]

@@ -1,0 +1,71 @@
+{
+  "_about": "Verbatim excerpts of official public-health guidance (whitespace normalised; long passages split into sentences, first letter capitalised where split). Alerts may use ONLY these texts for health advice. Retrieved 2026-10-31.",
+  "sources": {
+    "ivhhn_hdoh_vog_protection": {
+      "publisher": "Hawaii Interagency Vog Information Dashboard (IVHHN with Hawaiʻi State Department of Health, USGS HVO, Hawaiʻi County Civil Defense, NPS, NWS)",
+      "title": "Protect yourself from vog",
+      "url": "https://vog.ivhhn.org/vog-protection",
+      "excerpts": [
+        "Vog is a hazy mixture of sulfur dioxide gas (SO2) and particles (PM2.5) originating from Kīlauea Volcano.",
+        "Sensitivity to vog varies among people, so everyone needs to take responsibility to protect themselves and dependent family members, as necessary.",
+        "Individuals in ‘sensitive groups,’ such as people with pre-existing respiratory or other medical conditions, are expected to be at highest risk for potential health effects, depending on the amount of emissions, distance away from the vent, and wind direction from day to day.",
+        "Keep medications handy: If you have asthma or other respiratory conditions, keep your medication available and use as prescribed. If you don't have medications, but feel you might need them, call your doctor.",
+        "If you are having asthma symptoms, such as trouble breathing, wheeze, increased coughing, or chest tightness, contact your doctor or seek other medical assistance.",
+        "Do not smoke: Also, avoid secondhand smoke.",
+        "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
+        "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+        "Stay indoors: When vog levels rise, go indoors and close all doors and windows to the outside and, if possible, seal obvious gaps under doors or around windows.",
+        "Beware of becoming overheated as a result of closing up your house.",
+        "The Hawaiʻi Department of Health (HDOH) does not recommend the use of respirators by the general public to protect against volcanic gases.",
+        "Many common masks (including surgical masks) and bandanas will not provide substantial protection from PM2.5 or SO2.",
+        "Learn about wind conditions: Be aware of winds that could carry vog to your area."
+      ]
+    },
+    "airnow_fires_and_health": {
+      "publisher": "U.S. EPA AirNow",
+      "title": "Fires and Your Health",
+      "url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+      "excerpts": [
+        "The biggest health threat from smoke is from fine particles.",
+        "These microscopic particles can get into your eyes and respiratory system, where they can cause health problems such as burning eyes, runny nose, and illnesses such as bronchitis.",
+        "Fine particles also can aggravate chronic heart and lung diseases - and even are linked to premature deaths in people with these conditions.",
+        "If you are healthy, you're usually not at a major risk from short-term exposures to smoke. Still, it's a good idea to avoid breathing smoke if you can help it.",
+        "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+        "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
+        "When smoke levels are high, try to avoid using anything that burns, such as wood fireplaces, gas logs, gas stoves - and even candles!",
+        "Don't vacuum. That stirs up particles already inside your home. And don't smoke.",
+        "If you have asthma or other lung disease, make sure you follow your doctor's directions about taking your medicines and following your asthma management plan. Call your doctor if your symptoms worsen.",
+        "Run your air conditioner if you have one. Keep the fresh air intake closed and the filter clean to prevent bringing additional smoke inside.",
+        "If you don't have an air conditioner, staying inside with the windows closed may be dangerous in extremely hot weather. In these cases, seek alternative shelter."
+      ]
+    },
+    "airnow_aqi_basics": {
+      "publisher": "U.S. EPA AirNow",
+      "title": "AQI Basics",
+      "url": "https://www.airnow.gov/aqi/aqi-basics/",
+      "excerpts": [
+        "The U.S. Air Quality Index (AQI) is EPA's tool for communicating about outdoor air quality and health.",
+        "The higher the AQI value, the greater the level of air pollution and the greater the health concern.",
+        "When AQI values are above 100, air quality is unhealthy: at first for certain sensitive groups of people, then for everyone as AQI values get higher.",
+        "Moderate (51 to 100): Air quality is acceptable. However, there may be a risk for some people, particularly those who are unusually sensitive to air pollution.",
+        "Unhealthy for Sensitive Groups (101 to 150): Members of sensitive groups may experience health effects. The general public is less likely to be affected."
+      ]
+    }
+  },
+  "verdict_sources": {
+    "vog_kilauea": ["ivhhn_hdoh_vog_protection"],
+    "vog_mauna_loa": ["ivhhn_hdoh_vog_protection"],
+    "wildfire_smoke": ["airnow_fires_and_health"],
+    "dust": ["airnow_aqi_basics"],
+    "uncertain": ["airnow_fires_and_health", "ivhhn_hdoh_vog_protection"],
+    "no_plume": ["airnow_aqi_basics"]
+  },
+  "verdict_links": {
+    "vog_kilauea": "https://vog.ivhhn.org/",
+    "vog_mauna_loa": "https://vog.ivhhn.org/",
+    "wildfire_smoke": "https://fire.airnow.gov/",
+    "dust": "https://www.airnow.gov/",
+    "uncertain": "https://www.airnow.gov/",
+    "no_plume": "https://www.airnow.gov/"
+  }
+}

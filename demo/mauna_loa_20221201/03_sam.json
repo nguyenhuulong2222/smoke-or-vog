@@ -1,52 +1,52 @@
 {
   "variants": {
     "box": {
-      "prompt": "<0f>1<|box;x1=395;y1=385;x2=921;y2=505;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=399;y1=355;x2=784;y2=475;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 19763,
-        "mean_confidence": 0.395,
-        "frac_inside_spark_boxes": 0.995,
-        "spark_box_fill": 0.308
+        "mask_px": 26656,
+        "mean_confidence": 0.484,
+        "frac_inside_spark_boxes": 0.999,
+        "spark_box_fill": 0.57
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.39453125,
+          "confidence": 0.484375,
           "box": [
             395,
-            382,
-            933,
-            498
+            357,
+            769,
+            475
           ],
-          "mask_px": 19763
+          "mask_px": 26656
         }
       ]
     },
     "box+point": {
-      "prompt": "<0f>1<|box;x1=395;y1=385;x2=921;y2=505;w=1400;h=1000|><|point;x=633;y=438;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=399;y1=355;x2=784;y2=475;w=1400;h=1000|><|point;x=546;y=420;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 31753,
-        "mean_confidence": 0.59,
-        "frac_inside_spark_boxes": 0.992,
-        "spark_box_fill": 0.494
+        "mask_px": 27426,
+        "mean_confidence": 0.516,
+        "frac_inside_spark_boxes": 0.997,
+        "spark_box_fill": 0.585
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.58984375,
+          "confidence": 0.515625,
           "box": [
-            406,
-            376,
-            912,
-            503
+            394,
+            354,
+            760,
+            475
           ],
-          "mask_px": 31753
+          "mask_px": 27426
         }
       ]
     },
@@ -89,31 +89,45 @@
     {
       "plume_id": 1,
       "spark_box": [
-        395,
-        385,
-        921,
-        505
+        399,
+        355,
+        784,
+        475
       ],
       "pass2_box": [
-        330,
-        357,
-        987,
-        521
+        339,
+        337,
+        814,
+        492
       ],
       "pass1": {
-        "area_px": 31753,
-        "coherence": 0.994,
-        "bbox_frac": 0.0459,
-        "edges_touched": 0
+        "area_px": 27426,
+        "coherence": 0.989,
+        "bbox_frac": 0.0314,
+        "edges_touched": 0,
+        "land": {
+          "land_frac": 0.0,
+          "islands_covered": {},
+          "land_spill": false,
+          "islands_swallowed": []
+        }
       },
       "pass2": {
-        "area_px": 47769,
-        "coherence": 0.938,
-        "bbox_frac": 0.0737,
-        "edges_touched": 0
+        "area_px": 35629,
+        "coherence": 0.994,
+        "bbox_frac": 0.0483,
+        "edges_touched": 0,
+        "land": {
+          "land_frac": 0.0,
+          "islands_covered": {
+            "Molokaʻi": 0.006
+          },
+          "land_spill": false,
+          "islands_swallowed": []
+        }
       },
       "kept": "pass2",
-      "reason": "pass 2 larger (1.50x) and coherent"
+      "reason": "pass 2 larger (1.30x) and coherent"
     }
   ]
 }

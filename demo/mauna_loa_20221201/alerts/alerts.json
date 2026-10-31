@@ -1,0 +1,198 @@
+{
+  "run_id": "mauna_loa_20221201_20261031T225554Z",
+  "mode": "replay",
+  "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
+  "verdict": "uncertain",
+  "confidence": 0.0,
+  "image_time_utc": "2022-12-01",
+  "places": {
+    "near": [],
+    "source_side": null
+  },
+  "official_source_url": "https://www.airnow.gov/",
+  "health_sources": [
+    "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+    "https://vog.ivhhn.org/vog-protection"
+  ],
+  "generated_by": {
+    "text": {
+      "model": "muse-spark-1.3",
+      "effort": "medium",
+      "cost_usd": 0.027449,
+      "input_tokens": 1498,
+      "cached_tokens": 0,
+      "output_tokens": 6018,
+      "reasoning_tokens": 4754
+    },
+    "background": "muse-image-1.0 (text-free)"
+  },
+  "alerts": [
+    {
+      "lang": "en",
+      "language": "English",
+      "mode": "replay",
+      "replay_banner": "REPLAY · Dec 1, 2022 · not a current alert",
+      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
+      "headline": "Satellite haze check: source unclear",
+      "summary": "Daily satellite pass on Dec 1, 2022 could not confirm the haze source.",
+      "actions": [
+        {
+          "text": "Pay attention to local air quality reports and health warnings.",
+          "source_id": "airnow_fires_and_health",
+          "index": 4,
+          "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+          "url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/"
+        },
+        {
+          "text": "Limit strenuous outdoor activity when vog levels are high.",
+          "source_id": "ivhhn_hdoh_vog_protection",
+          "index": 7,
+          "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+          "url": "https://vog.ivhhn.org/vog-protection"
+        }
+      ],
+      "confidence": 0.0,
+      "confidence_label": "Confidence: 0%",
+      "disclaimer": "Satellite estimate, not an official warning.",
+      "disclaimer_en": "Satellite estimate, not an official warning.",
+      "official_source_url": "https://www.airnow.gov/",
+      "machine_translated": false,
+      "needs_community_review": false,
+      "card": "alert_en.png"
+    },
+    {
+      "lang": "vi",
+      "language": "Vietnamese (Tiếng Việt)",
+      "mode": "replay",
+      "replay_banner": "PHÁT LẠI · 1 tháng 12, 2022 · không phải cảnh báo hiện tại",
+      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
+      "headline": "Kiểm tra mù từ vệ tinh: chưa rõ nguồn",
+      "summary": "Ảnh vệ tinh ngày 1 tháng 12, 2022 đã không xác nhận được nguồn mù.",
+      "actions": [
+        {
+          "text": "Theo dõi báo cáo chất lượng không khí tại địa phương và các cảnh báo về khói cháy rừng.",
+          "source_id": "airnow_fires_and_health",
+          "index": 4,
+          "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+          "url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+          "reviewed_override": true,
+          "model_text": "Theo dõi báo cáo chất lượng không khí và cảnh báo sức khỏe."
+        },
+        {
+          "text": "Hạn chế hoạt động gắng sức ngoài trời khi sương mù núi lửa (vog) dày đặc.",
+          "source_id": "ivhhn_hdoh_vog_protection",
+          "index": 7,
+          "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+          "url": "https://vog.ivhhn.org/vog-protection"
+        }
+      ],
+      "confidence": 0.0,
+      "confidence_label": "Độ tin cậy: 0%",
+      "disclaimer": "Ước tính từ vệ tinh, không phải cảnh báo chính thức.",
+      "disclaimer_en": "Satellite estimate, not an official warning.",
+      "official_source_url": "https://www.airnow.gov/",
+      "machine_translated": true,
+      "needs_community_review": false,
+      "card": "alert_vi.png"
+    },
+    {
+      "lang": "ilo",
+      "language": "Ilocano (Ilokano)",
+      "mode": "replay",
+      "replay_banner": "ULIT · Dis 1, 2022 · saan a damdama nga alerto",
+      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
+      "headline": "Satellite check: saan a nakumpirma",
+      "summary": "Ti ladawan ti satellite idi Dis 1, 2022 ket saan a nakumpirma ti paggapuan ti asuk.",
+      "actions": [
+        {
+          "text": "Denggen dagiti report ti kalidad ti angin ken dagiti pakdaar ti salun-at.",
+          "source_id": "airnow_fires_and_health",
+          "index": 4,
+          "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+          "url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/"
+        },
+        {
+          "text": "Limitan ti nadagsen nga aramid iti ruar no nangato ti vog.",
+          "source_id": "ivhhn_hdoh_vog_protection",
+          "index": 7,
+          "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+          "url": "https://vog.ivhhn.org/vog-protection"
+        }
+      ],
+      "confidence": 0.0,
+      "confidence_label": "Talek: 0%",
+      "disclaimer": "Tantiya ti satellite, saan nga opisial a pakdaar.",
+      "disclaimer_en": "Satellite estimate, not an official warning.",
+      "official_source_url": "https://www.airnow.gov/",
+      "machine_translated": true,
+      "needs_community_review": true,
+      "card": "alert_ilo.png"
+    },
+    {
+      "lang": "tl",
+      "language": "Tagalog",
+      "mode": "replay",
+      "replay_banner": "REPLAY · Dis 1, 2022 · hindi ito kasalukuyang alerto",
+      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
+      "headline": "Satellite check: hindi nakumpirma",
+      "summary": "Hindi nakumpirma ng satellite image noong Dis 1, 2022 ang pinagmulan ng haze.",
+      "actions": [
+        {
+          "text": "Makinig sa mga ulat ng kalidad ng hangin at mga babalang pangkalusugan.",
+          "source_id": "airnow_fires_and_health",
+          "index": 4,
+          "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+          "url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/"
+        },
+        {
+          "text": "Limitahan ang mabigat na gawain sa labas kapag mataas ang vog.",
+          "source_id": "ivhhn_hdoh_vog_protection",
+          "index": 7,
+          "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+          "url": "https://vog.ivhhn.org/vog-protection"
+        }
+      ],
+      "confidence": 0.0,
+      "confidence_label": "Kumpiyansa: 0%",
+      "disclaimer": "Tantiya ng satellite, hindi opisyal na babala.",
+      "disclaimer_en": "Satellite estimate, not an official warning.",
+      "official_source_url": "https://www.airnow.gov/",
+      "machine_translated": true,
+      "needs_community_review": true,
+      "card": "alert_tl.png"
+    },
+    {
+      "lang": "haw",
+      "language": "ʻŌlelo Hawaiʻi",
+      "mode": "replay",
+      "replay_banner": "HOʻOPĀ HOU · 1 Kekemapa 2022 · ʻaʻole he makaʻala o kēia manawa",
+      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
+      "headline": "Nānā ukali: akaka ʻole ke kumu",
+      "summary": "ʻAʻole i hōʻoia ka ukali i ke kumu o ka ʻohu ma ka lā 1 Kekemapa 2022.",
+      "actions": [
+        {
+          "text": "E nānā i nā hōʻike ʻea a me nā ʻōlelo aʻo ola.",
+          "source_id": "airnow_fires_and_health",
+          "index": 4,
+          "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+          "url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/"
+        },
+        {
+          "text": "E hoʻemi i ka hana ikaika ma waho ke piʻi ka vog.",
+          "source_id": "ivhhn_hdoh_vog_protection",
+          "index": 7,
+          "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+          "url": "https://vog.ivhhn.org/vog-protection"
+        }
+      ],
+      "confidence": 0.0,
+      "confidence_label": "Hilinaʻi: 0%",
+      "disclaimer": "He manaʻo ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
+      "disclaimer_en": "Satellite estimate, not an official warning.",
+      "official_source_url": "https://www.airnow.gov/",
+      "machine_translated": true,
+      "needs_community_review": true,
+      "card": "alert_haw.png"
+    }
+  ]
+}

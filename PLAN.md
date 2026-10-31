@@ -29,6 +29,21 @@ Deadline: **Tue Nov 4, 2026, 4:00 pm HST**. Budget: **< $20 total** (spent so fa
 - **Round 2:** per-plume aggregation rule, FIRMS volcanic-zone exclusion, two-pass SAM,
   Mauna Loa case, offline pytest suite (29 tests), and the effort A/B.
 
+## Results: round 3 (2026-10-31): HVO status, land gate, stage 5 alerts
+
+| Case | HVO status at image time | Overall |
+|---|---|---|
+| Kīlauea 2026-10-17 | Kīlauea ADVISORY/YELLOW, `episodic_pause` (ep. 55 ended 19:03Z) | **vog_kilauea 0.70** |
+| Maui 2023-08-08 | Kīlauea ADVISORY/YELLOW, **not erupting**; Mauna Loa NORMAL | **wildfire_smoke 0.90** (plume #1 is now smoke 0.78, no longer "Kīlauea vog") |
+| Mauna Loa 2022-12-01 | Mauna Loa WARNING/RED erupting; Kīlauea WATCH/ORANGE erupting | **uncertain** (0.38; one earlier run hit 0.70 on an island-sized mask, now blocked by the land gate) |
+
+- **Land spill:** done within the time box. Natural Earth 10m land is rasterised to the grid.
+  Pass 2 is rejected if it adds more than 5 points of land fraction or swallows an island, and
+  plumes with unreliable masks can't confirm a verdict.
+- **Stage 5:** 5-language alerts grounded in `assets/health_sources.json`, with text-free Muse
+  Image backgrounds and PIL/Noto Sans cards. Done for Kīlauea and Maui (`demo/*/alerts/`).
+- **Tests:** 52 offline.
+
 ## Results: round 2 (2026-10-31, after fixes 2 and 3a–e)
 
 | Case | Per-plume verdicts | Overall (≥0.70 rule) | Expected |
@@ -59,10 +74,10 @@ Kīlauea was paused in August 2023. The saving is about $0.009 per run.
 
 ## Known issues / next fixes
 
-1. **Pass-2 land spill:** on Mauna Loa, pass 2 pulled in Molokaʻi and nearby cloud, yet passed
+1. ~~**Pass-2 land spill**~~ (fixed in round 3): on Mauna Loa, pass 2 pulled in Molokaʻi and nearby cloud, yet passed
    every check (coherent, under 3× growth). Add a land/cloud check, for example rejecting pass 2
    if it adds more than X% bright or land pixels.
-2. **"Active vent" overclaim:** the classifier now reads summit glow as an active vent. On Maui
+2. ~~**"Active vent" overclaim**~~ (fixed in round 3 with USGS HVO status): the classifier now reads summit glow as an active vent. On Maui
    2023-08-08 that pushed plume #1 toward vog_kilauea (0.65), but Kīlauea was paused and only
    residual heat remained. Phrase it as "thermal signal at summit", and add HVO eruption status
    (erupting / paused) as context.

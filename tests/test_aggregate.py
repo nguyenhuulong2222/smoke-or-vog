@@ -46,3 +46,15 @@ def test_uncertain_class_is_never_confirmed_even_if_confident():
 def test_empty_is_uncertain():
     out = aggregate([])
     assert out["class"] == "uncertain" and out["plume_id"] is None
+
+
+def test_unreliable_mask_cannot_confirm():
+    # Regression: Mauna Loa run where SAM's "plume" was 68% of Hawaiʻi Island.
+    out = aggregate([p(1, "vog_mauna_loa", 0.70), p(2, "uncertain", 0.30)],
+                    unreliable={1: "mask swallows Hawaiʻi (segmentation unreliable)"})
+    assert out["class"] == "uncertain"
+    assert out["unconfirmed"][0]["not_confirmed_because"].startswith("mask swallows")
+    # a reliable plume elsewhere still confirms
+    out = aggregate([p(1, "vog_mauna_loa", 0.9), p(2, "wildfire_smoke", 0.8)],
+                    unreliable={1: "x"})
+    assert out["class"] == "wildfire_smoke"

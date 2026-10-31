@@ -334,3 +334,84 @@ def fetch_wind(points: dict[str, tuple[float, float]], when: datetime | None) ->
         sites[n] = {"time": key, "speed_kmh": d["hourly"]["wind_speed_10m"][i],
                     "from_deg": d["hourly"]["wind_direction_10m"][i]}
     return {"source": "Open-Meteo archive (ERA5-based reanalysis)", "sites": sites}
+
+
+# ---------------------------------------------------------------- Volcano status (USGS HVO)
+
+HANS_SEARCH = "https://volcanoes.usgs.gov/hans-public/api/search/search"
+HVO_VOLCANOES = {"kilauea": ("hi3", r"K[IĪ]LAUEA"), "mauna_loa": ("hi6", r"MAUNA LOA")}
+
+
+def parse_hvo_notice(notice_html: str, name_re: str) -> dict:
+    """Pull alert level, aviation color, and activity summary for one volcano
+    out of an HVO notice (daily/weekly/monthly update or VAN/VONA)."""
+    import html as html_mod
+
+    text = html_mod.unescape(re.sub(r"<[^>]+>", " ", notice_html))
+    text = re.sub(r"\s+", " ", text)
+    m = re.search(name_re + r"\s*\(VNUM", text, re.I)
+    block = text[m.start():] if m else text
+    nxt = re.search(r"\b[A-Z][A-ZĀĒĪŌŪʻ' ]{3,}\s*\(VNUM", block[10:])
+    if nxt:
+        block = block[:10 + nxt.start()]
+    level = re.search(r"Volcano Alert Level:\s*([A-Z]+)", block)
+    color = re.search(r"Aviation Color Code:\s*([A-Z]+)", block)
+    summ = re.search(r"(?:Activity )?Summary:\s*(.+?)(?:\s+Volcanic Activity:|\s+[A-Z][a-z]+ "
+                     r"Observations:|\s+Previous |$)", block)
+    summary = summ.group(1).strip() if summ else ""
+    summary = " ".join(re.split(r"(?<=[.!?])\s+", summary)[:3])
+    erupting = classify_eruption(summary)
+    if erupting == "unknown" and level and level.group(1) == "NORMAL":
+        erupting = "no"  # USGS: NORMAL / GREEN = typical non-eruptive background state
+    return {"alert_level": level.group(1) if level else None,
+            "aviation_color": color.group(1) if color else None,
+            "erupting": erupting, "activity_summary": summary}
+
+
+def classify_eruption(summary: str) -> str:
+    """'yes' | 'no' | 'episodic_pause' | 'unknown' from an HVO activity summary."""
+    low = summary.lower()
+    ongoing = bool(re.search(r"\bongoing\b[^.]*\beruption\b|\beruption\b[^.]*\bongoing\b", low))
+    if re.search(r"\bnot erupting\b|\bno (?:active )?eruption\b", low):
+        return "no"
+    if (ongoing or "episode" in low) and re.search(
+            r"\bepisode\b[^.]*\b(?:ended|paused|stopped)\b|\bpaused?\b[^.]*\bepisode\b", low):
+        return "episodic_pause"
+    if re.search(r"\beruption\b[^.]*\b(?:has )?(?:ended|paused)\b", low):
+        return "no"
+    if ongoing or re.search(r"\bis erupting\b|\beruption\b[^.]*\bcontinu(?:es|ed)\b|"
+                            r"\bactive (?:fissures?|lava|vents?)\b|\beruption began\b|"
+                            r"\bhas resumed\b|\blava fountain", low):
+        return "yes"
+    return "unknown"
+
+
+def fetch_volcano_status(when: datetime | None, lookback_days: int = 45) -> dict:
+    """Status of Kīlauea and Mauna Loa valid at `when` (None = now): the most recent
+    HVO notice sent at or before that time, from the USGS HANS public search API."""
+    end = when or datetime.now(timezone.utc)
+    start = end - timedelta(days=lookback_days)
+    out = {"source": "USGS Hawaiian Volcano Observatory notices via HANS public API "
+                     "(https://volcanoes.usgs.gov/hans-public/api/search/search)",
+           "valid_at": end.isoformat(), "volcanoes": {}}
+    for key, (code, name_re) in HVO_VOLCANOES.items():
+        try:
+            r = requests.post(HANS_SEARCH, json={
+                "obsAbbr": "hvo", "noticeTypeCd": "", "volcCd": code,
+                "startUnixtime": int(start.timestamp()), "endUnixtime": int(end.timestamp()),
+                "searchText": "", "pageIndex": 0}, headers=UA, timeout=45)
+            r.raise_for_status()
+            rows = [n for n in r.json().get("noticeData", [])
+                    if n.get("sentUnixtime", 0) <= end.timestamp()]
+        except Exception as e:  # noqa: BLE001
+            out["volcanoes"][key] = {"error": str(e)[:200]}
+            continue
+        if not rows:
+            out["volcanoes"][key] = {"error": f"no HVO notice in the {lookback_days} days before"}
+            continue
+        n = max(rows, key=lambda x: x["sentUnixtime"])
+        out["volcanoes"][key] = {
+            **parse_hvo_notice(n.get("noticeHtml", ""), name_re),
+            "notice_type": n.get("noticeTypeCd"), "notice_sent_utc": n.get("sentUtc"),
+            "notice_id": n.get("noticeIdentifier"), "notice_url": n.get("permLink")}
+    return out

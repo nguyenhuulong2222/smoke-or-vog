@@ -1,52 +1,52 @@
 {
   "variants": {
     "box": {
-      "prompt": "<0f>1<|box;x1=1008;y1=770;x2=1232;y2=960;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=1008;y1=780;x2=1239;y2=960;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 22755,
-        "mean_confidence": 0.641,
-        "frac_inside_spark_boxes": 0.943,
-        "spark_box_fill": 0.499
+        "mask_px": 21663,
+        "mean_confidence": 0.527,
+        "frac_inside_spark_boxes": 0.945,
+        "spark_box_fill": 0.487
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.640625,
+          "confidence": 0.52734375,
           "box": [
             987,
-            764,
-            1193,
+            776,
+            1199,
             948
           ],
-          "mask_px": 22755
+          "mask_px": 21663
         }
       ]
     },
     "box+point": {
-      "prompt": "<0f>1<|box;x1=1008;y1=770;x2=1232;y2=960;w=1400;h=1000|><|point;x=1110;y=857;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=1008;y1=780;x2=1239;y2=960;w=1400;h=1000|><|point;x=1120;y=870;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 22224,
-        "mean_confidence": 0.605,
-        "frac_inside_spark_boxes": 0.944,
-        "spark_box_fill": 0.488
+        "mask_px": 22565,
+        "mean_confidence": 0.523,
+        "frac_inside_spark_boxes": 0.964,
+        "spark_box_fill": 0.518
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.60546875,
+          "confidence": 0.5234375,
           "box": [
-            988,
-            765,
-            1191,
+            993,
+            779,
+            1190,
             947
           ],
-          "mask_px": 22224
+          "mask_px": 22565
         }
       ]
     },
@@ -90,30 +90,46 @@
       "plume_id": 1,
       "spark_box": [
         1008,
-        770,
-        1232,
+        780,
+        1239,
         960
       ],
       "pass2_box": [
-        958,
-        738,
-        1220,
-        973
+        963,
+        754,
+        1219,
+        971
       ],
       "pass1": {
-        "area_px": 22224,
-        "coherence": 0.995,
-        "bbox_frac": 0.0264,
-        "edges_touched": 0
+        "area_px": 22565,
+        "coherence": 0.998,
+        "bbox_frac": 0.0236,
+        "edges_touched": 0,
+        "land": {
+          "land_frac": 0.042,
+          "islands_covered": {
+            "Hawaiʻi": 0.026
+          },
+          "land_spill": false,
+          "islands_swallowed": []
+        }
       },
       "pass2": {
-        "area_px": 31062,
-        "coherence": 0.997,
-        "bbox_frac": 0.0385,
-        "edges_touched": 0
+        "area_px": 31887,
+        "coherence": 1.0,
+        "bbox_frac": 0.0376,
+        "edges_touched": 0,
+        "land": {
+          "land_frac": 0.027,
+          "islands_covered": {
+            "Hawaiʻi": 0.024
+          },
+          "land_spill": false,
+          "islands_swallowed": []
+        }
       },
       "kept": "pass2",
-      "reason": "pass 2 larger (1.40x) and coherent"
+      "reason": "pass 2 larger (1.41x) and coherent"
     }
   ]
 }

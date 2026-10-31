@@ -1,5 +1,5 @@
 {
-  "run_id": "maui_20230808_20261031T223834Z",
+  "run_id": "maui_20230808_20261031T230423Z",
   "case": "maui_20230808",
   "stages": {
     "0_context": {
@@ -11,14 +11,14 @@
       "candidates": 0
     },
     "2_localize": {
-      "plumes": 3,
+      "plumes": 2,
       "model": "muse-spark-1.3",
       "effort": "medium",
-      "cost_usd": 0.012476,
+      "cost_usd": 0.009815,
       "input_tokens": 2208,
-      "cached_tokens": 0,
-      "output_tokens": 2286,
-      "reasoning_tokens": 1907
+      "cached_tokens": 2156,
+      "output_tokens": 2218,
+      "reasoning_tokens": 1911
     },
     "3_sam": {
       "chosen": "box+point",
@@ -26,39 +26,32 @@
         {
           "plume_id": 1,
           "kept": "pass2",
-          "reason": "pass 2 larger (1.11x) and coherent",
-          "pass1_px": 57311,
-          "pass2_px": 63652
+          "reason": "pass 2 larger (1.10x) and coherent",
+          "pass1_px": 59772,
+          "pass2_px": 65504
         },
         {
           "plume_id": 2,
           "kept": "pass2",
-          "reason": "pass 2 larger (1.16x) and coherent",
-          "pass1_px": 41338,
-          "pass2_px": 47909
-        },
-        {
-          "plume_id": 3,
-          "kept": "pass2",
-          "reason": "pass 2 larger (1.22x) and coherent",
-          "pass1_px": 3607,
-          "pass2_px": 4383
+          "reason": "pass 2 larger (1.15x) and coherent",
+          "pass1_px": 43073,
+          "pass2_px": 49460
         }
       ],
       "variants": {
         "box": {
-          "objects": 3,
-          "mask_px": 104152,
-          "mean_confidence": 0.766,
-          "frac_inside_spark_boxes": 0.994,
-          "spark_box_fill": 0.436
+          "objects": 2,
+          "mask_px": 102918,
+          "mean_confidence": 0.814,
+          "frac_inside_spark_boxes": 0.988,
+          "spark_box_fill": 0.431
         },
         "box+point": {
-          "objects": 3,
-          "mask_px": 102256,
-          "mean_confidence": 0.81,
-          "frac_inside_spark_boxes": 0.995,
-          "spark_box_fill": 0.428
+          "objects": 2,
+          "mask_px": 102845,
+          "mean_confidence": 0.85,
+          "frac_inside_spark_boxes": 0.991,
+          "spark_box_fill": 0.432
         },
         "concept:smoke": {
           "objects": 0,
@@ -80,118 +73,94 @@
     "4_classify": {
       "overall": {
         "class": "wildfire_smoke",
-        "confidence": 0.88,
+        "confidence": 0.9,
         "plume_id": 2,
         "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
         "confirmed": [
           {
             "plume_id": 2,
             "class": "wildfire_smoke",
-            "confidence": 0.88,
-            "source_hint": "Kula, Maui fire cluster n201"
-          }
-        ],
-        "unconfirmed": [
-          {
-            "plume_id": 1,
-            "class": "vog_kilauea",
-            "confidence": 0.65,
-            "source_hint": "Kilauea summit active vent"
+            "confidence": 0.9,
+            "source_hint": "Kula, Maui fire ~3 km away (n=201 cluster)"
           },
           {
-            "plume_id": 3,
-            "class": "uncertain",
-            "confidence": 0.45,
-            "source_hint": "Honolulu fire cluster n44 vs cloud contamination"
+            "plume_id": 1,
+            "class": "wildfire_smoke",
+            "confidence": 0.78,
+            "source_hint": "Hawaii Island leeward fires plus regional smoke transport; no eruption source"
           }
-        ]
+        ],
+        "unconfirmed": []
       },
       "model": "muse-spark-1.3",
       "effort": "medium",
-      "cost_usd": 0.026762,
-      "input_tokens": 3770,
+      "cost_usd": 0.015857,
+      "input_tokens": 3985,
       "cached_tokens": 0,
-      "output_tokens": 5188,
-      "reasoning_tokens": 4491
+      "output_tokens": 2559,
+      "reasoning_tokens": 1747
     }
   },
-  "cost_usd": 0.054238,
-  "total_spend_usd": 0.2771,
+  "cost_usd": 0.040672,
+  "total_spend_usd": 0.8517,
   "classification": {
-    "caveats": "Mixed-source scene on 2023-08-08: active Kilauea vent and major Maui/Honolulu fires co-exist. SAM ocean-only segmentation creates 60+ km offsets from sources. Plume 1 may mix vog with Kona Hawaii Island fires; Mauna Loa flank cluster (n21, 17.2km from summit) may be lava not vegetation fire. Trade cumulus contaminates faint veil. ADP unavailable.",
+    "caveats": "Segmentation upwind ends are offshore and approximate; wind varies locally and with height. FIRMS counts are rendered marker pixels, not individual detections. Summit thermal glow (45 px at Kilauea) is excluded and not used as eruption proof. Plume 1 upwind is ~70-85 km from summits and >85 km from nearest listed fire pixels, so exact fire of origin cannot be isolated from this context alone.",
     "evidence": [
-      "Scene shows two distinct regimes: broad diffuse gray haze SW of Hawaii Island near summits and long narrow gray streak WSW from central islands far from summits",
-      "Kilauea summit has 45 thermal pixels excluded as volcanic_thermal_excluded indicating active vent supporting vog",
-      "Plume 2 upwind only 22.0 km from large Kula Maui fire cluster n201 and >160 km from summits supporting wildfire smoke",
-      "Single class cannot describe both vog-likely and smoke-likely plumes; dominant area (plume 1, 18618 km2) vs diagnostic disaster plume (plume 2) conflict"
+      "Both volcanoes officially not erupting at image time: Kilauea ADVISORY/YELLOW 'is not erupting', Mauna Loa NORMAL/GREEN 'erupting: no' on 2023-08-08",
+      "Two diffuse gray translucent veils leeward to west-southwest over ocean, not bright white textured trade cumulus seen elsewhere in image",
+      "Strong easterly 10-m flow ~30 km/h from ~83 deg at Maui fire site and ~31 km/h from 41 deg nearby, consistent with west / west-northwest elongation of veils",
+      "Multiple large FIRMS fire clusters on 2023-08-08: n=201 near Kula Maui, n=206 and n=46 near Kailua-Kona/Kohala Hawaii Island, n=21 near Mauna Loa flank, n=44 near Honolulu",
+      "Upwind ends are 69-85 km (plume 1) and 163-190 km (plume 2) from volcanic summits, not trailing from summit vents as expected for vog"
     ],
     "per_plume": [
       {
-        "class": "vog_kilauea",
-        "confidence": 0.65,
+        "class": "wildfire_smoke",
+        "confidence": 0.78,
         "evidence": [
-          "broad diffuse light-gray haze west of Big Island, not bright white textured cumulus",
-          "upwind end 68.9 km from Kilauea summit, 60.5 km from Mauna Loa summit, closer than to any fire cluster nearest 76.3 km",
-          "Kilauea summit 45 thermal pixels excluded from fires indicates active vent",
-          "Kilauea summit wind 33.0 kmh from 11 deg NNE drives SSW transport consistent with haze SW/west of island"
+          "Large broad light-gray diffuse veil west-southwest of Hawaii Island, not bright white cloud",
+          "Volcanoes not erupting per HVO, so not vog despite 68.9 km to Mauna Loa summit and 85.3 km to Kilauea summit from upwind end at 18.93N, -155.92W off SW coast",
+          "Coincident Hawaii Island wildfire activity: clusters n=206, n=46 near west Hawaii and n=21 Mauna Loa flank 17.2 km from summit (wildfire since no eruption)",
+          "Leeward position west of island under easterly trade flow favors smoke accumulation offshore"
         ],
         "plume_id": 1,
-        "source_hint": "Kilauea summit active vent"
+        "source_hint": "Hawaii Island leeward fires plus regional smoke transport; no eruption source"
       },
       {
         "class": "wildfire_smoke",
-        "confidence": 0.88,
+        "confidence": 0.9,
         "evidence": [
-          "long narrow light-gray streak extending west-southwest, distinct from scattered white trade cumulus",
-          "upwind end 189.1 km from Kilauea, 162.3 km from Mauna Loa ruling out vog",
-          "upwind end only 22.0 km from Kula Maui fire cluster n201 nearest_summit 165.2 km",
-          "fire_cluster_2 wind 30.5 kmh from 83 deg easterly aligns with WSW plume orientation and length 308 km"
+          "Elongated faint gray translucent streak extending west-northwest from vicinity of central islands",
+          "Upwind end 20.695N, -156.475W only 22.1 km from large Kula, Maui fire cluster n=201, nearest_summit 165.2 km, far from volcanoes (163.1 km Mauna Loa, 189.9 km Kilauea)",
+          "Wind at fire_cluster_2 30.5 km/h from 83 deg (east) directly aligns with west-northwest transport direction",
+          "Volcanoes not erupting, ruling out vog; color/texture gray veil not white cloud"
         ],
         "plume_id": 2,
-        "source_hint": "Kula, Maui fire cluster n201"
-      },
-      {
-        "class": "uncertain",
-        "confidence": 0.45,
-        "evidence": [
-          "small very faint gray veil west of upper-central island, area 1266 km2, visibility very_faint",
-          "upwind 364.4 km from Kilauea, 332.7 km from Mauna Loa, 16.4 km from Honolulu fire cluster n44 suggesting smoke",
-          "faintness and proximity to bright cumulus prevents firm smoke vs thin cloud/haze distinction"
-        ],
-        "plume_id": 3,
-        "source_hint": "Honolulu fire cluster n44 vs cloud contamination"
+        "source_hint": "Kula, Maui fire ~3 km away (n=201 cluster)"
       }
     ],
-    "source_hint": "mixed vog + wildfire smoke scene",
-    "model_overall_class": "uncertain",
-    "model_overall_confidence": 0.7,
+    "source_hint": "Maui Kula and Hawaii Island wildfire clusters on 2023-08-08; Kilauea and Mauna Loa not erupting",
+    "model_overall_class": "wildfire_smoke",
+    "model_overall_confidence": 0.85,
     "overall": {
       "class": "wildfire_smoke",
-      "confidence": 0.88,
+      "confidence": 0.9,
       "plume_id": 2,
       "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
       "confirmed": [
         {
           "plume_id": 2,
           "class": "wildfire_smoke",
-          "confidence": 0.88,
-          "source_hint": "Kula, Maui fire cluster n201"
-        }
-      ],
-      "unconfirmed": [
-        {
-          "plume_id": 1,
-          "class": "vog_kilauea",
-          "confidence": 0.65,
-          "source_hint": "Kilauea summit active vent"
+          "confidence": 0.9,
+          "source_hint": "Kula, Maui fire ~3 km away (n=201 cluster)"
         },
         {
-          "plume_id": 3,
-          "class": "uncertain",
-          "confidence": 0.45,
-          "source_hint": "Honolulu fire cluster n44 vs cloud contamination"
+          "plume_id": 1,
+          "class": "wildfire_smoke",
+          "confidence": 0.78,
+          "source_hint": "Hawaii Island leeward fires plus regional smoke transport; no eruption source"
         }
-      ]
+      ],
+      "unconfirmed": []
     }
   }
 }

@@ -1,0 +1,10 @@
+{
+  "_about": "Reviewed translations that replace model output for a specific official excerpt (lang -> 'source_id#index' -> text). Keep each line faithful to the source excerpt.",
+  "vi": {
+    "airnow_fires_and_health#4": {
+      "text": "Theo dõi báo cáo chất lượng không khí tại địa phương và các cảnh báo về khói cháy rừng.",
+      "reviewed_by": "project owner (native speaker), 2026-10-31",
+      "source_excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings."
+    }
+  }
+}
