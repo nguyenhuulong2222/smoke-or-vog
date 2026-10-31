@@ -7,16 +7,16 @@
   "result": {
     "cloud_cover": "mostly",
     "plumes": [],
-    "scene_description": "True-color satellite view of the main Hawaiian Islands with extensive white clouds covering the northern portion and over the large island in the southeast, with large areas of dark open ocean visible to the southwest and in the central channel; no distinct haze or discolored streak distinguishable from ordinary cloud."
+    "scene_description": "True-color satellite view of the main Hawaiian Islands with extensive white cloud cover over the northern islands and over the large island in the southeast, with dark open ocean visible to the southwest and south-central. No distinct haze or plume separable from ordinary cloud is visible."
   },
   "pixels": [],
   "meta": {
     "model": "muse-spark-1.3",
     "effort": "medium",
-    "cost_usd": 0.008145,
+    "cost_usd": 0.006093,
     "input_tokens": 2076,
     "cached_tokens": 0,
-    "output_tokens": 1306,
-    "reasoning_tokens": 1221
+    "output_tokens": 823,
+    "reasoning_tokens": 744
   }
 }

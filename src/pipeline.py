@@ -20,9 +20,10 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 from . import geo, models, sources
+from .aggregate import aggregate
 from .common import OUT, SAM_PER_IMAGE, check_budget, total_spend
 
 CASES = {
@@ -32,9 +33,16 @@ CASES = {
     "maui_20230808": {"layer": "MODIS_Terra_CorrectedReflectance_TrueColor",
                       "time": "2023-08-08", "approx_utc": "2023-08-08T21:00:00Z",
                       "historical": True},
+    "mauna_loa_20221201": {"layer": "MODIS_Aqua_CorrectedReflectance_TrueColor",
+                           "time": "2022-12-01", "approx_utc": "2022-12-01T23:30:00Z",
+                           "historical": True,
+                           "note": "Mauna Loa NE rift eruption (Nov 27-Dec 10 2022); Kīlauea "
+                                   "summit was also erupting until Dec 9 2022"},
 }
 CONCEPTS = ["smoke", "volcanic plume", "haze"]
 RUN_COST_CAP = 0.50
+CLASSIFY_EFFORT = "medium"
+REFINE_MARGIN = 0.15
 CLASS_COLORS = {
     "vog_kilauea": (255, 140, 0), "vog_mauna_loa": (255, 90, 160),
     "wildfire_smoke": (230, 40, 40), "dust": (200, 170, 90),
@@ -140,6 +148,52 @@ def plume_geometry(mask: Image.Image, wind_from_deg: float | None) -> dict:
     return g
 
 
+# ------------------------------------------------------------------ two-pass SAM
+
+def refine_box(mask: Image.Image, margin: float = REFINE_MARGIN) -> list[int] | None:
+    """Mask bounding box expanded by `margin` of its width/height on every side."""
+    bb = mask.getbbox()
+    if not bb:
+        return None
+    x1, y1, x2, y2 = bb[0], bb[1], bb[2] - 1, bb[3] - 1
+    dx, dy = (x2 - x1 + 1) * margin, (y2 - y1 + 1) * margin
+    return geo.Box(x1 - dx, y1 - dy, x2 + dx, y2 + dy).clip(*mask.size).as_list()
+
+
+def mask_quality(mask: Image.Image) -> dict:
+    """Area, coherence (largest component share), bbox share of frame, edge contact."""
+    area = _mask_area(mask)
+    if not area:
+        return {"area_px": 0, "coherence": 0.0, "bbox_frac": 0.0, "edges_touched": 0}
+    small = mask.resize((mask.width // 2, mask.height // 2), Image.NEAREST)
+    comps = sources.components(small, min_px=1)
+    total = sum(n for _, n in comps) or 1
+    bb = mask.getbbox()
+    w, h = mask.size
+    edges = sum([bb[0] <= 0, bb[1] <= 0, bb[2] >= w, bb[3] >= h])
+    return {"area_px": area, "coherence": round(comps[0][1] / total, 3) if comps else 0.0,
+            "bbox_frac": round((bb[2] - bb[0]) * (bb[3] - bb[1]) / (w * h), 4),
+            "edges_touched": edges}
+
+
+def choose_pass(q1: dict, q2: dict, max_growth: float = 3.0, max_bbox_frac: float = 0.25,
+                min_coherence: float = 0.85) -> tuple[str, str]:
+    """Keep pass 2 only if it is larger, coherent, and shows no ocean-wide spill."""
+    if not q2 or not q2.get("area_px"):
+        return "pass1", "pass 2 returned no mask"
+    if q2["area_px"] <= q1["area_px"] * 1.02:
+        return "pass1", "pass 2 not larger"
+    if q2["coherence"] < min_coherence:
+        return "pass1", f"pass 2 fragmented (coherence {q2['coherence']})"
+    if q2["area_px"] > q1["area_px"] * max_growth:
+        return "pass1", f"pass 2 grew >{max_growth}x (spill)"
+    if q2["bbox_frac"] > max_bbox_frac:
+        return "pass1", f"pass 2 bbox covers {q2['bbox_frac']:.0%} of frame (spill)"
+    if q2["edges_touched"] > max(1, q1["edges_touched"]):
+        return "pass1", "pass 2 runs off multiple frame edges (spill)"
+    return "pass2", f"pass 2 larger ({q2['area_px'] / max(1, q1['area_px']):.2f}x) and coherent"
+
+
 # ------------------------------------------------------------------ overlay
 
 def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes, adp_mask,
@@ -155,6 +209,8 @@ def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes,
     for p in plumes:
         cls = per.get(p["plume_id"], {}).get("class", "uncertain")
         color = CLASS_COLORS.get(cls, (190, 190, 190))
+        if (per.get(p["plume_id"], {}).get("confidence") or 0) < 0.70:
+            cls = cls + "?"
         fill = Image.new("RGBA", base.size, color + (110,))
         layer.paste(fill, (0, 0), p["mask"])
         bb = p["mask"].getbbox()
@@ -189,7 +245,12 @@ def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes,
     d = ImageDraw.Draw(out)
     head = title
     if classification:
-        head += f"  |  verdict: {classification['class']} ({classification['confidence']:.2f})"
+        ov = classification.get("overall") or classification
+        head += f"  |  verdict: {ov['class']} ({ov['confidence']:.2f})"
+        unc = [u for u in classification.get("overall", {}).get("unconfirmed", [])]
+        if unc:
+            head += "  |  unconfirmed: " + ", ".join(
+                f"#{u['plume_id']} {u['class']} {u['confidence']:.2f}" for u in unc)
     d.rectangle([0, 0, out.width, 30], fill=(0, 0, 0, 180))
     d.text((10, 5), head, fill=(255, 255, 255, 255), font=f)
     legend = ("triangle=summit  red ring=FIRMS fire  cyan=wind (downwind)  white box=Spark  "
@@ -201,7 +262,7 @@ def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes,
 
 # ------------------------------------------------------------------ run
 
-def run(case: str) -> Path:
+def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
     cfg = CASES[case]
     check_budget(RUN_COST_CAP)
     spend_start = total_spend()
@@ -250,6 +311,8 @@ def run(case: str) -> Path:
     for c in firms["clusters"][:6]:
         x, y = geo.px_to_norm1000(*geo.lonlat_to_px(c["lon"], c["lat"]))
         hints.append(f"- satellite fire detections near {c['near']} at (x={x}, y={y})")
+    for zone, n in firms.get("volcanic_thermal", {}).items():
+        hints.append(f"- active volcanic thermal signal (summit glow) in {zone}: {n} detections")
     for b in adp["candidates"]:
         x1, y1 = geo.px_to_norm1000(b[0], b[1])
         x2, y2 = geo.px_to_norm1000(b[2], b[3])
@@ -302,20 +365,64 @@ def run(case: str) -> Path:
                                  quality=88)
         print(f"  3 SAM {label:24s} -> {sc}")
 
-    # Choose plume masks: box+point if it produced masks, else box, else best concept.
+    # Choose pass-1 masks: box+point if it produced masks, else box, else best concept.
     chosen = next((k for k in ("box+point", "box") if sam_results.get(k, {}).get("objects")), None)
     if chosen is None:
         concept_ok = [k for k in sam_results if k.startswith("concept") and sam_results[k]["objects"]]
         chosen = max(concept_ok, key=lambda k: sam_summary[k]["score"].get("frac_inside_spark_boxes", 0),
                      default=None)
-    _save_json(rd / "03_sam.json", {"variants": sam_summary, "chosen_for_classification": chosen})
-    log["stages"]["3_sam"] = {"chosen": chosen,
-                              "variants": {k: v["score"] for k, v in sam_summary.items()}}
+
+    # ---- stage 3b: two-pass refinement (box prompts only)
+    final_objs = list(sam_results[chosen]["objects"]) if chosen else []
+    refine_log = []
+    if chosen in ("box", "box+point"):
+        p1 = {o["object_id"]: o for o in final_objs}
+        pass2_px = []
+        for i, pp in enumerate(plumes_px, start=1):
+            o = p1.get(str(i))
+            nb = refine_box(o["mask"]) if o else None
+            pass2_px.append({**pp, "box": nb or pp["box"]})
+        check_budget(SAM_PER_IMAGE)
+        res2 = models.sam_segment(run_id, im, f"{chosen}:pass2",
+                                  models.object_prompt(im, pass2_px, with_points=chosen == "box+point"))
+        p2 = {o["object_id"]: o for o in res2["objects"]}
+        final_objs = []
+        before_after = im.convert("RGBA")
+        d_ba = ImageDraw.Draw(before_after)
+        for i in range(1, len(plumes_px) + 1):
+            o1, o2 = p1.get(str(i)), p2.get(str(i))
+            if not o1 and not o2:
+                continue
+            q1 = mask_quality(o1["mask"]) if o1 else {"area_px": 0, "edges_touched": 0}
+            q2 = mask_quality(o2["mask"]) if o2 else {}
+            pick, why = choose_pass(q1, q2) if o1 else ("pass2", "pass 1 had no mask")
+            final_objs.append(o2 if pick == "pass2" else o1)
+            refine_log.append({"plume_id": i, "spark_box": plumes_px[i - 1]["box"],
+                               "pass2_box": pass2_px[i - 1]["box"], "pass1": q1, "pass2": q2,
+                               "kept": pick, "reason": why})
+            for o, col in ((o1, (255, 80, 80, 255)), (o2, (80, 220, 255, 255))):
+                if o:
+                    edge = o["mask"].filter(ImageFilter.FIND_EDGES)
+                    before_after.paste(Image.new("RGBA", im.size, col), (0, 0), edge)
+            d_ba.rectangle(pass2_px[i - 1]["box"], outline=(80, 220, 255, 200), width=1)
+            d_ba.rectangle(plumes_px[i - 1]["box"], outline=(255, 255, 255, 200), width=1)
+        ImageDraw.Draw(before_after).text(
+            (10, 8), "red = pass 1 mask, cyan = pass 2 mask (box = mask bbox +15%)",
+            fill=(255, 255, 255, 255), font=_font(20), stroke_width=2, stroke_fill=(0, 0, 0, 255))
+        before_after.convert("RGB").save(rd / "03_sam_two_pass.jpg", quality=88)
+        for r in refine_log:
+            print(f"  3b plume {r['plume_id']}: pass1 {r['pass1']['area_px']} px -> "
+                  f"pass2 {r['pass2'].get('area_px', 0)} px; kept {r['kept']} ({r['reason']})")
+    _save_json(rd / "03_sam.json", {"variants": sam_summary, "chosen_for_classification": chosen,
+                                    "two_pass": refine_log})
+    log["stages"]["3_sam"] = {"chosen": chosen, "two_pass": [
+        {k: r[k] for k in ("plume_id", "kept", "reason")} | {"pass1_px": r["pass1"]["area_px"],
+                                                            "pass2_px": r["pass2"].get("area_px", 0)}
+        for r in refine_log], "variants": {k: v["score"] for k, v in sam_summary.items()}}
 
     # ---- geometry for classification
     plumes = []
-    src_objs = sam_results[chosen]["objects"] if chosen else []
-    for i, o in enumerate(src_objs, start=1):
+    for i, o in enumerate(final_objs, start=1):
         # Use the wind sample nearest to the plume's centroid for its upwind end.
         g0 = plume_geometry(o["mask"], None)
         if not g0:
@@ -331,7 +438,7 @@ def run(case: str) -> Path:
             name: round(geo.haversine_km(ue["lat"], ue["lon"], lat, lon), 1)
             for name, (lat, lon) in geo.SOURCES.items()}
         g["nearest_fire_clusters"] = sorted(
-            ({"near": c["near"], "n": c["n"],
+            ({"near": c["near"], "n": c["n"], "nearest_summit_km": c.get("nearest_summit_km"),
               "distance_km": round(geo.haversine_km(ue["lat"], ue["lon"], c["lat"], c["lon"]), 1)}
              for c in firms["clusters"]), key=lambda c: c["distance_km"])[:3]
         label = plumes_px[int(o["object_id"]) - 1]["label"] if chosen in ("box", "box+point") \
@@ -348,8 +455,11 @@ def run(case: str) -> Path:
         "segmentation_prompt_used": chosen,
         "plumes": [{k: v for k, v in p.items() if k != "mask"} for p in plumes],
         "volcanic_summits": {k: {"lat": v[0], "lon": v[1]} for k, v in geo.SOURCES.items()},
-        "firms": {"source": firms["source"], "clusters": firms["clusters"][:8],
-                  "note": firms.get("note")},
+        "firms": {"source": firms["source"], "fire_clusters": firms["clusters"][:8],
+                  "note": firms.get("note"),
+                  "volcanic_thermal_excluded": firms.get("volcanic_thermal"),
+                  "volcanic_note": firms.get("volcanic_note")},
+        "case_note": cfg.get("note"),
         "wind_10m": wind,
         "adp": {k: adp.get(k) for k in ("state", "haze_pixels", "note", "meaning_of_absence")
                 if k in adp},
@@ -357,15 +467,21 @@ def run(case: str) -> Path:
     for p in cls_ctx["plumes"]:
         p["geometry"].pop("upwind_end_px", None)
     if plumes or loc["plumes"]:
-        cls, cls_meta = models.spark_classify(run_id, im, cls_ctx)
+        cls, cls_meta = models.spark_classify(run_id, im, cls_ctx, effort=classify_effort)
     else:
         cls = {"detection": "no_plume", "class": "uncertain", "confidence": 0.0,
                "evidence": ["no plume localised by Muse Spark or segmented by SAM"],
                "source_hint": "none", "per_plume": [], "caveats": "No plume found; nothing to classify."}
         cls_meta = {"skipped": True, "cost_usd": 0}
+    cls["model_overall_class"] = cls.pop("class")
+    cls["model_overall_confidence"] = cls.pop("confidence")
+    cls["overall"] = aggregate(cls["per_plume"])
     _save_json(rd / "04_classify.json", {"context": cls_ctx, "result": cls, "meta": cls_meta})
-    log["stages"]["4_classify"] = {"class": cls["class"], "confidence": cls["confidence"], **cls_meta}
-    print(f"  4 classify: {cls['class']} ({cls['confidence']}) ${cls_meta.get('cost_usd', 0):.4f}")
+    log["stages"]["4_classify"] = {"overall": cls["overall"], **cls_meta}
+    ov = cls["overall"]
+    print(f"  4 classify: overall {ov['class']} ({ov['confidence']}); per plume " + ", ".join(
+        f"#{p['plume_id']} {p['class']} {p['confidence']}" for p in cls["per_plume"]) +
+        f"; ${cls_meta.get('cost_usd', 0):.4f}")
 
     # ---- overlay + summary
     title = f"Smoke or Vog? {case} | {cfg['layer']} {t}"
@@ -383,7 +499,10 @@ def run(case: str) -> Path:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--case", choices=list(CASES), default="live")
-    run(ap.parse_args().case)
+    ap.add_argument("--classify-effort", default=CLASSIFY_EFFORT,
+                    choices=["minimal", "low", "medium", "high"])
+    a = ap.parse_args()
+    run(a.case, a.classify_effort)
 
 
 if __name__ == "__main__":

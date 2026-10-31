@@ -5,7 +5,7 @@
       "time": "2026-10-31T21:40:00Z"
     },
     "spark_scene": {
-      "description": "True-color satellite view of the main Hawaiian Islands with extensive white clouds covering the northern portion and over the large island in the southeast, with large areas of dark open ocean visible to the southwest and in the central channel; no distinct haze or discolored streak distinguishable from ordinary cloud.",
+      "description": "True-color satellite view of the main Hawaiian Islands with extensive white cloud cover over the northern islands and over the large island in the southeast, with dark open ocean visible to the southwest and south-central. No distinct haze or plume separable from ordinary cloud is visible.",
       "cloud_cover": "mostly",
       "plumes": []
     },
@@ -22,22 +22,25 @@
       }
     },
     "firms": {
-      "source": "Kahu Ola /api/firms/hotspots (VIIRS NOAA-20/21 NRT, rolling 24 h)",
-      "clusters": [],
-      "note": null
+      "source": "Kahu Ola /api/firms/hotspots?include_volcanic=1 (VIIRS NOAA-20/21 NRT, rolling 24 h)",
+      "fire_clusters": [],
+      "note": null,
+      "volcanic_thermal_excluded": {},
+      "volcanic_note": "summit-caldera thermal detections (active vent glow), excluded from fire clusters"
     },
+    "case_note": null,
     "wind_10m": {
       "source": "Open-Meteo forecast (current)",
       "sites": {
         "kilauea_summit": {
-          "time": "2026-10-31T22:15",
-          "speed_kmh": 3.7,
+          "time": "2026-10-31T22:30",
+          "speed_kmh": 3.4,
           "from_deg": 137
         },
         "mauna_loa_summit": {
-          "time": "2026-10-31T22:15",
-          "speed_kmh": 8.8,
-          "from_deg": 265
+          "time": "2026-10-31T22:30",
+          "speed_kmh": 9.0,
+          "from_deg": 267
         }
       }
     },
@@ -50,14 +53,23 @@
   },
   "result": {
     "detection": "no_plume",
-    "class": "uncertain",
-    "confidence": 0.0,
     "evidence": [
-      "no plume localised or segmented"
+      "no plume localised by Muse Spark or segmented by SAM"
     ],
     "source_hint": "none",
     "per_plume": [],
-    "caveats": "No plume found; nothing to classify."
+    "caveats": "No plume found; nothing to classify.",
+    "model_overall_class": "uncertain",
+    "model_overall_confidence": 0.0,
+    "overall": {
+      "class": "uncertain",
+      "confidence": 0.0,
+      "max_plume_confidence": 0.0,
+      "plume_id": null,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [],
+      "unconfirmed": []
+    }
   },
   "meta": {
     "skipped": true,

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import io
 import re
+import time as time_mod
 from datetime import datetime, timedelta, timezone
 
 import requests
@@ -28,17 +29,22 @@ STAR_HI = "https://cdn.star.nesdis.noaa.gov/GOES18/ABI/SECTOR/hi/GEOCOLOR/"
 KAHUOLA = "https://kahuola.org"
 
 
-def _gibs_map(layer: str, time: str, fmt: str = "image/jpeg") -> Image.Image:
-    r = requests.get(GIBS_WMS, params={
-        "SERVICE": "WMS", "REQUEST": "GetMap", "VERSION": "1.3.0",
-        "LAYERS": layer, "CRS": "EPSG:4326",
-        "BBOX": f"{geo.SOUTH},{geo.WEST},{geo.NORTH},{geo.EAST}",
-        "WIDTH": geo.WIDTH, "HEIGHT": geo.HEIGHT, "FORMAT": fmt, "TIME": time,
-    }, headers=UA, timeout=90)
-    r.raise_for_status()
-    if not r.headers.get("content-type", "").startswith("image/"):
-        raise RuntimeError(f"GIBS returned {r.headers.get('content-type')}: {r.text[:200]}")
-    return Image.open(io.BytesIO(r.content))
+def _gibs_map(layer: str, time: str, fmt: str = "image/jpeg", attempts: int = 4) -> Image.Image:
+    """GetMap with retries: GIBS intermittently answers with a ServiceException."""
+    err = ""
+    for i in range(attempts):
+        r = requests.get(GIBS_WMS, params={
+            "SERVICE": "WMS", "REQUEST": "GetMap", "VERSION": "1.3.0",
+            "LAYERS": layer, "CRS": "EPSG:4326",
+            "BBOX": f"{geo.SOUTH},{geo.WEST},{geo.NORTH},{geo.EAST}",
+            "WIDTH": geo.WIDTH, "HEIGHT": geo.HEIGHT, "FORMAT": fmt, "TIME": time,
+        }, headers=UA, timeout=90)
+        if r.ok and r.headers.get("content-type", "").startswith("image/"):
+            return Image.open(io.BytesIO(r.content))
+        m = re.search(r"<ServiceException[^>]*>([^<]*)", r.text or "")
+        err = (m.group(1).strip() if m else r.text[:200]) or f"HTTP {r.status_code}"
+        time_mod.sleep(1.5 * (2 ** i))
+    raise RuntimeError(f"GIBS GetMap failed for {layer} @ {time}: {err}")
 
 
 def gibs_latest_time(layer: str, lookback_steps: int = 18) -> str:
@@ -117,8 +123,15 @@ def fetch_adp_live() -> dict:
     out["raw_path"] = str(path)
     if not meta.get("haze_pixels"):
         return out
-    # Reproject the Mercator mask onto our plate-carrée grid.
-    alpha = im.getchannel("A")
+    out["mask"] = adp_mask_to_grid(im)
+    out["candidates"] = adp_candidates(out["mask"])
+    return out
+
+
+def adp_mask_to_grid(im: Image.Image) -> Image.Image:
+    """Reproject a Kahu Ola ADP frame (Web-Mercator canvas over the analysis box,
+    haze = non-transparent pixels) onto the plate-carrée analysis grid (L, 0/255)."""
+    alpha = im.convert("RGBA").getchannel("A")
     mw, mh = im.size
     grid = Image.new("L", (geo.WIDTH, geo.HEIGHT), 0)
     gp, ap = grid.load(), alpha.load()
@@ -129,21 +142,31 @@ def fetch_adp_live() -> dict:
                 lon1, lat1 = geo.merc_px_to_lonlat(mx + 1, my + 1, mw, mh)
                 x0, y0 = geo.lonlat_to_px(lon0, lat0)
                 x1, y1 = geo.lonlat_to_px(lon1, lat1)
-                for yy in range(int(y0), int(y1) + 1):
-                    for xx in range(int(x0), int(x1) + 1):
+                for yy in range(int(y0), max(int(y0) + 1, int(round(y1)))):
+                    for xx in range(int(x0), max(int(x0) + 1, int(round(x1)))):
                         if 0 <= xx < geo.WIDTH and 0 <= yy < geo.HEIGHT:
                             gp[xx, yy] = 255
-    out["mask"] = grid
-    out["candidates"] = [b.as_list() for b in _components(grid)]
-    return out
+    return grid
 
 
-def _components(mask: Image.Image, min_px: int = 30) -> list[geo.Box]:
-    """Bounding boxes of connected components (4-neighbour) of a binary L image."""
+ADP_MIN_AREA_KM2 = 25.0  # ignore specks: one ADP canvas pixel is ~13 grid px (~4 km2)
+
+
+def adp_candidates(grid: Image.Image, min_px: int | None = None) -> list[list[int]]:
+    """Candidate regions = bounding boxes of connected ADP haze components
+    of at least ADP_MIN_AREA_KM2 (~0.29 km2 per grid pixel at 20 N)."""
+    if min_px is None:
+        min_px = round(ADP_MIN_AREA_KM2 / geo.pixel_area_km2(20.0))
+    return [box.as_list() for box, _ in components(grid, min_px)]
+
+
+def components(mask: Image.Image, min_px: int = 30) -> list[tuple[geo.Box, int]]:
+    """(bounding box, pixel count) of 4-connected components of a binary L image,
+    largest first."""
     w, h = mask.size
     px = mask.load()
     seen = bytearray(w * h)
-    boxes = []
+    found = []
     for y in range(h):
         for x in range(w):
             if px[x, y] and not seen[y * w + x]:
@@ -160,24 +183,68 @@ def _components(mask: Image.Image, min_px: int = 30) -> list[geo.Box]:
                             seen[ny * w + nx] = 1
                             stack.append((nx, ny))
                 if n >= min_px:
-                    boxes.append(geo.Box(x1, y1, x2, y2))
-    return boxes
+                    found.append((geo.Box(x1, y1, x2, y2), n))
+    found.sort(key=lambda t: -t[1])
+    return found
 
 
 # ---------------------------------------------------------------- FIRMS
 
+# Summit caldera boxes (lat_min, lat_max, lon_min, lon_max). They mirror the
+# Kahu Ola volcanic zones: its flagged Kīlauea detections fall in
+# 19.401-19.417 N, -155.291 to -155.267 W (Halemaʻumaʻu); Mauna Loa = Mokuʻāweoweo.
+VOLCANIC_ZONES = {
+    "kilauea-summit": (19.385, 19.435, -155.310, -155.250),
+    "mauna-loa-summit": (19.445, 19.500, -155.630, -155.570),
+}
+
+
+def volcanic_zone_of(lat: float, lon: float) -> str | None:
+    for name, (la0, la1, lo0, lo1) in VOLCANIC_ZONES.items():
+        if la0 <= lat <= la1 and lo0 <= lon <= lo1:
+            return name
+    return None
+
+
+def split_volcanic(pts: list[dict]) -> tuple[list[dict], dict[str, int]]:
+    """Separate summit-glow detections from fire candidates.
+
+    Uses the point's own `volcanic_zone` flag when present (Kahu Ola), otherwise
+    the caldera boxes. Returns (fire points, {zone: count})."""
+    fires, volcanic = [], {}
+    for p in pts:
+        zone = volcanic_zone_of(p["lat"], p["lon"])
+        flagged = p.get("volcanic_zone")
+        if flagged or (flagged is None and zone):
+            key = zone or "flagged"
+            volcanic[key] = volcanic.get(key, 0) + 1
+        else:
+            fires.append(p)
+    return fires, volcanic
+
+
+def _firms_result(source: str, pts: list[dict], **extra) -> dict:
+    fires, volcanic = split_volcanic(pts)
+    return {"source": source, "points_count": len(pts), "fire_points_count": len(fires),
+            "clusters": _cluster_points(fires),
+            "volcanic_thermal": volcanic,
+            "volcanic_note": "summit-caldera thermal detections (active vent glow), excluded "
+                             "from fire clusters", **extra}
+
+
 def fetch_firms_live() -> dict:
-    fc = requests.get(f"{KAHUOLA}/api/firms/hotspots", headers=UA, timeout=30).json()
+    fc = requests.get(f"{KAHUOLA}/api/firms/hotspots", params={"include_volcanic": 1},
+                      headers=UA, timeout=30).json()
     pts = []
     for f in fc.get("features", []):
         lon, lat = f["geometry"]["coordinates"][:2]
         p = f.get("properties", {})
-        pts.append({"lat": lat, "lon": lon, "frp": p.get("frp"),
-                    "acq": p.get("acq_datetime") or p.get("acq_date"),
-                    "confidence": p.get("confidence")})
-    return {"source": "Kahu Ola /api/firms/hotspots (VIIRS NOAA-20/21 NRT, rolling 24 h)",
-            "points": pts, "clusters": _cluster_points(pts),
-            "volcanic_zones_excluded": fc.get("properties", {}).get("volcanic_zones")}
+        pts.append({"lat": lat, "lon": lon, "frp": p.get("frp_mw") or p.get("frp"),
+                    "acq": p.get("acq_datetime_utc") or p.get("acq_date"),
+                    "confidence": p.get("detection_confidence") or p.get("confidence"),
+                    "volcanic_zone": bool(p.get("volcanic_zone"))})
+    return _firms_result("Kahu Ola /api/firms/hotspots?include_volcanic=1 "
+                         "(VIIRS NOAA-20/21 NRT, rolling 24 h)", pts)
 
 
 def fetch_firms_gibs(date: str) -> dict:
@@ -196,10 +263,9 @@ def fetch_firms_gibs(date: str) -> dict:
                 if a[x, y] > 0:
                     lon, lat = geo.px_to_lonlat(x + 0.5, y + 0.5)
                     pts.append({"lat": round(lat, 4), "lon": round(lon, 4), "layer": layer})
-    return {"source": f"NASA GIBS FIRMS thermal anomaly layers ({date}), rasterised",
-            "layers": layers, "points_count": len(pts),
-            "note": "n counts rendered marker pixels on a 0.005-deg grid, not individual detections",
-            "clusters": _cluster_points(pts)}
+    return _firms_result(
+        f"NASA GIBS FIRMS thermal anomaly layers ({date}), rasterised", pts, layers=layers,
+        note="counts are rendered marker pixels on a 0.005-deg grid, not individual detections")
 
 
 def _cluster_points(pts: list[dict], radius_km: float = 8.0) -> list[dict]:
@@ -217,6 +283,8 @@ def _cluster_points(pts: list[dict], radius_km: float = 8.0) -> list[dict]:
     for c in clusters:
         c["lat"], c["lon"] = round(c["lat"], 4), round(c["lon"], 4)
         c["near"] = _nearest_place(c["lat"], c["lon"])
+        c["nearest_summit_km"] = round(min(geo.haversine_km(c["lat"], c["lon"], *v)
+                                           for v in geo.SOURCES.values()), 1)
     return clusters
 
 
@@ -251,9 +319,10 @@ def fetch_wind(points: dict[str, tuple[float, float]], when: datetime | None) ->
             n: {"time": d["current"]["time"], "speed_kmh": d["current"]["wind_speed_10m"],
                 "from_deg": d["current"]["wind_direction_10m"]} for n, d in zip(names, r)}}
     day = when.strftime("%Y-%m-%d")
+    next_day = (when + timedelta(days=1)).strftime("%Y-%m-%d")  # rounding can cross midnight
     r = requests.get("https://archive-api.open-meteo.com/v1/archive", params={
         "latitude": lats, "longitude": lons, "timezone": "GMT", "start_date": day,
-        "end_date": day, "hourly": "wind_speed_10m,wind_direction_10m"},
+        "end_date": next_day, "hourly": "wind_speed_10m,wind_direction_10m"},
         headers=UA, timeout=30).json()
     r = r if isinstance(r, list) else [r]
     hour = when.replace(minute=0, second=0, microsecond=0) + timedelta(

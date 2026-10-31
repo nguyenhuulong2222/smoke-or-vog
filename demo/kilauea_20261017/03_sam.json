@@ -1,52 +1,52 @@
 {
   "variants": {
     "box": {
-      "prompt": "<0f>1<|box;x1=1029;y1=795;x2=1232;y2=960;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=1008;y1=770;x2=1232;y2=960;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 19606,
-        "mean_confidence": 0.449,
-        "frac_inside_spark_boxes": 0.958,
-        "spark_box_fill": 0.555
+        "mask_px": 22755,
+        "mean_confidence": 0.641,
+        "frac_inside_spark_boxes": 0.943,
+        "spark_box_fill": 0.499
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.44921875,
+          "confidence": 0.640625,
           "box": [
-            1017,
-            787,
-            1194,
-            947
+            987,
+            764,
+            1193,
+            948
           ],
-          "mask_px": 19606
+          "mask_px": 22755
         }
       ]
     },
     "box+point": {
-      "prompt": "<0f>1<|box;x1=1029;y1=795;x2=1232;y2=960;w=1400;h=1000|><|point;x=1124;y=874;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=1008;y1=770;x2=1232;y2=960;w=1400;h=1000|><|point;x=1110;y=857;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 18193,
-        "mean_confidence": 0.543,
-        "frac_inside_spark_boxes": 0.994,
-        "spark_box_fill": 0.534
+        "mask_px": 22224,
+        "mean_confidence": 0.605,
+        "frac_inside_spark_boxes": 0.944,
+        "spark_box_fill": 0.488
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.54296875,
+          "confidence": 0.60546875,
           "box": [
-            1022,
-            792,
-            1195,
-            941
+            988,
+            765,
+            1191,
+            947
           ],
-          "mask_px": 18193
+          "mask_px": 22224
         }
       ]
     },
@@ -84,5 +84,36 @@
       "objects": []
     }
   },
-  "chosen_for_classification": "box+point"
+  "chosen_for_classification": "box+point",
+  "two_pass": [
+    {
+      "plume_id": 1,
+      "spark_box": [
+        1008,
+        770,
+        1232,
+        960
+      ],
+      "pass2_box": [
+        958,
+        738,
+        1220,
+        973
+      ],
+      "pass1": {
+        "area_px": 22224,
+        "coherence": 0.995,
+        "bbox_frac": 0.0264,
+        "edges_touched": 0
+      },
+      "pass2": {
+        "area_px": 31062,
+        "coherence": 0.997,
+        "bbox_frac": 0.0385,
+        "edges_touched": 0
+      },
+      "kept": "pass2",
+      "reason": "pass 2 larger (1.40x) and coherent"
+    }
+  ]
 }

@@ -1,0 +1,229 @@
+{
+  "context": {
+    "image": {
+      "layer": "MODIS_Aqua_CorrectedReflectance_TrueColor",
+      "time": "2022-12-01"
+    },
+    "spark_scene": {
+      "description": "True-color view of the main Hawaiian Islands from northwest to southeast with scattered cumulus and cirrus over dark ocean, heavier cloud cover north and far south and over the eastern side of the large southeastern island, and a faint gray veil distinct from white clouds extending west-southwest over the central ocean.",
+      "cloud_cover": "partly",
+      "plumes": [
+        {
+          "label": "thin gray streak southwest of the large island",
+          "visual_description": "translucent light gray veil over dark ocean, grayer and more diffuse than surrounding bright white cumulus, extending west-southwest south of the central islands",
+          "visibility": "faint"
+        }
+      ]
+    },
+    "segmentation_prompt_used": "box+point",
+    "plumes": [
+      {
+        "plume_id": 1,
+        "spark_label": "thin gray streak southwest of the large island",
+        "sam_confidence": 0.52734375,
+        "geometry": {
+          "centroid": {
+            "lat": 20.831,
+            "lon": -157.471
+          },
+          "bbox_lonlat": [
+            -159.29,
+            20.445,
+            -156.005,
+            21.23
+          ],
+          "area_km2": 13857,
+          "length_km": 352,
+          "upwind_end": {
+            "lat": 21.15,
+            "lon": -158.1
+          },
+          "wind_site_used": "mauna_loa_summit",
+          "upwind_end_distance_km": {
+            "kilauea_summit": 352.0,
+            "mauna_loa_summit": 319.7
+          },
+          "nearest_fire_clusters": [
+            {
+              "near": "Honolulu (35 km)",
+              "n": 21,
+              "nearest_summit_km": 344.1,
+              "distance_km": 31.6
+            },
+            {
+              "near": "Mauna Loa summit (22 km)",
+              "n": 86,
+              "nearest_summit_km": 22.5,
+              "distance_km": 317.5
+            },
+            {
+              "near": "Mauna Loa summit (5 km)",
+              "n": 196,
+              "nearest_summit_km": 5.5,
+              "distance_km": 319.7
+            }
+          ]
+        }
+      }
+    ],
+    "volcanic_summits": {
+      "kilauea_summit": {
+        "lat": 19.406,
+        "lon": -155.283
+      },
+      "mauna_loa_summit": {
+        "lat": 19.475,
+        "lon": -155.608
+      }
+    },
+    "firms": {
+      "source": "NASA GIBS FIRMS thermal anomaly layers (2022-12-01), rasterised",
+      "fire_clusters": [
+        {
+          "lat": 19.5677,
+          "lon": -155.5088,
+          "n": 1354,
+          "near": "Mauna Loa summit (15 km)",
+          "nearest_summit_km": 14.6
+        },
+        {
+          "lat": 19.4355,
+          "lon": -155.6392,
+          "n": 196,
+          "near": "Mauna Loa summit (5 km)",
+          "nearest_summit_km": 5.5
+        },
+        {
+          "lat": 19.5134,
+          "lon": -155.5625,
+          "n": 174,
+          "near": "Mauna Loa summit (6 km)",
+          "nearest_summit_km": 6.4
+        },
+        {
+          "lat": 19.6526,
+          "lon": -155.506,
+          "n": 86,
+          "near": "Mauna Loa summit (22 km)",
+          "nearest_summit_km": 22.5
+        },
+        {
+          "lat": 21.4256,
+          "lon": -158.1725,
+          "n": 21,
+          "near": "Honolulu (35 km)",
+          "nearest_summit_km": 344.1
+        },
+        {
+          "lat": 19.5387,
+          "lon": -155.0163,
+          "n": 20,
+          "near": "Hilo (20 km)",
+          "nearest_summit_km": 31.6
+        },
+        {
+          "lat": 19.5425,
+          "lon": -155.4425,
+          "n": 1,
+          "near": "Mauna Loa summit (19 km)",
+          "nearest_summit_km": 18.9
+        }
+      ],
+      "note": "counts are rendered marker pixels on a 0.005-deg grid, not individual detections",
+      "volcanic_thermal_excluded": {
+        "mauna-loa-summit": 309,
+        "kilauea-summit": 91
+      },
+      "volcanic_note": "summit-caldera thermal detections (active vent glow), excluded from fire clusters"
+    },
+    "case_note": "Mauna Loa NE rift eruption (Nov 27-Dec 10 2022); Kīlauea summit was also erupting until Dec 9 2022",
+    "wind_10m": {
+      "source": "Open-Meteo archive (ERA5-based reanalysis)",
+      "sites": {
+        "kilauea_summit": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 6.2,
+          "from_deg": 80
+        },
+        "mauna_loa_summit": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 7.3,
+          "from_deg": 351
+        },
+        "fire_cluster_1": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 16.9,
+          "from_deg": 331
+        },
+        "fire_cluster_2": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 7.3,
+          "from_deg": 351
+        },
+        "fire_cluster_3": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 12.8,
+          "from_deg": 338
+        }
+      }
+    },
+    "adp": {
+      "state": "unavailable"
+    }
+  },
+  "result": {
+    "caveats": "Upwind end is ~320 km NW of Mauna Loa and ~352 km from Kilauea, not at the vent, and is 31.6 km from Honolulu fire cluster; SAM confidence low at 0.53, visibility faint, proximal source area obscured by cloud over east Hawaii, and 10-m winds are light/variable (6-7 kmh) so may not represent plume-level transport. Both volcanoes were erupting, so Kilauea contribution cannot be excluded.",
+    "evidence": [
+      "translucent light gray veil distinct from bright white cumulus/cirrus, grayer and diffuse - typical vog not bright textured cloud",
+      "extends west-southwest over central ocean from Big Island direction, consistent with 10-m wind at Kilauea from 080 deg (east) blowing to WSW",
+      "case note: Mauna Loa NE rift eruption Nov27-Dec10 2022 ongoing on 2022-12-01; Kilauea summit also erupting",
+      "summit-caldera thermal detections excluded as volcanic_thermal_excluded: mauna-loa-summit 309, kilauea-summit 91 - confirms active vents",
+      "dominant FIRMS clusters are on/near Mauna Loa (14.6, 5.5, 6.4, 22.5 km from summit, n up to 1354) - likely lava not vegetation fire during eruption",
+      "Honolulu fire cluster n=21 is small and unlikely to produce 13857 km2, 352-km veil; color gray not brown as expected for smoke",
+      "large upwind distance explained by cloud cover over eastern Big Island hiding proximal plume and segmentation capturing only distal faint portion"
+    ],
+    "per_plume": [
+      {
+        "class": "vog_mauna_loa",
+        "confidence": 0.62,
+        "evidence": [
+          "plume_id 1 thin gray streak southwest of large island, faint translucent gray over dark ocean",
+          "length 352 km area 13857 km2 - large regional haze, more consistent with major Mauna Loa eruption vog than 21-pixel Honolulu fire",
+          "upwind_end 319.7 km from Mauna Loa, 352 km from Kilauea but source region cloud-covered per scene description",
+          "nearest non-volcanic fire Honolulu 31.6 km away but small; Mauna Loa flank clusters 317-319 km away with nearest_summit_km 5.5-22.5 km indicating lava",
+          "wind from east at Kilauea supports WSW transport"
+        ],
+        "plume_id": 1,
+        "source_hint": "Mauna Loa summit/NE rift eruption"
+      }
+    ],
+    "source_hint": "Mauna Loa summit/NE rift eruption",
+    "model_overall_class": "vog_mauna_loa",
+    "model_overall_confidence": 0.62,
+    "overall": {
+      "class": "uncertain",
+      "confidence": 0.0,
+      "max_plume_confidence": 0.62,
+      "plume_id": null,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [],
+      "unconfirmed": [
+        {
+          "plume_id": 1,
+          "class": "vog_mauna_loa",
+          "confidence": 0.62,
+          "source_hint": "Mauna Loa summit/NE rift eruption"
+        }
+      ]
+    }
+  },
+  "meta": {
+    "model": "muse-spark-1.3",
+    "effort": "medium",
+    "cost_usd": 0.020484,
+    "input_tokens": 3290,
+    "cached_tokens": 0,
+    "output_tokens": 3852,
+    "reasoning_tokens": 3250
+  }
+}

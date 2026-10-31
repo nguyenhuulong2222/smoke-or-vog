@@ -5,9 +5,9 @@
     "- satellite fire detections near Kailua-Kona (52 km) at (x=734, y=583)",
     "- satellite fire detections near Kula, Maui (3 km) at (x=671, y=438)",
     "- satellite fire detections near Kailua-Kona (52 km) at (x=758, y=597)",
-    "- satellite fire detections near Kīlauea summit (1 km) at (x=817, y=718)",
     "- satellite fire detections near Honolulu (21 km) at (x=426, y=316)",
     "- satellite fire detections near Mauna Loa summit (17 km) at (x=785, y=680)",
+    "- active volcanic thermal signal (summit glow) in kilauea-summit: 45 detections",
     "- aerosol detection product: unavailable (absence does not mean no haze)"
   ],
   "result": {
@@ -15,112 +15,112 @@
     "plumes": [
       {
         "bbox": {
-          "x_max": 765,
-          "x_min": 415,
-          "y_max": 880,
+          "x_max": 780,
+          "x_min": 410,
+          "y_max": 855,
           "y_min": 590
         },
         "inside_point": {
           "x": 620,
-          "y": 730
+          "y": 715
         },
-        "label": "large pale gray veil west of large island",
+        "label": "broad gray haze west of the large island",
         "origin_point": {
-          "x": 740,
-          "y": 690
+          "x": 760,
+          "y": 695
         },
         "visibility": "clear",
-        "visual_description": "broad diffuse light gray veil covering ocean immediately west and southwest of the large southeastern island, extending far to the southwest"
+        "visual_description": "broad diffuse light-gray haze covering ocean west of the southeastern large island"
       },
       {
         "bbox": {
-          "x_max": 675,
-          "x_min": 285,
-          "y_max": 560,
+          "x_max": 610,
+          "x_min": 270,
+          "y_max": 575,
           "y_min": 385
         },
         "inside_point": {
-          "x": 500,
-          "y": 480
+          "x": 450,
+          "y": 490
         },
-        "label": "long thin gray band southwest of small central islands",
+        "label": "elongated gray streak southwest of the central islands",
         "origin_point": {
-          "x": 671,
-          "y": 438
+          "x": 595,
+          "y": 445
         },
         "visibility": "faint",
-        "visual_description": "elongated pale gray translucent band stretching west-southwest from the vicinity of the small central island cluster across the ocean"
+        "visual_description": "long narrow light-gray streak extending west-southwest from the central island group"
       },
       {
         "bbox": {
-          "x_max": 385,
-          "x_min": 265,
-          "y_max": 345,
-          "y_min": 295
+          "x_max": 430,
+          "x_min": 310,
+          "y_max": 340,
+          "y_min": 290
         },
         "inside_point": {
-          "x": 330,
-          "y": 320
+          "x": 370,
+          "y": 313
         },
-        "label": "faint gray streak west of middle island",
+        "label": "faint gray veil west of the upper-central island",
         "origin_point": {
-          "x": 390,
+          "x": 423,
           "y": 315
         },
         "visibility": "very_faint",
-        "visual_description": "very faint narrow grayish streak extending west from the west side of the middle island over dark ocean"
+        "visual_description": "small very faint gray veil extending west from the west coast of the upper-central island"
       }
     ],
-    "scene_description": "True-color satellite view of the Hawaiian Island chain from Kauai in the northwest to the large island in the southeast, with scattered small white trade-wind cumulus over ocean and over islands and prominent pale gray haze veils leeward of islands."
+    "scene_description": "True-color satellite view of the main Hawaiian Islands from northwest to southeast with scattered white trade-wind cumulus and three gray haze plumes extending west to southwest over the dark ocean."
   },
   "pixels": [
     {
-      "label": "large pale gray veil west of large island",
+      "label": "broad gray haze west of the large island",
       "box": [
-        581,
+        574,
         590,
-        1071,
-        880
+        1092,
+        855
       ],
       "inside": [
         868,
-        730
+        715
       ]
     },
     {
-      "label": "long thin gray band southwest of small central islands",
+      "label": "elongated gray streak southwest of the central islands",
       "box": [
-        399,
+        378,
         385,
-        945,
-        560
+        854,
+        575
       ],
       "inside": [
-        700,
-        480
+        630,
+        490
       ]
     },
     {
-      "label": "faint gray streak west of middle island",
+      "label": "faint gray veil west of the upper-central island",
       "box": [
-        371,
-        295,
-        539,
-        345
+        434,
+        290,
+        602,
+        340
       ],
       "inside": [
-        462,
-        320
+        518,
+        313
       ]
     }
   ],
   "meta": {
     "model": "muse-spark-1.3",
     "effort": "medium",
-    "cost_usd": 0.018596,
-    "input_tokens": 2212,
+    "cost_usd": 0.012476,
+    "input_tokens": 2208,
     "cached_tokens": 0,
-    "output_tokens": 3725,
-    "reasoning_tokens": 3316
+    "output_tokens": 2286,
+    "reasoning_tokens": 1907
   }
 }

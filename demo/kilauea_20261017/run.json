@@ -1,10 +1,10 @@
 {
-  "run_id": "kilauea_20261017_20261031T222544Z",
+  "run_id": "kilauea_20261017_20261031T223754Z",
   "case": "kilauea_20261017",
   "stages": {
     "0_context": {
       "image_time": "2026-10-17T21:00:00Z",
-      "firms_clusters": 3
+      "firms_clusters": 4
     },
     "1_adp": {
       "state": "unavailable",
@@ -14,28 +14,37 @@
       "plumes": 1,
       "model": "muse-spark-1.3",
       "effort": "medium",
-      "cost_usd": 0.009535,
-      "input_tokens": 2137,
-      "cached_tokens": 236,
-      "output_tokens": 1676,
-      "reasoning_tokens": 1461
+      "cost_usd": 0.007038,
+      "input_tokens": 2183,
+      "cached_tokens": 0,
+      "output_tokens": 1014,
+      "reasoning_tokens": 817
     },
     "3_sam": {
       "chosen": "box+point",
+      "two_pass": [
+        {
+          "plume_id": 1,
+          "kept": "pass2",
+          "reason": "pass 2 larger (1.40x) and coherent",
+          "pass1_px": 22224,
+          "pass2_px": 31062
+        }
+      ],
       "variants": {
         "box": {
           "objects": 1,
-          "mask_px": 19606,
-          "mean_confidence": 0.449,
-          "frac_inside_spark_boxes": 0.958,
-          "spark_box_fill": 0.555
+          "mask_px": 22755,
+          "mean_confidence": 0.641,
+          "frac_inside_spark_boxes": 0.943,
+          "spark_box_fill": 0.499
         },
         "box+point": {
           "objects": 1,
-          "mask_px": 18193,
-          "mean_confidence": 0.543,
-          "frac_inside_spark_boxes": 0.994,
-          "spark_box_fill": 0.534
+          "mask_px": 22224,
+          "mean_confidence": 0.605,
+          "frac_inside_spark_boxes": 0.944,
+          "spark_box_fill": 0.488
         },
         "concept:smoke": {
           "objects": 0,
@@ -55,44 +64,71 @@
       }
     },
     "4_classify": {
-      "class": "vog_kilauea",
-      "confidence": 0.8,
+      "overall": {
+        "class": "vog_kilauea",
+        "confidence": 0.75,
+        "plume_id": 1,
+        "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+        "confirmed": [
+          {
+            "plume_id": 1,
+            "class": "vog_kilauea",
+            "confidence": 0.75,
+            "source_hint": "Kilauea summit active vent"
+          }
+        ],
+        "unconfirmed": []
+      },
       "model": "muse-spark-1.3",
       "effort": "medium",
-      "cost_usd": 0.012601,
-      "input_tokens": 2900,
-      "cached_tokens": 143,
-      "output_tokens": 2149,
-      "reasoning_tokens": 1708
+      "cost_usd": 0.014283,
+      "input_tokens": 3100,
+      "cached_tokens": 0,
+      "output_tokens": 2449,
+      "reasoning_tokens": 1971
     }
   },
-  "cost_usd": 0.034636,
-  "total_spend_usd": 0.1709,
+  "cost_usd": 0.036321,
+  "total_spend_usd": 0.2229,
   "classification": {
-    "caveats": "Upwind end is ~46 km south of Kilauea summit, likely because cloud over the island obscures the vent-to-coast segment and SAM confidence is modest at 0.54; ADP SO2 unavailable so gas not independently confirmed; Mauna Loa cannot be fully excluded if winds aloft differ from 10-m reanalysis.",
-    "class": "vog_kilauea",
-    "confidence": 0.8,
+    "caveats": "Big Island interior is partly cloud-covered so the over-land connection from summit to ocean haze is obscured; segmented upwind_end is ~90-110 km south of both summits and represents emergence from cloud, not true vent origin; Mauna Loa summit 10-m wind from 300 deg differs from Kilauea NE trades.",
     "evidence": [
-      "Diffuse pale blue-gray translucent trail extending south-southwest from southern coast of Hawaii Island, visually distinct from surrounding bright white textured cumulus",
-      "Orientation matches 10-m wind at Kilauea summit from 030 deg at 16.7 kmh blowing toward SSW over 123 km length; Mauna Loa 10-m wind from 300 deg would blow toward ESE and does not match",
-      "Upwind end 46.4 km from Kilauea summit vs 69.3 km from Mauna Loa summit, closer to Kilauea",
-      "Dominant FIRMS thermal cluster n=516 centered at Kilauea summit (0 km) indicating active vent; other clusters near Honolulu >390 km away inconsistent as source",
-      "Color and thin translucent morphology typical of vog, not browner wildfire smoke and not bright white cloud"
+      "thin pale blue-gray translucent haze extending south-southwest from southern tip of Big Island over dark ocean, distinct from bright white textured cumulus/cirrus over land - matches vog, not cloud or brown smoke",
+      "volcanic_thermal_excluded kilauea-summit 316 indicates active summit vent glow at Kilauea, providing SO2 source for vog",
+      "nearest FIRMS clusters n=168 at 2.1 km and n=32 at 4.4 km from Kilauea summit are flank lava, not vegetation wildfire; only distant Honolulu fires 334.6 km away are unrelated",
+      "10-m wind at Kilauea summit from 030 deg at 16.7 km/h (NE trades) blows toward SSW, consistent with 179-km plume oriented SSW from island",
+      "plume geometry area 9122 km2 length 179 km centroid 18.718,-155.664 is downwind ocean vog accumulation despite upwind_end 89.7 km from Mauna Loa and 110.3 km from Kilauea due to cloud masking"
     ],
     "per_plume": [
       {
         "class": "vog_kilauea",
-        "confidence": 0.8,
+        "confidence": 0.75,
         "evidence": [
-          "Pale blue-gray translucent faint trail south of Big Island, distinct from bright white cumulus",
-          "SSW orientation consistent with NNE (030 deg) 10-m wind at Kilauea summit",
-          "Upwind end closer to Kilauea (46.4 km) than Mauna Loa (69.3 km)",
-          "516-pixel FIRMS thermal anomaly at Kilauea summit, Honolulu fires >390 km distant"
+          "pale blue-gray translucent faint haze, not bright white cloud and not brown smoke",
+          "active Kilauea vent with 316 excluded summit thermals plus 168+32 near-summit lava pixels supports Kilauea vog source",
+          "Kilauea NE wind 030/16.7 kmh drives SSW transport matching visual orientation; Honolulu fire source >330 km distant impossible"
         ],
         "plume_id": 1,
-        "source_hint": "Kilauea summit vent; SSW downwind plume"
+        "source_hint": "Kilauea summit active vent"
       }
     ],
-    "source_hint": "Kilauea summit vent; SSW downwind plume"
+    "source_hint": "Kilauea summit active vent",
+    "model_overall_class": "vog_kilauea",
+    "model_overall_confidence": 0.75,
+    "overall": {
+      "class": "vog_kilauea",
+      "confidence": 0.75,
+      "plume_id": 1,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [
+        {
+          "plume_id": 1,
+          "class": "vog_kilauea",
+          "confidence": 0.75,
+          "source_hint": "Kilauea summit active vent"
+        }
+      ],
+      "unconfirmed": []
+    }
   }
 }

@@ -22,7 +22,8 @@ detection signal (GOES-18 ADP haze mask + metadata, FIRMS hotspots), never as th
 Kahu Ola's haze layer is an estimate rather than an official product. For official vog
 information, see <https://vog.ivhhn.org/>.
 
-> Status: detection chain working on three cases (live, Kīlauea 2026-10-17, Maui 2023-08-08).
+> Status: detection chain working on four cases (live, Kīlauea 2026-10-17, Maui 2023-08-08,
+> Mauna Loa 2022-12-01). Curated outputs are in [`demo/`](demo/).
 > No alert generation or demo UI yet. See [PLAN.md](PLAN.md).
 
 ## Setup
@@ -68,7 +69,28 @@ prices on dev.meta.ai/docs/pricing-rate-limits.
 .venv/bin/python -m src.pipeline --case live              # latest GOES-West GeoColor frame
 .venv/bin/python -m src.pipeline --case kilauea_20261017  # vog plume test case
 .venv/bin/python -m src.pipeline --case maui_20230808     # Maui wildfire smoke test case
+.venv/bin/python -m src.pipeline --case mauna_loa_20221201 # Mauna Loa eruption vog test case
+.venv/bin/python -m pytest                                # 29 offline tests, Meta API mocked
 ```
+
+**Overall verdict rule (safety first):** each plume is classified separately. The overall
+verdict is the most hazardous class confirmed at confidence ≥ 0.70, in the order
+`wildfire_smoke > vog_* > dust > cloud`. Plumes below 0.70 are listed as *unconfirmed*.
+The verdict is `uncertain` only when no plume reaches 0.70 (`src/aggregate.py`).
+
+*Intended behaviour (Mauna Loa test case, 2022-12-01):* the classifier picks the right class
+(`vog_mauna_loa`) but only at 0.62. The vent area was under cloud, the visible haze was 320 km
+downwind, and Kīlauea was erupting at the same time. So the overall verdict is `uncertain`, and
+we don't lower the 0.70 threshold to make a test case pass. When the source can't be seen,
+honest uncertainty is the correct output.
+
+**SAM is run in two passes:** pass 1 uses the Muse Spark box and point. Pass 2 re-prompts with
+the pass-1 mask's bounding box plus a 15% margin. Pass 2 is kept only if it's larger and still
+coherent, with no ocean-wide spill.
+
+**Summit glow is not fire:** FIRMS detections inside the Kīlauea and Mauna Loa summit calderas
+(Kahu Ola `volcanic_zone` flag, or the same caldera boxes for historical data) are reported as
+`volcanic_thermal` and kept out of the fire clusters.
 
 Each run writes `out/runs/<case>_<UTC>/`:
 
@@ -77,8 +99,8 @@ Each run writes `out/runs/<case>_<UTC>/`:
 | `00_image.jpg`, `00_context.json` | True-color image on a fixed lon/lat grid, FIRMS fire clusters, 10 m wind |
 | `01_adp.json` (+ `01_adp_mask.png`) | Kahu Ola ADP haze signal → candidate regions (live only) |
 | `02_spark_localize.json` | Muse Spark vision → plume boxes, origin and inside points (0–1000 grid) |
-| `03_sam_*.jpg`, `03_sam.json` | SAM 3.1 with box, box+point, and concept prompts, with a score for each |
-| `04_classify.json` | Muse Spark → `vog_kilauea \| vog_mauna_loa \| wildfire_smoke \| dust \| cloud \| uncertain` |
+| `03_sam_*.jpg`, `03_sam.json` | SAM 3.1 with box, box+point, and concept prompts, with a score for each; `03_sam_two_pass.jpg` shows pass 1 vs pass 2 |
+| `04_classify.json` | Muse Spark per-plume classes (`vog_kilauea \| vog_mauna_loa \| wildfire_smoke \| dust \| cloud \| uncertain`) plus the aggregated `overall` |
 | `overlay.png`, `run.json` | Annotated overlay and run summary (incl. cost) |
 
 A budget guard stops any run that would push total logged spend past $20.
@@ -94,8 +116,11 @@ A budget guard stops any run that would push total logged spend past $20.
 ## Layout
 
 ```
-src/            pipeline.py (chain), models.py (Meta API stages), sources.py (data), geo.py, common.py
-scripts/        Step-3 smoke tests
+src/            pipeline.py (chain), models.py (Meta API stages), sources.py (data),
+                aggregate.py (verdict rule), geo.py, common.py
+tests/          pytest suite (no credits spent)
+scripts/        Step-3 smoke tests, effort_ab.py (classifier reasoning-effort A/B)
+demo/           curated runs with compressed images
 out/            generated outputs and costs.csv
 data/raw/       downloaded frames (git-ignored)
 ```

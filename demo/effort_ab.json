@@ -1,0 +1,287 @@
+{
+  "summary": {
+    "low": {
+      "n": 6,
+      "key_plume_correct": 5,
+      "overall_correct": 4,
+      "mean_key_conf": 0.665,
+      "mean_cost_usd": 0.00999,
+      "mean_output_tokens": 1625
+    },
+    "medium": {
+      "n": 6,
+      "key_plume_correct": 6,
+      "overall_correct": 4,
+      "mean_key_conf": 0.76,
+      "mean_cost_usd": 0.01907,
+      "mean_output_tokens": 3502
+    }
+  },
+  "runs": [
+    {
+      "run": "kilauea_20261017_20261031T223754Z",
+      "case": "kilauea_20261017",
+      "expected": "vog_kilauea",
+      "samples": [
+        {
+          "effort": "medium",
+          "source": "pipeline run",
+          "cost_usd": 0.014283,
+          "output_tokens": 2449,
+          "key_plume_correct": true,
+          "key_conf": 0.75,
+          "overall": "vog_kilauea",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "vog_kilauea",
+              0.75
+            ]
+          ]
+        },
+        {
+          "effort": "low",
+          "source": "ab#1",
+          "cost_usd": 0.008376,
+          "output_tokens": 1059,
+          "key_plume_correct": true,
+          "key_conf": 0.78,
+          "overall": "vog_kilauea",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "vog_kilauea",
+              0.78
+            ]
+          ]
+        },
+        {
+          "effort": "low",
+          "source": "ab#2",
+          "cost_usd": 0.004334,
+          "output_tokens": 907,
+          "key_plume_correct": true,
+          "key_conf": 0.78,
+          "overall": "vog_kilauea",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "vog_kilauea",
+              0.78
+            ]
+          ]
+        },
+        {
+          "effort": "medium",
+          "source": "ab#1",
+          "cost_usd": 0.012434,
+          "output_tokens": 2014,
+          "key_plume_correct": true,
+          "key_conf": 0.76,
+          "overall": "vog_kilauea",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "vog_kilauea",
+              0.76
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "run": "maui_20230808_20261031T223834Z",
+      "case": "maui_20230808",
+      "expected": "wildfire_smoke",
+      "samples": [
+        {
+          "effort": "medium",
+          "source": "pipeline run",
+          "cost_usd": 0.026762,
+          "output_tokens": 5188,
+          "key_plume_correct": true,
+          "key_conf": 0.88,
+          "overall": "wildfire_smoke",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "vog_kilauea",
+              0.65
+            ],
+            [
+              2,
+              "wildfire_smoke",
+              0.88
+            ],
+            [
+              3,
+              "uncertain",
+              0.45
+            ]
+          ]
+        },
+        {
+          "effort": "low",
+          "source": "ab#1",
+          "cost_usd": 0.012928,
+          "output_tokens": 1933,
+          "key_plume_correct": true,
+          "key_conf": 0.88,
+          "overall": "wildfire_smoke",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "vog_kilauea",
+              0.72
+            ],
+            [
+              2,
+              "wildfire_smoke",
+              0.88
+            ],
+            [
+              3,
+              "wildfire_smoke",
+              0.6
+            ]
+          ]
+        },
+        {
+          "effort": "low",
+          "source": "ab#2",
+          "cost_usd": 0.012809,
+          "output_tokens": 1905,
+          "key_plume_correct": true,
+          "key_conf": 0.9,
+          "overall": "wildfire_smoke",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "vog_kilauea",
+              0.72
+            ],
+            [
+              2,
+              "wildfire_smoke",
+              0.9
+            ],
+            [
+              3,
+              "wildfire_smoke",
+              0.58
+            ]
+          ]
+        },
+        {
+          "effort": "medium",
+          "source": "ab#1",
+          "cost_usd": 0.023502,
+          "output_tokens": 4458,
+          "key_plume_correct": true,
+          "key_conf": 0.9,
+          "overall": "wildfire_smoke",
+          "overall_correct": true,
+          "per_plume": [
+            [
+              1,
+              "wildfire_smoke",
+              0.62
+            ],
+            [
+              2,
+              "wildfire_smoke",
+              0.9
+            ],
+            [
+              3,
+              "wildfire_smoke",
+              0.6
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "run": "mauna_loa_20221201_20261031T224017Z",
+      "case": "mauna_loa_20221201",
+      "expected": "vog_mauna_loa",
+      "samples": [
+        {
+          "effort": "medium",
+          "source": "pipeline run",
+          "cost_usd": 0.020484,
+          "output_tokens": 3852,
+          "key_plume_correct": true,
+          "key_conf": 0.62,
+          "overall": "uncertain",
+          "overall_correct": false,
+          "per_plume": [
+            [
+              1,
+              "vog_mauna_loa",
+              0.62
+            ]
+          ]
+        },
+        {
+          "effort": "low",
+          "source": "ab#1",
+          "cost_usd": 0.012358,
+          "output_tokens": 1940,
+          "key_plume_correct": false,
+          "key_conf": 0.0,
+          "overall": "uncertain",
+          "overall_correct": false,
+          "per_plume": [
+            [
+              1,
+              "uncertain",
+              0.45
+            ]
+          ]
+        },
+        {
+          "effort": "low",
+          "source": "ab#2",
+          "cost_usd": 0.009106,
+          "output_tokens": 2007,
+          "key_plume_correct": true,
+          "key_conf": 0.65,
+          "overall": "uncertain",
+          "overall_correct": false,
+          "per_plume": [
+            [
+              1,
+              "vog_mauna_loa",
+              0.65
+            ]
+          ]
+        },
+        {
+          "effort": "medium",
+          "source": "ab#1",
+          "cost_usd": 0.016935,
+          "output_tokens": 3054,
+          "key_plume_correct": true,
+          "key_conf": 0.65,
+          "overall": "uncertain",
+          "overall_correct": false,
+          "per_plume": [
+            [
+              1,
+              "vog_mauna_loa",
+              0.65
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

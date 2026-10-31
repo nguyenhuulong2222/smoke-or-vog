@@ -1,0 +1,119 @@
+{
+  "variants": {
+    "box": {
+      "prompt": "<0f>1<|box;x1=395;y1=385;x2=921;y2=505;w=1400;h=1000|>",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 1,
+        "mask_px": 19763,
+        "mean_confidence": 0.395,
+        "frac_inside_spark_boxes": 0.995,
+        "spark_box_fill": 0.308
+      },
+      "objects": [
+        {
+          "object_id": "1",
+          "confidence": 0.39453125,
+          "box": [
+            395,
+            382,
+            933,
+            498
+          ],
+          "mask_px": 19763
+        }
+      ]
+    },
+    "box+point": {
+      "prompt": "<0f>1<|box;x1=395;y1=385;x2=921;y2=505;w=1400;h=1000|><|point;x=633;y=438;w=1400;h=1000|>",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 1,
+        "mask_px": 31753,
+        "mean_confidence": 0.59,
+        "frac_inside_spark_boxes": 0.992,
+        "spark_box_fill": 0.494
+      },
+      "objects": [
+        {
+          "object_id": "1",
+          "confidence": 0.58984375,
+          "box": [
+            406,
+            376,
+            912,
+            503
+          ],
+          "mask_px": 31753
+        }
+      ]
+    },
+    "concept:smoke": {
+      "prompt": "smoke",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:volcanic plume": {
+      "prompt": "volcanic plume",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:haze": {
+      "prompt": "haze",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    }
+  },
+  "chosen_for_classification": "box+point",
+  "two_pass": [
+    {
+      "plume_id": 1,
+      "spark_box": [
+        395,
+        385,
+        921,
+        505
+      ],
+      "pass2_box": [
+        330,
+        357,
+        987,
+        521
+      ],
+      "pass1": {
+        "area_px": 31753,
+        "coherence": 0.994,
+        "bbox_frac": 0.0459,
+        "edges_touched": 0
+      },
+      "pass2": {
+        "area_px": 47769,
+        "coherence": 0.938,
+        "bbox_frac": 0.0737,
+        "edges_touched": 0
+      },
+      "kept": "pass2",
+      "reason": "pass 2 larger (1.50x) and coherent"
+    }
+  ]
+}

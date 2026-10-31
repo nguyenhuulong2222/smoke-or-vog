@@ -185,7 +185,8 @@ CLASSIFY_SCHEMA = {
 }
 
 
-def spark_classify(run_id: str, im: Image.Image, context: dict) -> tuple[dict, dict]:
+def spark_classify(run_id: str, im: Image.Image, context: dict,
+                   effort: str = "medium") -> tuple[dict, dict]:
     prompt = (
         "Classify the haze in this true-color satellite image of the Hawaiian Islands. "
         "Allowed classes: vog_kilauea, vog_mauna_loa, wildfire_smoke, dust, cloud, uncertain. "
@@ -194,7 +195,10 @@ def spark_classify(run_id: str, im: Image.Image, context: dict) -> tuple[dict, d
         "detections, and 10 m wind). Reason from evidence: vog plumes are usually thin, "
         "bluish-gray, and trail downwind from an active summit vent; wildfire smoke trails "
         "downwind from fire detections away from the summits and is often browner; cloud is "
-        "bright white with texture. Never force a class: if the evidence conflicts or is "
+        "bright white with texture. Summit-caldera thermal detections are listed separately "
+        "as volcanic_thermal_excluded: they indicate an active vent, not a wildfire. Fire "
+        "clusters carry nearest_summit_km; detections on a volcano's flank during an eruption "
+        "may be lava, not vegetation fire. Never force a class: if the evidence conflicts or is "
         "weak, use 'uncertain' and say why. Confidence is 0 to 1. 'class' is the overall "
         "answer for the dominant plume or 'uncertain'. Give per_plume entries using the "
         "plume ids from the context.\n\nCONTEXT (JSON):\n" + json.dumps(context, ensure_ascii=False)
@@ -202,4 +206,4 @@ def spark_classify(run_id: str, im: Image.Image, context: dict) -> tuple[dict, d
     return _spark_json(run_id, "classify", [
         {"type": "input_text", "text": prompt},
         {"type": "input_image", "image_url": to_data_url(im, "JPEG")},
-    ], CLASSIFY_SCHEMA, "haze_classification")
+    ], CLASSIFY_SCHEMA, "haze_classification", effort=effort)

@@ -26,39 +26,58 @@ Deadline: **Tue Nov 4, 2026, 4:00 pm HST**. Budget: **< $20 total** (spent so fa
     - NOAA NODD (raw ABI on S3) is not needed yet.
   - **Kahu Ola ADP:** live only. Historical frame keys return 404.
 - **Detection chain (decision C):** `src/pipeline.py`, 5 stages, output per run in `out/runs/`.
+- **Round 2:** per-plume aggregation rule, FIRMS volcanic-zone exclusion, two-pass SAM,
+  Mauna Loa case, offline pytest suite (29 tests), and the effort A/B.
 
-## Results (2026-10-31)
+## Results: round 2 (2026-10-31, after fixes 2 and 3a–e)
 
-| Case | Spark localize | SAM (box / box+point) | SAM concepts | Verdict |
-|---|---|---|---|---|
-| Kīlauea 2026-10-17 | 1 plume S of Hawaiʻi Island | 1 mask each, 95–99% inside Spark box | 0 / 0 / 0 | **vog_kilauea 0.80** |
-| Maui 2023-08-08 | 3 plumes | 3 masks each | 0 / 0 / 0 | **uncertain 0.55** overall: #2 wildfire_smoke 0.88 (Kula fire, 22 km upwind); #1 Kona-side veil uncertain 0.45; #3 faint Oʻahu streak smoke 0.62 |
-| Live 2026-10-31 21:40Z | 0 plumes (mostly cloudy) | skipped | 0 / 0 / 0 | no_plume (uncertain 0.0) |
+| Case | Per-plume verdicts | Overall (≥0.70 rule) | Expected |
+|---|---|---|---|
+| Kīlauea 2026-10-17 21:00Z (GOES-W) | #1 vog_kilauea 0.75 | **vog_kilauea 0.75** | vog_kilauea ✅ |
+| Maui 2023-08-08 (MODIS Terra) | #2 wildfire_smoke 0.88; #1 vog_kilauea 0.65 (unconfirmed); #3 uncertain 0.45 | **wildfire_smoke 0.88** | wildfire_smoke ✅ (round 1 said "uncertain") |
+| Mauna Loa 2022-12-01 (MODIS Aqua) | #1 vog_mauna_loa 0.62 (unconfirmed) | **uncertain** | vog_mauna_loa ⚠️ right class, below 0.70 |
+| Live 2026-10-31 21:40Z (GOES-W) | no plume (mostly cloudy) | **uncertain / no_plume** | n/a |
 
-**Which SAM prompt style works best:** box prompts from Muse Spark. In all three cases, the concept
-prompts "smoke", "volcanic plume" and "haze" returned nothing on 1 km satellite imagery, and so did
-"haze plume" in Step 3. Box+point usually gave slightly higher SAM confidence than box alone and is
-used for classification.
+**Two-pass SAM (3b):** pass 2 was kept for every plume (1.11–1.50× larger, coherence ≥ 0.99).
+Kīlauea tail before/after: the plume extent grew from lon −155.89…−155.03 / lat 18.30…19.04
+(5,336 km², 123 km) to −156.27…−154.96 / 18.23…19.25 (9,122 km², 179 km). That captures the
+western tail and reaches the south coast. See `demo/kilauea_20261017/tail_before_after.jpg`.
+
+**Effort A/B (3e)**, classifier only, 6 samples per level over 3 cases (`demo/effort_ab.json`):
+
+| effort | key plume correct | overall correct | mean key conf | mean cost | mean output tokens |
+|---|---|---|---|---|---|
+| low | 5/6 | 4/6 | 0.665 | $0.0100 | 1,625 |
+| medium | 6/6 | 4/6 | 0.760 | $0.0191 | 3,502 |
+
+→ **We keep `medium`.** `low` is cheaper but scores worse. It missed Mauna Loa once (uncertain
+0.45), and on Maui it confirmed plume #1 as vog_kilauea at 0.72, which is doubtful because
+Kīlauea was paused in August 2023. The saving is about $0.009 per run.
+
+**SAM prompt style:** boxes from Spark, refined in two passes. The concept prompts "smoke",
+"volcanic plume" and "haze" still return 0 masks in all 4 cases.
 
 ## Known issues / next fixes
 
-1. **Spark boxes can be too tight.** On the Kīlauea case the box cut off the plume's western tail,
-   so the mask is smaller than the visible haze. Try padding the box, asking for the full extent,
-   or splitting a plume into head and tail objects.
-2. **Volcanic heat in historical FIRMS.** GIBS thermal anomalies include the summit glow, so the
-   summits show up as "fire clusters". Tag clusters within about 5 km of a summit as
-   `volcanic_thermal` (Kahu Ola live already suppresses these zones).
-3. **No ground truth for Maui plume #1.** Kīlauea was paused on 2023-08-08, so `uncertain` looks
-   right. Check against HVO status and the Kohala fire timeline before we use it in the demo.
-4. **The overall verdict follows the biggest plume.** When there are several plumes, consider
-   a `mixed` headline, or report each plume first.
-5. **Unexercised path:** ADP→candidate reprojection (Mercator mask → our grid). Today's ADP was
-   empty, so it's untested on a real detection.
-6. **Mauna Loa** has no test case yet. Add one, such as the 2022-11/12 eruption with MODIS daily.
+1. **Pass-2 land spill:** on Mauna Loa, pass 2 pulled in Molokaʻi and nearby cloud, yet passed
+   every check (coherent, under 3× growth). Add a land/cloud check, for example rejecting pass 2
+   if it adds more than X% bright or land pixels.
+2. **"Active vent" overclaim:** the classifier now reads summit glow as an active vent. On Maui
+   2023-08-08 that pushed plume #1 toward vog_kilauea (0.65), but Kīlauea was paused and only
+   residual heat remained. Phrase it as "thermal signal at summit", and add HVO eruption status
+   (erupting / paused) as context.
+3. **Mauna Loa confidence 0.62:** the source area was under cloud, and the plume was 320 km
+   downwind over the Oʻahu channel. Options: a clearer date (try 2022-11-29 Terra, or VIIRS
+   2022-12-02), or an SO₂ layer from GIBS as extra evidence. Both Kīlauea and Mauna Loa were
+   erupting, so a cautious answer is defensible.
+4. **The upwind end uses 10 m wind**, which isn't plume-level transport. Consider 850 hPa wind
+   from Open-Meteo.
+5. **NE-rift fissure detections** (Mauna Loa 2022) stay in the fire clusters, as designed, and are
+   labeled with `nearest_summit_km`. The classifier handled this correctly ("indicating lava").
 
 ## Next steps (waiting for go-ahead)
 
-- [ ] Fixes 1–2 above, then rerun all three cases.
+- [ ] Fixes 1–2, re-run the 4 cases.
 - [ ] Alerts: Muse Image card per affected district, EN first, then ʻŌlelo Hawaiʻi if quality
       holds. Every card includes "estimate, not official" and the IVHHN link.
 - [ ] Demo surface: static page with the latest verdict, overlay, stage outputs and card.
@@ -71,9 +90,8 @@ used for classification.
 - `experiments/meta-hackathon-muse` covers Muse Spark Open and Glimmer on Fireworks. It has
   nothing on SAM 3.1 or image input.
 - One useful tip: in its effort sweep, Muse did best at `reasoning_effort=low` on simple tasks.
-  Higher effort cost more tokens and lowered accuracy, and `max` truncated answers. We use
-  `reasoning.effort="medium"` for localization and classification. Testing `low` is a cheap
-  experiment.
+  Higher effort cost more tokens and lowered accuracy, and `max` truncated answers. We tested `low` against
+  `medium` for the classifier; `medium` won (see the effort table above).
 
 ## Constraints
 

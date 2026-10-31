@@ -1,13 +1,13 @@
 {
   "state": "no_qualifying_detection",
-  "scan_start_utc": "2026-10-31T22:10:21.100Z",
+  "scan_start_utc": "2026-10-31T22:20:21.100Z",
   "haze_pixels": 0,
   "volcanic_suppressed_pixels": 0,
-  "frame_age_seconds": 1015,
+  "frame_age_seconds": 1174,
   "authority": "estimate",
   "note": "Satellite haze estimate, not an official product. ADP cannot tell wildfire smoke from volcanic haze (vog); a plume drifting from Kīlauea, often southwest past Ka Lae on trade winds, is usually vog. Detections inside the Kīlauea and Mauna Loa volcanic zones are suppressed. Daytime only.",
   "meaning_of_absence": "No qualifying satellite detection. Does NOT mean there is no haze or smoke.",
-  "frame_url": "https://kahuola.org/api/hazards/smoke-sat/frame?key=hawaii%2Fframes%2F20261031T2210Z.png",
+  "frame_url": "https://kahuola.org/api/hazards/smoke-sat/frame?key=hawaii%2Fframes%2F20261031T2220Z.png",
   "candidates": [],
-  "raw_path": "/Volumes/Crucial1TB/smoke-or-vog/data/raw/adp/kahuola_adp_20261031T2210Z.png"
+  "raw_path": "/Volumes/Crucial1TB/smoke-or-vog/data/raw/adp/kahuola_adp_20261031T2220Z.png"
 }

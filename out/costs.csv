@@ -36,3 +36,40 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-10-31T22:27:32+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222710Z; concept:smoke; outcome=completed
 2026-10-31T22:27:34+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222710Z; concept:volcanic plume; outcome=completed
 2026-10-31T22:27:35+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222710Z; concept:haze; outcome=completed
+2026-10-31T22:38:09+00:00,pipeline:localize,muse-spark-1.3,ok,2183,0,1014,817,,0.007038,run=kilauea_20261017_20261031T223754Z
+2026-10-31T22:38:11+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T223754Z; box; outcome=completed
+2026-10-31T22:38:12+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T223754Z; box+point; outcome=completed
+2026-10-31T22:38:13+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T223754Z; concept:smoke; outcome=completed
+2026-10-31T22:38:16+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T223754Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:38:18+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T223754Z; concept:haze; outcome=completed
+2026-10-31T22:38:19+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T223754Z; box+point:pass2; outcome=completed
+2026-10-31T22:38:34+00:00,pipeline:classify,muse-spark-1.3,ok,3100,0,2449,1971,,0.014283,run=kilauea_20261017_20261031T223754Z
+2026-10-31T22:38:55+00:00,pipeline:localize,muse-spark-1.3,ok,2208,0,2286,1907,,0.012476,run=maui_20230808_20261031T223834Z
+2026-10-31T22:38:57+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T223834Z; box; outcome=completed
+2026-10-31T22:39:00+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T223834Z; box+point; outcome=completed
+2026-10-31T22:39:03+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T223834Z; concept:smoke; outcome=completed
+2026-10-31T22:39:04+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T223834Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:39:05+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T223834Z; concept:haze; outcome=completed
+2026-10-31T22:39:08+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T223834Z; box+point:pass2; outcome=completed
+2026-10-31T22:39:41+00:00,pipeline:classify,muse-spark-1.3,ok,3770,0,5188,4491,,0.026762,run=maui_20230808_20261031T223834Z
+2026-10-31T22:40:02+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,823,744,,0.006093,run=live_20261031T223946Z
+2026-10-31T22:40:03+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T223946Z; concept:smoke; outcome=completed
+2026-10-31T22:40:04+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T223946Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:40:05+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T223946Z; concept:haze; outcome=completed
+2026-10-31T22:40:54+00:00,pipeline:localize,muse-spark-1.3,ok,2252,0,4489,4284,,0.021893,run=mauna_loa_20221201_20261031T224017Z
+2026-10-31T22:40:57+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=mauna_loa_20221201_20261031T224017Z; box; outcome=completed
+2026-10-31T22:40:59+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=mauna_loa_20221201_20261031T224017Z; box+point; outcome=completed
+2026-10-31T22:41:00+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=mauna_loa_20221201_20261031T224017Z; concept:smoke; outcome=completed
+2026-10-31T22:41:01+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=mauna_loa_20221201_20261031T224017Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:41:03+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=mauna_loa_20221201_20261031T224017Z; concept:haze; outcome=completed
+2026-10-31T22:41:07+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=mauna_loa_20221201_20261031T224017Z; box+point:pass2; outcome=completed
+2026-10-31T22:41:29+00:00,pipeline:classify,muse-spark-1.3,ok,3290,0,3852,3250,,0.020484,run=mauna_loa_20221201_20261031T224017Z
+2026-10-31T22:42:11+00:00,pipeline:classify,muse-spark-1.3,ok,3100,0,1059,694,,0.008376,run=effort_ab:kilauea_20261017_20261031T223754Z
+2026-10-31T22:42:16+00:00,pipeline:classify,muse-spark-1.3,ok,3100,3087,907,534,,0.004334,run=effort_ab:kilauea_20261017_20261031T223754Z
+2026-10-31T22:42:27+00:00,pipeline:classify,muse-spark-1.3,ok,3100,0,2014,1552,,0.012434,run=effort_ab:kilauea_20261017_20261031T223754Z
+2026-10-31T22:42:37+00:00,pipeline:classify,muse-spark-1.3,ok,3770,0,1933,1261,,0.012928,run=effort_ab:maui_20230808_20261031T223834Z
+2026-10-31T22:42:48+00:00,pipeline:classify,muse-spark-1.3,ok,3770,0,1905,1205,,0.012809,run=effort_ab:maui_20230808_20261031T223834Z
+2026-10-31T22:43:13+00:00,pipeline:classify,muse-spark-1.3,ok,3770,143,4458,3641,,0.023502,run=effort_ab:maui_20230808_20261031T223834Z
+2026-10-31T22:43:26+00:00,pipeline:classify,muse-spark-1.3,ok,3290,0,1940,1404,,0.012358,run=effort_ab:mauna_loa_20221201_20261031T224017Z
+2026-10-31T22:43:36+00:00,pipeline:classify,muse-spark-1.3,ok,3290,3215,2007,1402,,0.009106,run=effort_ab:mauna_loa_20221201_20261031T224017Z
+2026-10-31T22:43:53+00:00,pipeline:classify,muse-spark-1.3,ok,3290,143,3054,2458,,0.016935,run=effort_ab:mauna_loa_20221201_20261031T224017Z
