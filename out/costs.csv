@@ -135,3 +135,4 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-10-31T23:13:09+00:00,pipeline:alerts,muse-spark-1.3,ok,1014,0,9168,7630,,0.040232,run=maui_20230808_20261031T230423Z
 2026-10-31T23:13:40+00:00,pipeline:alerts,muse-spark-1.3,ok,1498,0,6018,4754,,0.027449,run=mauna_loa_20221201_20261031T225554Z
 2026-10-31T23:13:50+00:00,alerts:background,muse-image-1.0,ok,,,,,1 image,0.010000,run=mauna_loa_20221201_20261031T225554Z; verdict=uncertain
+2026-10-31T23:17:04+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,780,699,,0.005910,run=live_20261031T231646Z

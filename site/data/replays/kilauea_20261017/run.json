@@ -1,0 +1,458 @@
+{
+ "slug": "kilauea_20261017",
+ "case": "kilauea_20261017",
+ "mode": "replay",
+ "run_id": "kilauea_20261017_20261031T230310Z",
+ "title": {
+  "en": "Kīlauea vog plume · Oct 17, 2026",
+  "vi": "Vệt vog Kīlauea · 17/10/2026"
+ },
+ "image_time": "2026-10-17T21:00:00Z",
+ "layer": "GOES-West_ABI_GeoColor",
+ "verdict": {
+  "class": "vog_kilauea",
+  "confidence": 0.7,
+  "plume_id": 1,
+  "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+  "confirmed": [
+   {
+    "plume_id": 1,
+    "class": "vog_kilauea",
+    "confidence": 0.7,
+    "source_hint": "Kilauea summit"
+   }
+  ],
+  "unconfirmed": []
+ },
+ "detection": null,
+ "cost_usd": 0.0363,
+ "models": [
+  {
+   "stage": "2 Localize",
+   "model": "muse-spark-1.3",
+   "what": "vision: find haze/plume boxes and points"
+  },
+  {
+   "stage": "3 Segment",
+   "model": "sam-3.1",
+   "what": "box + point prompts → pixel masks (two passes)"
+  },
+  {
+   "stage": "4 Classify",
+   "model": "muse-spark-1.3",
+   "what": "reasoning over image + wind, vents, FIRMS, USGS status"
+  },
+  {
+   "stage": "5 Alerts",
+   "model": "muse-spark-1.3",
+   "what": "5-language alerts from official guidance only"
+  },
+  {
+   "stage": "5 Cards",
+   "model": "muse-image-1.0",
+   "what": "text-free background illustration"
+  }
+ ],
+ "steps": {
+  "image": {
+   "src": "image.jpg",
+   "layer": "GOES-West_ABI_GeoColor",
+   "time": "2026-10-17T21:00:00Z",
+   "source": "NASA GIBS WMS"
+  },
+  "adp": {
+   "state": "unavailable",
+   "candidates": 0,
+   "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
+   "meaning_of_absence": null,
+   "src": null
+  },
+  "spark": {
+   "src": "spark_boxes.jpg",
+   "scene": "True-color satellite view of the main Hawaiian Islands with scattered white clouds over dark ocean; the largest island in the lower right has a pale diffuse trailing haze to its south.",
+   "cloud_cover": "partly",
+   "plumes": [
+    {
+     "label": "pale gray-blue plume south of the large island",
+     "visual_description": "diffuse pale blue-gray haze extending south-southwest from the southern coast of the large island over the ocean, fainter and bluer than the surrounding bright white clouds",
+     "visibility": "faint"
+    }
+   ],
+   "model": "muse-spark-1.3",
+   "cost_usd": 0.005827
+  },
+  "sam": {
+   "src": "sam_two_pass.jpg",
+   "prompt_used": "box+point",
+   "variants": {
+    "box": {
+     "objects": 1,
+     "score": {
+      "objects": 1,
+      "mask_px": 21663,
+      "mean_confidence": 0.527,
+      "frac_inside_spark_boxes": 0.945,
+      "spark_box_fill": 0.487
+     }
+    },
+    "box+point": {
+     "objects": 1,
+     "score": {
+      "objects": 1,
+      "mask_px": 22565,
+      "mean_confidence": 0.523,
+      "frac_inside_spark_boxes": 0.964,
+      "spark_box_fill": 0.518
+     }
+    },
+    "concept:smoke": {
+     "objects": 0,
+     "score": {
+      "objects": 0,
+      "mask_px": 0,
+      "mean_confidence": null
+     }
+    },
+    "concept:volcanic plume": {
+     "objects": 0,
+     "score": {
+      "objects": 0,
+      "mask_px": 0,
+      "mean_confidence": null
+     }
+    },
+    "concept:haze": {
+     "objects": 0,
+     "score": {
+      "objects": 0,
+      "mask_px": 0,
+      "mean_confidence": null
+     }
+    }
+   },
+   "two_pass": [
+    {
+     "plume_id": 1,
+     "pass1_px": 22565,
+     "pass2_px": 31887,
+     "kept": "pass2",
+     "reason": "pass 2 larger (1.41x) and coherent"
+    }
+   ]
+  },
+  "classify": {
+   "overlay": "overlay.jpg",
+   "per_plume": [
+    {
+     "class": "vog_kilauea",
+     "confidence": 0.7,
+     "evidence": [
+      "pale gray-blue diffuse haze south of Hawaii island, bluer and fainter than white clouds",
+      "SSW extent consistent with NE wind from 30 deg transporting summit emissions to the south-southwest",
+      "upwind end SE coast 35.7 km from Kilauea, 69.6 km from Mauna Loa; 31-37 km from Kilauea summit lava thermal clusters (2-4 km from summit), no wildfire source upwind",
+      "Kilauea recently eruptive with pause 2 hr before image is plausible vog source; Mauna Loa not erupting"
+     ],
+     "plume_id": 1,
+     "source_hint": "Kilauea summit"
+    }
+   ],
+   "caveats": "Kilauea was in episodic_pause, Episode 55 ended at 9:03 a.m. HST ~2 hr before the 11:00 a.m. HST (21:00Z) image, so plume may be residual or passive degassing and emission rate is uncertain. Upwind end is 35.7 km from Kilauea summit on the SE coast, not at the vent, likely due to cloud over the island obscuring the over-land portion and segmentation starting offshore. Visibility is faint, limiting color discrimination. Summit/flank thermal clusters are lava/vent glow, not proof of emissions on their own.",
+   "plumes": [
+    {
+     "plume_id": 1,
+     "label": "pale gray-blue plume south of the large island",
+     "area_km2": 9351,
+     "length_km": 177,
+     "upwind_end_distance_km": {
+      "kilauea_summit": 35.7,
+      "mauna_loa_summit": 69.6
+     },
+     "nearest_fire_clusters": [
+      {
+       "near": "Kīlauea summit (4 km)",
+       "n": 32,
+       "nearest_summit_km": 4.4,
+       "distance_km": 31.8
+      },
+      {
+       "near": "Kīlauea summit (2 km)",
+       "n": 168,
+       "nearest_summit_km": 2.1,
+       "distance_km": 37.4
+      },
+      {
+       "near": "Honolulu (14 km)",
+       "n": 49,
+       "nearest_summit_km": 322.6,
+       "distance_km": 389.4
+      }
+     ],
+     "land": {
+      "land_frac": 0.027,
+      "islands_covered": {
+       "Hawaiʻi": 0.024
+      },
+      "land_spill": false,
+      "islands_swallowed": []
+     }
+    }
+   ],
+   "wind": {
+    "source": "Open-Meteo archive (ERA5-based reanalysis)",
+    "sites": {
+     "kilauea_summit": {
+      "time": "2026-10-17T21:00",
+      "speed_kmh": 16.7,
+      "from_deg": 30
+     },
+     "mauna_loa_summit": {
+      "time": "2026-10-17T21:00",
+      "speed_kmh": 7.9,
+      "from_deg": 300
+     },
+     "fire_cluster_1": {
+      "time": "2026-10-17T21:00",
+      "speed_kmh": 16.7,
+      "from_deg": 30
+     },
+     "fire_cluster_2": {
+      "time": "2026-10-17T21:00",
+      "speed_kmh": 19.3,
+      "from_deg": 60
+     },
+     "fire_cluster_3": {
+      "time": "2026-10-17T21:00",
+      "speed_kmh": 16.7,
+      "from_deg": 30
+     }
+    }
+   },
+   "firms": {
+    "source": "NASA GIBS FIRMS thermal anomaly layers (2026-10-17), rasterised",
+    "fire_clusters": [
+     {
+      "lat": 19.4045,
+      "lon": -155.3031,
+      "n": 168,
+      "near": "Kīlauea summit (2 km)",
+      "nearest_summit_km": 2.1
+     },
+     {
+      "lat": 21.3327,
+      "lon": -157.9854,
+      "n": 49,
+      "near": "Honolulu (14 km)",
+      "nearest_summit_km": 322.6
+     },
+     {
+      "lat": 19.4014,
+      "lon": -155.2414,
+      "n": 32,
+      "near": "Kīlauea summit (4 km)",
+      "nearest_summit_km": 4.4
+     },
+     {
+      "lat": 21.4737,
+      "lon": -158.0163,
+      "n": 20,
+      "near": "Honolulu (25 km)",
+      "nearest_summit_km": 335.1
+     }
+    ],
+    "volcanic_thermal_excluded": {
+     "kilauea-summit": 316
+    }
+   },
+   "volcano_status": {
+    "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+    "valid_at": "2026-10-17T21:00:00+00:00",
+    "volcanoes": {
+     "kilauea": {
+      "alert_level": "ADVISORY",
+      "aviation_color": "YELLOW",
+      "erupting": "episodic_pause",
+      "activity_summary": "Episode 55 of the ongoing Halemaʻumaʻu eruption ended abruptly at 9:03 a.m. HST on October 17, 2026. VAN is being reissued to drop the alert level from WATCH to ADVISORY and the color code from ORANGE to YELLOW.",
+      "notice_type": "VAN",
+      "notice_sent_utc": "2026-10-17 19:59:31",
+      "notice_id": "DOI-USGS-HVO-2026-10-17T19:56:12+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-17T19:56:12+00:00"
+     },
+     "mauna_loa": {
+      "alert_level": "NORMAL",
+      "aviation_color": "GREEN",
+      "erupting": "no",
+      "activity_summary": "Mauna Loa earthquake counts decreased in September compared to August, and minor inflation continues. Mauna Loa had a decrease in seismic activity compared to the previous month; a total of 53 earthquakes were detected in Mauna Loa's summit region during the September reporting period, after 87 in August. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+      "notice_type": "MU",
+      "notice_sent_utc": "2026-10-01 21:30:20",
+      "notice_id": "DOI-USGS-HVO-2026-10-01T01:33:14+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-01T01:33:14+00:00"
+     }
+    }
+   }
+  },
+  "alerts": {
+   "available": true,
+   "mode": "replay",
+   "places": {
+    "near": [
+     "Pāhala (Kaʻū)",
+     "Nāʻālehu (Kaʻū)",
+     "Ocean View (Kaʻū)"
+    ],
+    "method": "within 15 km of plume mask",
+    "source_side": "Pāhoa (Puna)",
+    "source_side_km": 29
+   },
+   "health_sources": [
+    "https://vog.ivhhn.org/vog-protection"
+   ],
+   "items": [
+    {
+     "lang": "en",
+     "language": "English",
+     "headline": "Vog haze near Kaʻū from satellite",
+     "summary": "On Oct 17, satellite image at 11:00 HST suggested vog from Kīlauea near Pāhala (Kaʻū), Nāʻālehu (Kaʻū), Ocean View (Kaʻū).",
+     "confidence_label": "Confidence: 70%",
+     "disclaimer": "Satellite estimate, not an official warning.",
+     "disclaimer_en": "Satellite estimate, not an official warning.",
+     "machine_translated": false,
+     "needs_community_review": false,
+     "official_source_url": "https://vog.ivhhn.org/",
+     "replay_banner": "REPLAY · Oct 17, 2026 · not a current alert",
+     "replay_banner_en": "REPLAY · Oct 17, 2026 · not a current alert",
+     "actions": [
+      {
+       "text": "Limit outdoor exertion when vog is high; exercise raises effects from gas and particles.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "reviewed": false
+      },
+      {
+       "text": "When vog rose, go indoors, close doors and windows, and seal gaps if possible.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Stay indoors: When vog levels rise, go indoors and close all doors and windows to the outside and, if possible, seal obvious gaps under doors or around windows.",
+       "reviewed": false
+      }
+     ],
+     "card": "cards/alert_en.jpg"
+    },
+    {
+     "lang": "vi",
+     "language": "Vietnamese (Tiếng Việt)",
+     "headline": "Vệ tinh gợi ý sương mù núi lửa gần Kaʻū",
+     "summary": "Ngày 17 tháng 10, ảnh vệ tinh lúc 11:00 HST đã cho thấy sương mù núi lửa (vog) từ Kīlauea gần Pāhala (Kaʻū), Nāʻālehu (Kaʻū), Ocean View (Kaʻū).",
+     "confidence_label": "Độ tin cậy: 70%",
+     "disclaimer": "Ước tính từ vệ tinh, không phải cảnh báo chính thức.",
+     "disclaimer_en": "Satellite estimate, not an official warning.",
+     "machine_translated": true,
+     "needs_community_review": false,
+     "official_source_url": "https://vog.ivhhn.org/",
+     "replay_banner": "PHÁT LẠI · 17 tháng 10, 2026 · không phải cảnh báo hiện tại",
+     "replay_banner_en": "REPLAY · Oct 17, 2026 · not a current alert",
+     "actions": [
+      {
+       "text": "Hạn chế vận động mạnh ngoài trời khi sương mù núi lửa (vog) dày đặc.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "reviewed": false
+      },
+      {
+       "text": "Khi sương mù núi lửa (vog) tăng, hãy ở trong nhà, đóng cửa và bịt khe hở.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Stay indoors: When vog levels rise, go indoors and close all doors and windows to the outside and, if possible, seal obvious gaps under doors or around windows.",
+       "reviewed": false
+      }
+     ],
+     "card": "cards/alert_vi.jpg"
+    },
+    {
+     "lang": "ilo",
+     "language": "Ilocano (Ilokano)",
+     "headline": "Satellite a makitkita ti vog idiay Kaʻū",
+     "summary": "Idi Oct 17, ti ladawan ti satellite iti 11:00 HST ket nangipakita iti vog manipud Kīlauea asideg ti Pāhala (Kaʻū), Nāʻālehu (Kaʻū), Ocean View (Kaʻū).",
+     "confidence_label": "Pannatalek: 70%",
+     "disclaimer": "Tantia ti satellite, saan nga opisial a ballaag.",
+     "disclaimer_en": "Satellite estimate, not an official warning.",
+     "machine_translated": true,
+     "needs_community_review": true,
+     "official_source_url": "https://vog.ivhhn.org/",
+     "replay_banner": "REPLAY · Okt 17, 2026 · saan nga agdama a ballaag",
+     "replay_banner_en": "REPLAY · Oct 17, 2026 · not a current alert",
+     "actions": [
+      {
+       "text": "Limitan ti nadagsen nga aktibidad iti ruar no ngumato ti vog.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "reviewed": false
+      },
+      {
+       "text": "Idi ngumato ti vog, agtalinaed iti uneg, ikalem dagiti ruangan ken tawa.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Stay indoors: When vog levels rise, go indoors and close all doors and windows to the outside and, if possible, seal obvious gaps under doors or around windows.",
+       "reviewed": false
+      }
+     ],
+     "card": "cards/alert_ilo.jpg"
+    },
+    {
+     "lang": "tl",
+     "language": "Tagalog",
+     "headline": "Vog na haze malapit sa Kaʻū ayon sa satellite",
+     "summary": "Noong Okt 17, ipinakita ng larawan ng satellite noong 11:00 HST ang vog mula sa Kīlauea malapit sa Pāhala (Kaʻū), Nāʻālehu (Kaʻū), Ocean View (Kaʻū).",
+     "confidence_label": "Kumpiyansa: 70%",
+     "disclaimer": "Tantiya mula sa satellite, hindi opisyal na babala.",
+     "disclaimer_en": "Satellite estimate, not an official warning.",
+     "machine_translated": true,
+     "needs_community_review": true,
+     "official_source_url": "https://vog.ivhhn.org/",
+     "replay_banner": "REPLAY · Okt 17, 2026 · hindi kasalukuyang alerto",
+     "replay_banner_en": "REPLAY · Oct 17, 2026 · not a current alert",
+     "actions": [
+      {
+       "text": "Bawasan ang mabigat na gawain sa labas kapag mataas ang vog.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "reviewed": false
+      },
+      {
+       "text": "Nang tumaas ang vog, manatili sa loob, isara ang pinto at bintana.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Stay indoors: When vog levels rise, go indoors and close all doors and windows to the outside and, if possible, seal obvious gaps under doors or around windows.",
+       "reviewed": false
+      }
+     ],
+     "card": "cards/alert_tl.jpg"
+    },
+    {
+     "lang": "haw",
+     "language": "ʻŌlelo Hawaiʻi",
+     "headline": "He vog ma Kaʻū i ʻike ʻia ma ukali",
+     "summary": "I ka lā 17 o ʻOkakopa, ua hōʻike ke kiʻi ukali o ka hola 11:00 HST i ka vog mai Kīlauea kokoke i Pāhala (Kaʻū), Nāʻālehu (Kaʻū), Ocean View (Kaʻū).",
+     "confidence_label": "Hilinaʻi: 70%",
+     "disclaimer": "He kuhi ukali, ʻaʻole ia he ʻōlelo aʻo kūhelu.",
+     "disclaimer_en": "Satellite estimate, not an official warning.",
+     "machine_translated": true,
+     "needs_community_review": true,
+     "official_source_url": "https://vog.ivhhn.org/",
+     "replay_banner": "REPLAY · 17 ʻOkakopa, 2026 · ʻaʻole ia he makaʻala o kēia manawa",
+     "replay_banner_en": "REPLAY · Oct 17, 2026 · not a current alert",
+     "actions": [
+      {
+       "text": "E kaupalena i ka hana ikaika ma waho ke piʻi ka vog.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "reviewed": false
+      },
+      {
+       "text": "I ka piʻi ʻana o ka vog, e noho i loko, e pani i nā puka a me nā pukaaniani.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Stay indoors: When vog levels rise, go indoors and close all doors and windows to the outside and, if possible, seal obvious gaps under doors or around windows.",
+       "reviewed": false
+      }
+     ],
+     "card": "cards/alert_haw.jpg"
+    }
+   ]
+  }
+ }
+}

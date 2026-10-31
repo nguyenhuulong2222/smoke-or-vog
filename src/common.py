@@ -18,7 +18,10 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "out"
 RAW = ROOT / "data" / "raw"
-COSTS_CSV = OUT / "costs.csv"
+# CI writes to its own ledger (SMOKEVOG_COSTS_CSV); budget checks sum every ledger
+# listed in SMOKEVOG_EXTRA_LEDGERS (comma-separated) plus COSTS_CSV.
+COSTS_CSV = Path(os.environ.get("SMOKEVOG_COSTS_CSV") or OUT / "costs.csv")
+EXTRA_LEDGERS = [Path(p) for p in os.environ.get("SMOKEVOG_EXTRA_LEDGERS", "").split(",") if p]
 OUT.mkdir(exist_ok=True)
 RAW.mkdir(parents=True, exist_ok=True)
 
@@ -88,6 +91,7 @@ COST_FIELDS = [
 
 def log_cost(script: str, model: str, cost: float, status: str = "ok",
              units: str = "", note: str = "", **tokens) -> None:
+    COSTS_CSV.parent.mkdir(parents=True, exist_ok=True)
     new = not COSTS_CSV.exists()
     with COSTS_CSV.open("a", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COST_FIELDS)
@@ -104,11 +108,16 @@ def log_cost(script: str, model: str, cost: float, status: str = "ok",
         })
 
 
-def total_spend() -> float:
-    if not COSTS_CSV.exists():
+def ledger_spend(path: Path) -> float:
+    if not path.exists():
         return 0.0
-    with COSTS_CSV.open() as f:
+    with path.open() as f:
         return sum(float(r["cost_usd"] or 0) for r in csv.DictReader(f))
+
+
+def total_spend() -> float:
+    paths = {COSTS_CSV.resolve(), *(p.resolve() for p in EXTRA_LEDGERS)}
+    return sum(ledger_spend(p) for p in paths)
 
 
 def check_budget(planned: float) -> None:

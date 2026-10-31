@@ -1,0 +1,9 @@
+openai==3.42.0
+python-dotenv==1.2.4
+requests==2.34.2
+pillow==13.0.0
+meta-sam-parser==0.1.0
+pyshp==3.1.6
+fonttools==4.68.0
+pytest==9.2.0
+jsonschema==4.26.0

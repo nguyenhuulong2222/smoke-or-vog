@@ -71,7 +71,7 @@ prices on dev.meta.ai/docs/pricing-rate-limits.
 .venv/bin/python -m src.pipeline --case maui_20230808     # Maui wildfire smoke test case
 .venv/bin/python -m src.pipeline --case mauna_loa_20221201 # Mauna Loa eruption vog test case
 .venv/bin/python -m src.alerts out/runs/<run_id>          # stage 5: 5-language alerts + cards
-.venv/bin/python -m pytest                                # 52 offline tests, Meta API mocked
+.venv/bin/python -m pytest                                # 69 offline tests, Meta API mocked
 ```
 
 **Overall verdict rule (safety first):** each plume is classified separately. The overall
@@ -127,6 +127,31 @@ and `alerts/alert_{en,vi,ilo,tl,haw}.png`:
   ([`demo/font_check.png`](demo/font_check.png)).
 - **Affected places** are towns within 15 km of the plume mask (`plume_<id>_mask.png`).
 
+## Stage 6: public demo
+
+- **Site** (`site/`): a static page with no build step, mobile-first (works at 390px), in
+  English and Vietnamese. It reads only `site/data/**` JSON and images, and has no API key or
+  API calls. A CSP limits it to its own origin plus Google Fonts. It has three parts:
+  - **Live now:** the latest scan, or an honest "no plume / too cloudy" with the scan time.
+  - **Replays:** Kīlauea 2026-10-17, Maui 2023-08-08, and Mauna Loa 2022-12-01 as the
+    honest-uncertainty example.
+  - **A six-step view for each run:** true-color image → ADP → Muse Spark boxes → SAM pass 1 vs
+    pass 2 → verdict and evidence (wind, distance to vents, FIRMS, USGS status with link) →
+    alerts in 5 languages with cards.
+- **Replay data:** `python -m src.sitedata out/runs/<run> site/data/replays/<slug> --mode replay`
+  (committed).
+- **Live data:** `.github/workflows/live.yml` runs `python -m src.live_publish` hourly during
+  Hawaiʻi daylight. `MODEL_API_KEY` is an Actions secret, used only server-side. The job:
+  - skips night hours and unchanged frames (no spend);
+  - drops the SAM concept prompts;
+  - writes alerts only for confirmed hazards;
+  - stores its cost ledger and last live run on the `live-data` branch;
+  - deploys `site/` to Cloudflare Pages project `smoke-or-vog`.
+  When total logged spend reaches **$15**, it publishes `budget_stop` and disables its own schedule.
+- **Gate:** the job runs only if the repo variable `LIVE_ENABLED` is `true`. Required secrets:
+  `MODEL_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+- **Local preview:** `python -m src.live_publish --index-only && cd site && python3 -m http.server`.
+
 ## Known limitations
 
 - Affected places are approximate: a fixed town list, 15 km from a satellite-derived mask.
@@ -173,6 +198,8 @@ src/            pipeline.py (chain), models.py (Meta API stages), sources.py (da
                 aggregate.py (verdict rule), land.py, alerts.py (stage 5), geo.py, common.py
 assets/         health_sources.json, land mask, fonts
 tests/          pytest suite (no credits spent)
+site/           static demo site (data/replays committed; data/live built by the workflow)
+.github/        live.yml: hourly server-side scan + Pages deploy (gated by LIVE_ENABLED)
 scripts/        Step-3 smoke tests, effort_ab.py (classifier reasoning-effort A/B)
 demo/           curated runs with compressed images
 out/            generated outputs and costs.csv

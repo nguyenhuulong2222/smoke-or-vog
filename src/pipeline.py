@@ -264,7 +264,7 @@ def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes,
 
 # ------------------------------------------------------------------ run
 
-def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
+def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True) -> Path:
     cfg = CASES[case]
     check_budget(RUN_COST_CAP)
     spend_start = total_spend()
@@ -342,13 +342,14 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
     print(f"  2 Spark localise: {len(plumes_px)} plume(s), ${loc_meta['cost_usd']:.4f}")
 
     # ---- stage 3: SAM prompt styles
-    planned = (2 if plumes_px else 0) + len(CONCEPTS)
+    concept_list = CONCEPTS if concepts else []
+    planned = (2 if plumes_px else 0) + len(concept_list)
     check_budget(planned * SAM_PER_IMAGE)
     variants = []
     if plumes_px:
         variants.append(("box", models.object_prompt(im, plumes_px, with_points=False)))
         variants.append(("box+point", models.object_prompt(im, plumes_px, with_points=True)))
-    variants += [(f"concept:{c}", c) for c in CONCEPTS]
+    variants += [(f"concept:{c}", c) for c in concept_list]
     sam_results, sam_summary = {}, {}
     for label, text in variants:
         res = models.sam_segment(run_id, im, label, text)
@@ -517,10 +518,12 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT) -> Path:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--case", choices=list(CASES), default="live")
+    ap.add_argument("--no-concepts", action="store_true",
+                    help="skip SAM concept prompts (they return nothing on satellite imagery)")
     ap.add_argument("--classify-effort", default=CLASSIFY_EFFORT,
                     choices=["minimal", "low", "medium", "high"])
     a = ap.parse_args()
-    run(a.case, a.classify_effort)
+    run(a.case, a.classify_effort, concepts=not a.no_concepts)
 
 
 if __name__ == "__main__":
