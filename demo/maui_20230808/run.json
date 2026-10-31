@@ -1,0 +1,121 @@
+{
+  "run_id": "maui_20230808_20261031T222431Z",
+  "case": "maui_20230808",
+  "stages": {
+    "0_context": {
+      "image_time": "2023-08-08",
+      "firms_clusters": 6
+    },
+    "1_adp": {
+      "state": "unavailable",
+      "candidates": 0
+    },
+    "2_localize": {
+      "plumes": 3,
+      "model": "muse-spark-1.3",
+      "effort": "medium",
+      "cost_usd": 0.018596,
+      "input_tokens": 2212,
+      "cached_tokens": 0,
+      "output_tokens": 3725,
+      "reasoning_tokens": 3316
+    },
+    "3_sam": {
+      "chosen": "box+point",
+      "variants": {
+        "box": {
+          "objects": 3,
+          "mask_px": 97221,
+          "mean_confidence": 0.737,
+          "frac_inside_spark_boxes": 0.98,
+          "spark_box_fill": 0.385
+        },
+        "box+point": {
+          "objects": 3,
+          "mask_px": 103902,
+          "mean_confidence": 0.768,
+          "frac_inside_spark_boxes": 0.984,
+          "spark_box_fill": 0.413
+        },
+        "concept:smoke": {
+          "objects": 0,
+          "mask_px": 0,
+          "mean_confidence": null
+        },
+        "concept:volcanic plume": {
+          "objects": 0,
+          "mask_px": 0,
+          "mean_confidence": null
+        },
+        "concept:haze": {
+          "objects": 0,
+          "mask_px": 0,
+          "mean_confidence": null
+        }
+      }
+    },
+    "4_classify": {
+      "class": "uncertain",
+      "confidence": 0.55,
+      "model": "muse-spark-1.3",
+      "effort": "medium",
+      "cost_usd": 0.01841,
+      "input_tokens": 3586,
+      "cached_tokens": 0,
+      "output_tokens": 3277,
+      "reasoning_tokens": 2460
+    }
+  },
+  "cost_usd": 0.049506,
+  "total_spend_usd": 0.1222,
+  "classification": {
+    "caveats": "FIRMS clusters at Kilauea summit (1 km, n=45) and Mauna Loa summit (17 km, n=21) are likely volcanic heat, not wildfires, confounding distance metrics for plume 1. No SO2, AOD, or eruption-rate data available; classification uses only true-color morphology, geometry, fire distance and 10-m reanalysis wind. Plume 1 upwind gap and weak local summit wind make origin ambiguous and could be mixed vog plus transported wildfire smoke.",
+    "class": "uncertain",
+    "confidence": 0.55,
+    "evidence": [
+      "dominant plume 1 is largest (17710 km2, 279 km, clear) broad diffuse pale gray veil W-SW of Hawaii Island, not thin bluish-gray vent-trailing vog",
+      "plume 1 upwind end 69.1 km from Mauna Loa summit and 85.7 km from Kilauea summit, offset SW, not at active vent",
+      "plume 1 nearest non-summit fire is Kailua-Kona clusters >90-122 km away; nearest clusters are summit thermal anomalies themselves",
+      "plume 2 and 3 show clear wildfire-smoke geometry but are smaller/fainter than plume 1, so overall dominant haze cannot be confidently assigned"
+    ],
+    "per_plume": [
+      {
+        "class": "uncertain",
+        "confidence": 0.45,
+        "evidence": [
+          "broad diffuse light gray veil covering ocean W-SW of large island, 17710 km2, 279 km long, not thin vent trail",
+          "upwind end at 18.93,-155.925 is 69.1 km from Mauna Loa and 85.7 km from Kilauea, with gap from summit",
+          "nearest FIRMS are summit thermals (45 at Kilauea, 21 at Mauna Loa) likely volcanic heat, nearest true wildfire clusters 91-122 km away",
+          "Mauna Loa summit wind 5.5 kmh from 157 deg too weak to explain 279 km veil; Kilauea summit wind 33 kmh from 11 deg broadly SW but no confirmed active vent emission"
+        ],
+        "plume_id": 1,
+        "source_hint": "veil west-southwest of Hawaii Island"
+      },
+      {
+        "class": "wildfire_smoke",
+        "confidence": 0.88,
+        "evidence": [
+          "elongated pale gray translucent band 273 km stretching W-SW from central Maui island cluster",
+          "upwind end at 20.685,-156.465 only 21.9 km from large Kula, Maui fire cluster (n=201)",
+          "161-188 km from volcanic summits, ruling out direct vog vent trail",
+          "fire_cluster_2 wind 30.5 kmh from 83 deg (easterly) blows directly westward matching band orientation"
+        ],
+        "plume_id": 2,
+        "source_hint": "Kula, Maui (3 km) fire cluster downwind to WSW"
+      },
+      {
+        "class": "wildfire_smoke",
+        "confidence": 0.62,
+        "evidence": [
+          "very faint narrow grayish streak 92 km extending west from west side of middle island (Oahu) over dark ocean",
+          "upwind end 28.9 km from Honolulu (21 km) fire cluster (n=44), 356-388 km from volcanic summits",
+          "easterly trade wind from 83 deg at fire_cluster_2 and 41 deg at fire_cluster_3 supports westward drift",
+          "very_faint visibility and low sam_confidence 0.629 limit confidence; morphology still smoke-like not bright white textured cloud"
+        ],
+        "plume_id": 3,
+        "source_hint": "Honolulu (21 km) fire cluster downwind to west"
+      }
+    ],
+    "source_hint": "dominant veil west-southwest of Hawaii Island with secondary Maui wildfire outflow"
+  }
+}

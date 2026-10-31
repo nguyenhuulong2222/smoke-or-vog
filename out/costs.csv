@@ -7,3 +7,32 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-10-31T22:12:15+00:00,spark_vision_test,muse-spark-1.3,ok,250,0,1099,915,,0.004983,image=https://kahuola.org/api/hazards/smoke-sat/frame?key=hawaii%2Fframes%2F20261031T2
 2026-10-31T22:12:34+00:00,spark_vision_test,muse-spark-1.3,ok,1776,0,1860,1569,,0.010125,image=../data/raw/validation/mauna_loa_modis.jpg
 2026-10-31T22:12:54+00:00,image_test,muse-image-1.0,ok,,,,,1 image,0.010000,"usage={'input_tokens': 4089, 'input_tokens_details': None, 'output_tokens': 796, 'total_tokens': 4885, 'output_tokens_details': None}"
+2026-10-31T22:23:40+00:00,pipeline:localize,muse-spark-1.3,ok,2082,0,1687,1489,,0.009772,run=kilauea_20261017_20261031T222324Z
+2026-10-31T22:23:41+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222324Z; box; outcome=completed
+2026-10-31T22:23:45+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222324Z; box+point; outcome=completed
+2026-10-31T22:23:47+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222324Z; concept:smoke; outcome=completed
+2026-10-31T22:23:48+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222324Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:23:49+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222324Z; concept:haze; outcome=completed
+2026-10-31T22:24:00+00:00,pipeline:classify,muse-spark-1.3,ok,2870,0,1948,1511,,0.011867,run=kilauea_20261017_20261031T222324Z
+2026-10-31T22:24:58+00:00,pipeline:localize,muse-spark-1.3,ok,2212,0,3725,3316,,0.018596,run=maui_20230808_20261031T222431Z
+2026-10-31T22:25:00+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T222431Z; box; outcome=completed
+2026-10-31T22:25:03+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T222431Z; box+point; outcome=completed
+2026-10-31T22:25:05+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T222431Z; concept:smoke; outcome=completed
+2026-10-31T22:25:06+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T222431Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:25:07+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=maui_20230808_20261031T222431Z; concept:haze; outcome=completed
+2026-10-31T22:25:25+00:00,pipeline:classify,muse-spark-1.3,ok,3586,0,3277,2460,,0.018410,run=maui_20230808_20261031T222431Z
+2026-10-31T22:25:40+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,936,865,,0.006573,run=live_20261031T222525Z
+2026-10-31T22:25:41+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222525Z; concept:smoke; outcome=completed
+2026-10-31T22:25:42+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222525Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:25:43+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222525Z; concept:haze; outcome=completed
+2026-10-31T22:25:58+00:00,pipeline:localize,muse-spark-1.3,ok,2137,236,1676,1461,,0.009535,run=kilauea_20261017_20261031T222544Z
+2026-10-31T22:25:59+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222544Z; box; outcome=completed
+2026-10-31T22:26:00+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222544Z; box+point; outcome=completed
+2026-10-31T22:26:01+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222544Z; concept:smoke; outcome=completed
+2026-10-31T22:26:03+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222544Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:26:04+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261031T222544Z; concept:haze; outcome=completed
+2026-10-31T22:26:15+00:00,pipeline:classify,muse-spark-1.3,ok,2900,143,2149,1708,,0.012601,run=kilauea_20261017_20261031T222544Z
+2026-10-31T22:27:31+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,1306,1221,,0.008145,run=live_20261031T222710Z
+2026-10-31T22:27:32+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222710Z; concept:smoke; outcome=completed
+2026-10-31T22:27:34+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222710Z; concept:volcanic plume; outcome=completed
+2026-10-31T22:27:35+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261031T222710Z; concept:haze; outcome=completed

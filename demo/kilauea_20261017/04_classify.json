@@ -1,0 +1,170 @@
+{
+  "context": {
+    "image": {
+      "layer": "GOES-West_ABI_GeoColor",
+      "time": "2026-10-17T21:00:00Z"
+    },
+    "spark_scene": {
+      "description": "True-color satellite view of the main Hawaiian Islands arrayed northwest to southeast over dark ocean, with scattered bright white cumulus and cloud bands concentrated north, east and southwest and relatively clear waters in the central area. Islands are partly cloud-covered, with a distinct pale diffuse trail extending south from the largest southeastern island.",
+      "cloud_cover": "partly",
+      "plumes": [
+        {
+          "label": "pale blue-gray trail south of southeastern island",
+          "visual_description": "diffuse pale blue-gray translucent trail extending south-southwest from the southern coast of the largest southeastern island over dark ocean, distinct in color and texture from surrounding bright white cumulus clouds",
+          "visibility": "faint"
+        }
+      ]
+    },
+    "segmentation_prompt_used": "box+point",
+    "plumes": [
+      {
+        "plume_id": 1,
+        "spark_label": "pale blue-gray trail south of southeastern island",
+        "sam_confidence": 0.54296875,
+        "geometry": {
+          "centroid": {
+            "lat": 18.689,
+            "lon": -155.505
+          },
+          "bbox_lonlat": [
+            -155.89,
+            18.295,
+            -155.03,
+            19.04
+          ],
+          "area_km2": 5336,
+          "length_km": 123,
+          "upwind_end": {
+            "lat": 19.0,
+            "lon": -155.18
+          },
+          "wind_site_used": "kilauea_summit",
+          "upwind_end_distance_km": {
+            "kilauea_summit": 46.4,
+            "mauna_loa_summit": 69.3
+          },
+          "nearest_fire_clusters": [
+            {
+              "near": "Kīlauea summit (0 km)",
+              "n": 516,
+              "distance_km": 46.6
+            },
+            {
+              "near": "Honolulu (14 km)",
+              "n": 49,
+              "distance_km": 391.2
+            },
+            {
+              "near": "Honolulu (25 km)",
+              "n": 20,
+              "distance_km": 404.0
+            }
+          ]
+        }
+      }
+    ],
+    "volcanic_summits": {
+      "kilauea_summit": {
+        "lat": 19.406,
+        "lon": -155.283
+      },
+      "mauna_loa_summit": {
+        "lat": 19.475,
+        "lon": -155.608
+      }
+    },
+    "firms": {
+      "source": "NASA GIBS FIRMS thermal anomaly layers (2026-10-17), rasterised",
+      "clusters": [
+        {
+          "lat": 19.4071,
+          "lon": -155.285,
+          "n": 516,
+          "near": "Kīlauea summit (0 km)"
+        },
+        {
+          "lat": 21.3327,
+          "lon": -157.9854,
+          "n": 49,
+          "near": "Honolulu (14 km)"
+        },
+        {
+          "lat": 21.4737,
+          "lon": -158.0163,
+          "n": 20,
+          "near": "Honolulu (25 km)"
+        }
+      ],
+      "note": "n counts rendered marker pixels on a 0.005-deg grid, not individual detections"
+    },
+    "wind_10m": {
+      "source": "Open-Meteo archive (ERA5-based reanalysis)",
+      "sites": {
+        "kilauea_summit": {
+          "time": "2026-10-17T21:00",
+          "speed_kmh": 16.7,
+          "from_deg": 30
+        },
+        "mauna_loa_summit": {
+          "time": "2026-10-17T21:00",
+          "speed_kmh": 7.9,
+          "from_deg": 300
+        },
+        "fire_cluster_1": {
+          "time": "2026-10-17T21:00",
+          "speed_kmh": 16.7,
+          "from_deg": 30
+        },
+        "fire_cluster_2": {
+          "time": "2026-10-17T21:00",
+          "speed_kmh": 19.3,
+          "from_deg": 60
+        },
+        "fire_cluster_3": {
+          "time": "2026-10-17T21:00",
+          "speed_kmh": 20.3,
+          "from_deg": 57
+        }
+      }
+    },
+    "adp": {
+      "state": "unavailable"
+    }
+  },
+  "result": {
+    "caveats": "Upwind end is ~46 km south of Kilauea summit, likely because cloud over the island obscures the vent-to-coast segment and SAM confidence is modest at 0.54; ADP SO2 unavailable so gas not independently confirmed; Mauna Loa cannot be fully excluded if winds aloft differ from 10-m reanalysis.",
+    "class": "vog_kilauea",
+    "confidence": 0.8,
+    "evidence": [
+      "Diffuse pale blue-gray translucent trail extending south-southwest from southern coast of Hawaii Island, visually distinct from surrounding bright white textured cumulus",
+      "Orientation matches 10-m wind at Kilauea summit from 030 deg at 16.7 kmh blowing toward SSW over 123 km length; Mauna Loa 10-m wind from 300 deg would blow toward ESE and does not match",
+      "Upwind end 46.4 km from Kilauea summit vs 69.3 km from Mauna Loa summit, closer to Kilauea",
+      "Dominant FIRMS thermal cluster n=516 centered at Kilauea summit (0 km) indicating active vent; other clusters near Honolulu >390 km away inconsistent as source",
+      "Color and thin translucent morphology typical of vog, not browner wildfire smoke and not bright white cloud"
+    ],
+    "per_plume": [
+      {
+        "class": "vog_kilauea",
+        "confidence": 0.8,
+        "evidence": [
+          "Pale blue-gray translucent faint trail south of Big Island, distinct from bright white cumulus",
+          "SSW orientation consistent with NNE (030 deg) 10-m wind at Kilauea summit",
+          "Upwind end closer to Kilauea (46.4 km) than Mauna Loa (69.3 km)",
+          "516-pixel FIRMS thermal anomaly at Kilauea summit, Honolulu fires >390 km distant"
+        ],
+        "plume_id": 1,
+        "source_hint": "Kilauea summit vent; SSW downwind plume"
+      }
+    ],
+    "source_hint": "Kilauea summit vent; SSW downwind plume"
+  },
+  "meta": {
+    "model": "muse-spark-1.3",
+    "effort": "medium",
+    "cost_usd": 0.012601,
+    "input_tokens": 2900,
+    "cached_tokens": 143,
+    "output_tokens": 2149,
+    "reasoning_tokens": 1708
+  }
+}

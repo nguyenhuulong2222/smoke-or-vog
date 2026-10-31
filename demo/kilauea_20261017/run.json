@@ -1,0 +1,98 @@
+{
+  "run_id": "kilauea_20261017_20261031T222544Z",
+  "case": "kilauea_20261017",
+  "stages": {
+    "0_context": {
+      "image_time": "2026-10-17T21:00:00Z",
+      "firms_clusters": 3
+    },
+    "1_adp": {
+      "state": "unavailable",
+      "candidates": 0
+    },
+    "2_localize": {
+      "plumes": 1,
+      "model": "muse-spark-1.3",
+      "effort": "medium",
+      "cost_usd": 0.009535,
+      "input_tokens": 2137,
+      "cached_tokens": 236,
+      "output_tokens": 1676,
+      "reasoning_tokens": 1461
+    },
+    "3_sam": {
+      "chosen": "box+point",
+      "variants": {
+        "box": {
+          "objects": 1,
+          "mask_px": 19606,
+          "mean_confidence": 0.449,
+          "frac_inside_spark_boxes": 0.958,
+          "spark_box_fill": 0.555
+        },
+        "box+point": {
+          "objects": 1,
+          "mask_px": 18193,
+          "mean_confidence": 0.543,
+          "frac_inside_spark_boxes": 0.994,
+          "spark_box_fill": 0.534
+        },
+        "concept:smoke": {
+          "objects": 0,
+          "mask_px": 0,
+          "mean_confidence": null
+        },
+        "concept:volcanic plume": {
+          "objects": 0,
+          "mask_px": 0,
+          "mean_confidence": null
+        },
+        "concept:haze": {
+          "objects": 0,
+          "mask_px": 0,
+          "mean_confidence": null
+        }
+      }
+    },
+    "4_classify": {
+      "class": "vog_kilauea",
+      "confidence": 0.8,
+      "model": "muse-spark-1.3",
+      "effort": "medium",
+      "cost_usd": 0.012601,
+      "input_tokens": 2900,
+      "cached_tokens": 143,
+      "output_tokens": 2149,
+      "reasoning_tokens": 1708
+    }
+  },
+  "cost_usd": 0.034636,
+  "total_spend_usd": 0.1709,
+  "classification": {
+    "caveats": "Upwind end is ~46 km south of Kilauea summit, likely because cloud over the island obscures the vent-to-coast segment and SAM confidence is modest at 0.54; ADP SO2 unavailable so gas not independently confirmed; Mauna Loa cannot be fully excluded if winds aloft differ from 10-m reanalysis.",
+    "class": "vog_kilauea",
+    "confidence": 0.8,
+    "evidence": [
+      "Diffuse pale blue-gray translucent trail extending south-southwest from southern coast of Hawaii Island, visually distinct from surrounding bright white textured cumulus",
+      "Orientation matches 10-m wind at Kilauea summit from 030 deg at 16.7 kmh blowing toward SSW over 123 km length; Mauna Loa 10-m wind from 300 deg would blow toward ESE and does not match",
+      "Upwind end 46.4 km from Kilauea summit vs 69.3 km from Mauna Loa summit, closer to Kilauea",
+      "Dominant FIRMS thermal cluster n=516 centered at Kilauea summit (0 km) indicating active vent; other clusters near Honolulu >390 km away inconsistent as source",
+      "Color and thin translucent morphology typical of vog, not browner wildfire smoke and not bright white cloud"
+    ],
+    "per_plume": [
+      {
+        "class": "vog_kilauea",
+        "confidence": 0.8,
+        "evidence": [
+          "Pale blue-gray translucent faint trail south of Big Island, distinct from bright white cumulus",
+          "SSW orientation consistent with NNE (030 deg) 10-m wind at Kilauea summit",
+          "Upwind end closer to Kilauea (46.4 km) than Mauna Loa (69.3 km)",
+          "516-pixel FIRMS thermal anomaly at Kilauea summit, Honolulu fires >390 km distant"
+        ],
+        "plume_id": 1,
+        "source_hint": "Kilauea summit vent; SSW downwind plume"
+      }
+    ],
+    "source_hint": "Kilauea summit vent; SSW downwind plume"
+  }
+}

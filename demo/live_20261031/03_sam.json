@@ -1,0 +1,38 @@
+{
+  "variants": {
+    "concept:smoke": {
+      "prompt": "smoke",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:volcanic plume": {
+      "prompt": "volcanic plume",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:haze": {
+      "prompt": "haze",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    }
+  },
+  "chosen_for_classification": null
+}

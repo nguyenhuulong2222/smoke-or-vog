@@ -1,0 +1,88 @@
+{
+  "variants": {
+    "box": {
+      "prompt": "<0f>1<|box;x1=1029;y1=795;x2=1232;y2=960;w=1400;h=1000|>",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 1,
+        "mask_px": 19606,
+        "mean_confidence": 0.449,
+        "frac_inside_spark_boxes": 0.958,
+        "spark_box_fill": 0.555
+      },
+      "objects": [
+        {
+          "object_id": "1",
+          "confidence": 0.44921875,
+          "box": [
+            1017,
+            787,
+            1194,
+            947
+          ],
+          "mask_px": 19606
+        }
+      ]
+    },
+    "box+point": {
+      "prompt": "<0f>1<|box;x1=1029;y1=795;x2=1232;y2=960;w=1400;h=1000|><|point;x=1124;y=874;w=1400;h=1000|>",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 1,
+        "mask_px": 18193,
+        "mean_confidence": 0.543,
+        "frac_inside_spark_boxes": 0.994,
+        "spark_box_fill": 0.534
+      },
+      "objects": [
+        {
+          "object_id": "1",
+          "confidence": 0.54296875,
+          "box": [
+            1022,
+            792,
+            1195,
+            941
+          ],
+          "mask_px": 18193
+        }
+      ]
+    },
+    "concept:smoke": {
+      "prompt": "smoke",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:volcanic plume": {
+      "prompt": "volcanic plume",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:haze": {
+      "prompt": "haze",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    }
+  },
+  "chosen_for_classification": "box+point"
+}

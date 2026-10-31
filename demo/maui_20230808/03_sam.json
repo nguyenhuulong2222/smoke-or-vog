@@ -1,0 +1,132 @@
+{
+  "variants": {
+    "box": {
+      "prompt": "<0f>1<|box;x1=581;y1=590;x2=1071;y2=880;w=1400;h=1000|>,2<|box;x1=399;y1=385;x2=945;y2=560;w=1400;h=1000|>,3<|box;x1=371;y1=295;x2=539;y2=345;w=1400;h=1000|>",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 3,
+        "mask_px": 97221,
+        "mean_confidence": 0.737,
+        "frac_inside_spark_boxes": 0.98,
+        "spark_box_fill": 0.385
+      },
+      "objects": [
+        {
+          "object_id": "1",
+          "confidence": 0.87109375,
+          "box": [
+            614,
+            588,
+            1045,
+            881
+          ],
+          "mask_px": 61377
+        },
+        {
+          "object_id": "2",
+          "confidence": 0.71875,
+          "box": [
+            433,
+            400,
+            910,
+            574
+          ],
+          "mask_px": 31984
+        },
+        {
+          "object_id": "3",
+          "confidence": 0.62109375,
+          "box": [
+            385,
+            291,
+            559,
+            350
+          ],
+          "mask_px": 3860
+        }
+      ]
+    },
+    "box+point": {
+      "prompt": "<0f>1<|box;x1=581;y1=590;x2=1071;y2=880;w=1400;h=1000|><|point;x=868;y=730;w=1400;h=1000|>,2<|box;x1=399;y1=385;x2=945;y2=560;w=1400;h=1000|><|point;x=700;y=480;w=1400;h=1000|>,3<|box;x1=371;y1=295;x2=539;y2=345;w=1400;h=1000|><|point;x=462;y=320;w=1400;h=1000|>",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 3,
+        "mask_px": 103902,
+        "mean_confidence": 0.768,
+        "frac_inside_spark_boxes": 0.984,
+        "spark_box_fill": 0.413
+      },
+      "objects": [
+        {
+          "object_id": "1",
+          "confidence": 0.87890625,
+          "box": [
+            589,
+            590,
+            1027,
+            876
+          ],
+          "mask_px": 60551
+        },
+        {
+          "object_id": "2",
+          "confidence": 0.796875,
+          "box": [
+            423,
+            389,
+            908,
+            575
+          ],
+          "mask_px": 39048
+        },
+        {
+          "object_id": "3",
+          "confidence": 0.62890625,
+          "box": [
+            376,
+            293,
+            543,
+            350
+          ],
+          "mask_px": 4303
+        }
+      ]
+    },
+    "concept:smoke": {
+      "prompt": "smoke",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:volcanic plume": {
+      "prompt": "volcanic plume",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    },
+    "concept:haze": {
+      "prompt": "haze",
+      "outcome": "completed",
+      "error": null,
+      "score": {
+        "objects": 0,
+        "mask_px": 0,
+        "mean_confidence": null
+      },
+      "objects": []
+    }
+  },
+  "chosen_for_classification": "box+point"
+}
