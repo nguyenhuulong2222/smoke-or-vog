@@ -213,7 +213,8 @@ def write_results(res: dict) -> None:
     doc = ROOT / "docs" / "VALIDATION.md"
     text = doc.read_text()
     head = text.split("## Results")[0]
-    doc.write_text(head + "## Results\n\n" + "\n".join(md) + "\n")
+    tail = text[text.index("## Interpretation"):] if "## Interpretation" in text else ""
+    doc.write_text(head + "## Results\n\n" + "\n".join(md) + "\n" + ("\n" + tail if tail else ""))
     print("\n".join(md))
 
 

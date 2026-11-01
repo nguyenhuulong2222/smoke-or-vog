@@ -210,6 +210,19 @@ and `alerts/alert_{en,vi,ilo,tl,haw}.png`:
   `MODEL_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
 - **Local preview:** `python -m src.live_publish --index-only && cd site && python3 -m http.server`.
 
+## Validation and history
+
+`src/backfill.py` runs every archived GOES-West scan (11:00 and 14:00 HST, 160 scans from Aug 11
+to Oct 31, 2026) through the agent pipeline with tracking, on its own ledger
+(`out/costs_backfill.csv`, $3.94). `src/groundtruth.py` downloads the public AirNow hourly files
+for Hawaiʻi SO₂ and PM2.5. `src/validate.py` applies the rules pre-registered in
+`docs/VALIDATION.md` (committed before any result). Vog: SO₂ rose in 4 of 5 covered scans, against
+a 67% base rate (not significant). Smoke: untested, since none occurred in the window. "No plume":
+clean air at every monitor in only 20 of 107 scans. Ground-level vog is common when no plume is
+visible, so the site never equates "no plume" with clean air. `src/history.py` exports lite site
+data to the `live-data` branch, and the live workflow copies it into the site for the History
+calendar.
+
 ## Known limitations
 
 - Affected places are approximate: a fixed town list, 15 km from a satellite-derived mask.

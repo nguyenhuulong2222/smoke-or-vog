@@ -74,6 +74,29 @@ that shows each step:
 
 On all four cases, the agent's verdicts matched or beat the fixed classifier's on the same plumes.
 
+### Validation against ground monitors (81 days, every scan)
+
+We ran **all 160 archived GOES-West scans** (11:00 and 14:00 HST, Aug 11 to Oct 31, 2026)
+through the full agent pipeline with motion tracking, for $3.94. We then compared each verdict
+with Hawaiʻi DOH and National Park Service SO₂ / PM2.5 monitors (AirNow hourly files, ±3 h). The
+rules were committed before any result was computed (`docs/VALIDATION.md`), and no scan was
+dropped.
+
+| Verdict | Scans | Monitor nearby | Ground agrees | Base rate |
+|---|---|---|---|---|
+| Vog → SO₂ rose | 6 | 5 | 4/5 (80%, 95% CI 38–96%) | 67% |
+| Smoke → PM2.5 rose | 0 | — | untested (no smoke in the window) | — |
+| No plume → clean air at every monitor | 107 | 107 | 20/107 (19%) | — |
+
+What we learned, stated plainly:
+- Five vog cases cannot show that the verdict beats chance. The nearby monitors also rose on 67%
+  of other scans.
+- **"No plume" does not mean clean air.** Ground-level SO₂ at Pāhala and Ocean View was often
+  elevated when no plume was visible from space. So the site says "no haze plume detected" and
+  links to the ground monitors.
+- The site's **History** calendar shows every day's headline verdict, opens any scan, and shows
+  this table under "How accurate is it?".
+
 ## How we used Meta's models
 
 | Model | Where | What it does |

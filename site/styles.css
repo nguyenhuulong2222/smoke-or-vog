@@ -262,3 +262,5 @@ button.cal-day:hover, .cal-day.is-sel { outline: 3px solid var(--pacific); outli
 
 .second-opinion { border-left: 4px solid var(--pacific); padding: 2px 0 2px 12px; margin: 14px 0; }
 .second-opinion ul { padding-left: 18px; }
+.acc-find, #accuracy .small { max-width: 72ch; }
+.acc-find li { margin-bottom: 6px; }

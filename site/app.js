@@ -72,12 +72,19 @@ const T = {
     accUncertain: (u) => `Uncertain (${u.scans} scans): SO₂ rose in ${u.so2_elevated}, PM2.5 in ${u.pm25_elevated}, neither in ${u.neither}.`,
     accCaveat: "Small samples: read the counts, not just the percentages. Most vog plumes drift over the ocean where there are no monitors, and satellites see the whole air column while monitors measure ground level. Base rate = how often the same monitors rose on other scans; a verdict is useful only if it beats that.",
     accNA: "no monitor nearby",
+    accNone: "no such verdicts",
+    accFindVog: (x) => `Vog: SO₂ rose in ${x.agree} of ${x.covered} vog scans with a monitor nearby, but those monitors also rose on ${Math.round(x.base_rate * 100)}% of other scans. ${x.covered} cases cannot show that the verdict beats chance.`,
+    accFindNo: (x) => `No plume: the air was clean at every monitor in only ${x.agree} of ${x.covered} scans. Ground-level vog (mostly SO₂ at Pāhala and Ocean View) is common even when no plume shows from space, so "no plume" never means "clean air".`,
+    accFindSmoke: "Smoke: no wildfire smoke was confirmed in this window, so smoke accuracy is untested here.",
+    accDoc: "Full method and results",
     soTitle: "Second opinion (Muse Wonder)",
     soWhy: (so) => `Asked because the call was borderline: ${so.trigger_code === "band" ? `the top plume's confidence (${Math.round(so.trigger_conf * 100)}%) is between 55% and 75%` : "two plumes point to different hazards"}. Wonder saw the same evidence (every tool result above) but not Spark's verdict.`,
     soRow: (id, s, sc, w, wc) => `Plume #${id}: Spark ${s} (${sc}) / Wonder second opinion: ${w} (${wc})`,
     soAgree: "They agree. Wonder cannot raise confidence, so the 0.70 bar still decides what is confirmed.",
     soDisagree: "They disagree, so the verdict stays uncertain.",
     soInvalid: "Wonder's answer was rejected (no valid citations), so it cannot confirm anything.",
+    notClean: "No plume seen from space does not mean the air is clean: ground-level vog in Kaʻū and Kona is common even then (see How accurate is it?).",
+    groundLink: "Check ground monitors (AirNow)",
     newWorkTitle: "Built during the hackathon", newWork: "Everything in this project (code, pipeline, site, prompts, tests) was built Oct 31–Nov 4, 2026. Pre-existing external input: the Kahu Ola public API (/api/hazards/smoke-sat, /api/firms/hotspots), built earlier by the same author and used read-only as a data source.",
     replayBanner: "Replay of a past event. Not a current alert.",
     daily: "daily satellite pass",
@@ -175,12 +182,19 @@ const T = {
     accUncertain: (u) => `Chưa xác định (${u.scans} lượt): SO₂ tăng ${u.so2_elevated}, PM2.5 tăng ${u.pm25_elevated}, không tăng ${u.neither}.`,
     accCaveat: "Mẫu nhỏ: hãy đọc số lượng, không chỉ phần trăm. Phần lớn vệt vog trôi ra biển, nơi không có trạm đo; vệ tinh nhìn cả cột không khí còn trạm đo chỉ đo ở mặt đất. Tỷ lệ nền = tần suất các trạm đó tăng trong những lượt quét khác; kết luận chỉ hữu ích khi vượt tỷ lệ này.",
     accNA: "không có trạm gần",
+    accNone: "không có kết luận nào",
+    accFindVog: (x) => `Vog: SO₂ tăng ở ${x.agree} trên ${x.covered} lượt kết luận vog có trạm đo gần, nhưng các trạm đó cũng tăng trong ${Math.round(x.base_rate * 100)}% lượt quét khác. ${x.covered} trường hợp chưa đủ để chứng minh kết luận tốt hơn ngẫu nhiên.`,
+    accFindNo: (x) => `Không có vệt mù: không khí sạch ở mọi trạm chỉ trong ${x.agree} trên ${x.covered} lượt quét. Vog sát mặt đất (chủ yếu SO₂ ở Pāhala và Ocean View) vẫn thường xảy ra khi vệ tinh không thấy vệt mù, nên "không có vệt mù" không bao giờ có nghĩa là "không khí sạch".`,
+    accFindSmoke: "Khói: không có lượt quét nào được xác nhận là khói cháy rừng trong khoảng thời gian này, nên độ chính xác với khói chưa được kiểm chứng ở đây.",
+    accDoc: "Phương pháp và kết quả đầy đủ",
     soTitle: "Ý kiến thứ hai (Muse Wonder)",
     soWhy: (so) => `Được hỏi vì kết luận nằm sát ngưỡng: ${so.trigger_code === "band" ? `độ tin cậy của vệt chính (${Math.round(so.trigger_conf * 100)}%) nằm trong khoảng 55%–75%` : "hai vệt chỉ về hai mối nguy khác nhau"}. Wonder xem cùng bằng chứng (mọi kết quả công cụ ở trên) nhưng không thấy kết luận của Spark.`,
     soRow: (id, s, sc, w, wc) => `Vệt #${id}: Spark ${s} (${sc}) / Ý kiến thứ hai của Wonder: ${w} (${wc})`,
     soAgree: "Hai mô hình đồng ý. Wonder không thể nâng độ tin cậy, nên ngưỡng 0,70 vẫn quyết định điều gì được xác nhận.",
     soDisagree: "Hai mô hình không đồng ý, nên kết luận vẫn là chưa xác định.",
     soInvalid: "Câu trả lời của Wonder bị loại (không dẫn nguồn hợp lệ), nên không thể xác nhận điều gì.",
+    notClean: "Vệ tinh không thấy vệt mù không có nghĩa là không khí sạch: vog sát mặt đất ở Kaʻū và Kona vẫn thường xảy ra (xem Độ chính xác ra sao?).",
+    groundLink: "Xem trạm đo mặt đất (AirNow)",
     newWorkTitle: "Xây dựng trong thời gian hackathon", newWork: "Toàn bộ dự án này (mã nguồn, quy trình, trang web, prompt, kiểm thử) được xây dựng từ 31/10 đến 4/11/2026. Đầu vào có sẵn từ trước: API công khai của Kahu Ola (/api/hazards/smoke-sat, /api/firms/hotspots), do cùng tác giả xây dựng trước đó, chỉ được đọc làm nguồn dữ liệu.",
     replayBanner: "Xem lại sự kiện đã qua. Không phải cảnh báo hiện tại.",
     daily: "lượt chụp vệ tinh hằng ngày",
@@ -313,6 +327,8 @@ async function renderLive() {
       el("span", { class: "live__dot", "aria-hidden": "true" }),
       el("p", { class: "live__line", text: parts.join(" · ") }),
       el("button", { type: "button", class: "btn", onclick: () => select("live", 0, true), text: t().openLive }),
+      el("p", { class: "small live__note" }, t().notClean, " ",
+        el("a", { href: "https://www.airnow.gov/?city=Hilo&state=HI&country=USA", text: t().groundLink })),
       note && el("p", { class: "small live__note", text: note })));
     return;
   }
@@ -773,7 +789,7 @@ async function renderAccuracy() {
   const pct = (x) => (x == null ? "—" : `${Math.round(x * 100)}%`);
   const row = (key) => {
     const x = T[key];
-    const agree = x.rate == null ? t().accNA : `${x.agree}/${x.covered} (${pct(x.rate)}, 95% CI ${pct(x.ci95[0])}–${pct(x.ci95[1])})`;
+    const agree = !x.scans ? t().accNone : x.rate == null ? t().accNA : `${x.agree}/${x.covered} (${pct(x.rate)}, 95% CI ${pct(x.ci95[0])}–${pct(x.ci95[1])})`;
     return el("tr", {}, el("td", { text: t().accRows[key] }), el("td", { text: String(x.scans) }),
       el("td", { text: String(x.covered) }), el("td", { text: agree }), el("td", { text: key === "no_plume" ? "—" : pct(x.base_rate) }));
   };
@@ -782,6 +798,10 @@ async function renderAccuracy() {
     el("div", { class: "table-wrap" }, el("table", { class: "table" },
       el("thead", {}, el("tr", {}, t().accCols.map((c) => el("th", { text: c })))),
       el("tbody", {}, ["vog", "smoke", "no_plume"].map(row)))),
+    el("ul", { class: "acc-find" },
+      T.vog.covered ? el("li", { text: t().accFindVog(T.vog) }) : "",
+      T.no_plume.covered ? el("li", { text: t().accFindNo(T.no_plume) }) : "",
+      !T.smoke.scans ? el("li", { text: t().accFindSmoke }) : ""),
     el("p", { class: "small", text: t().accUncertain(T.uncertain) }),
     el("p", { class: "small", text: t().accCaveat }));
 }

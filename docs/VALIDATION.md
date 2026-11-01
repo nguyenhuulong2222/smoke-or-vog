@@ -65,4 +65,32 @@ what does *uncertain* look like on the ground?
 
 ## Results
 
-*(appended by `python -m src.validate`)*
+Computed 2026-11-01 05:17 UTC over **160 scans**.
+
+| Verdict | Scans | With monitor coverage | Agreement | Base rate (same stations, other scans) |
+|---|---|---|---|---|
+| Vog → SO₂ elevated | 6 | 5 | **4/5** (80%, 95% CI 38%–96%) | 67% |
+| Smoke → PM2.5 elevated | 0 | 0 | n/a (no monitor coverage) | n/a |
+| No plume → clean air | 107 | 107 | **20/107** (19%, 95% CI 12%–27%) | — |
+
+**Uncertain** (47 scans, 34 with coverage): SO₂ elevated in 17, PM2.5 elevated in 7, neither in 25.
+
+Per-scan details: `out/validation.json` (site copy: `site/data/validation.json`).
+
+## Interpretation (written after the results; not part of the pre-registered rules)
+
+- **Vog verdicts:** 6 of 160 scans were confirmed vog (all Kīlauea). SO₂ rose at a nearby
+  monitor in 4 of the 5 that had one. But the same stations also rose in 67% of other scans, so
+  with n = 5 this is **not evidence that the vog verdict beats chance**. It is consistent with
+  it, and it is all the network can show.
+- **"No plume" does not mean clean air.** Air was clean at every monitor in only 20 of 107
+  "no plume" scans. For comparison (descriptive), it was clean at every monitor in 26 of the 53
+  scans that did show a plume. Most of the "not clean" readings are SO₂ at Pāhala (46 scans),
+  Ocean View (35), Kona (21) and the Hawaiʻi Volcanoes NP visitor center (18). That is
+  ground-level vog on the Kaʻū and Kona side, which is often too thin, too low or too cloud-covered
+  to show as a distinct plume in a daytime satellite image. **The site therefore says "no haze
+  plume detected", never "air is clean", and points to the ground monitors.**
+- **Smoke:** there was no confirmed wildfire-smoke scan in the 81-day archive window, so smoke
+  accuracy is untested here. The Maui 2023 replay is a single case, not a validation.
+- **Uncertain:** of 47 uncertain scans, SO₂ rose in 17 and PM2.5 in 7. The model held back on
+  many scans where something was in the air. That is the cost of the 0.70 safety bar.
