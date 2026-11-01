@@ -1,0 +1,2 @@
+timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reasoning_tokens,units,cost_usd,note
+2026-11-01T00:58:40+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,1128,1043,,0.007389,run=live_20261101T005824Z

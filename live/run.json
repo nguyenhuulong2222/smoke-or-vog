@@ -1,0 +1,134 @@
+{
+ "slug": "live",
+ "case": "live",
+ "mode": "live",
+ "run_id": "live_20261101T005824Z",
+ "title": {
+  "en": "Live now",
+  "vi": "Trực tiếp"
+ },
+ "image_time": "2026-10-31T23:30:00Z",
+ "layer": "GOES-West_ABI_GeoColor",
+ "verdict": {
+  "class": "uncertain",
+  "confidence": 0.0,
+  "max_plume_confidence": 0.0,
+  "plume_id": null,
+  "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+  "confirmed": [],
+  "unconfirmed": []
+ },
+ "detection": "no_plume",
+ "cost_usd": 0.007389,
+ "models": [
+  {
+   "stage": "2 Localize",
+   "model": "muse-spark-1.3",
+   "what": "vision: find haze/plume boxes and points"
+  },
+  {
+   "stage": "3 Segment",
+   "model": "sam-3.1",
+   "what": "box + point prompts → pixel masks (two passes)"
+  },
+  {
+   "stage": "4 Classify",
+   "model": "muse-spark-1.3",
+   "what": "reasoning over image + wind, vents, FIRMS, USGS status"
+  },
+  {
+   "stage": "5 Alerts",
+   "model": "muse-spark-1.3",
+   "what": "5-language alerts from official guidance only"
+  },
+  {
+   "stage": "5 Cards",
+   "model": "muse-image-1.0",
+   "what": "text-free background illustration"
+  }
+ ],
+ "steps": {
+  "image": {
+   "src": "image.jpg",
+   "layer": "GOES-West_ABI_GeoColor",
+   "time": "2026-10-31T23:30:00Z",
+   "source": "NASA GIBS WMS"
+  },
+  "adp": {
+   "state": "no_qualifying_detection",
+   "candidates": 0,
+   "reason": null,
+   "meaning_of_absence": "No qualifying satellite detection. Does NOT mean there is no haze or smoke.",
+   "src": null
+  },
+  "spark": {
+   "src": "spark_boxes.jpg",
+   "scene": "True-color view of the main Hawaiian Islands with extensive bright white cumulus and cirrus clouds obscuring the northern islands and much of the Big Island in the southeast, while dark open ocean is visible in the southwest. No distinct gray haze or linear plume separate from ordinary clouds is visible.",
+   "cloud_cover": "mostly",
+   "plumes": [],
+   "model": "muse-spark-1.3",
+   "cost_usd": 0.007389
+  },
+  "sam": {
+   "src": null,
+   "prompt_used": null,
+   "variants": {},
+   "two_pass": []
+  },
+  "classify": {
+   "overlay": "overlay.jpg",
+   "per_plume": [],
+   "caveats": "No plume found; nothing to classify.",
+   "plumes": [],
+   "wind": {
+    "source": "Open-Meteo forecast (current)",
+    "sites": {
+     "kilauea_summit": {
+      "time": "2026-11-01T00:45",
+      "speed_kmh": 5.6,
+      "from_deg": 173
+     },
+     "mauna_loa_summit": {
+      "time": "2026-11-01T00:45",
+      "speed_kmh": 8.9,
+      "from_deg": 277
+     }
+    }
+   },
+   "firms": {
+    "source": "Kahu Ola /api/firms/hotspots?include_volcanic=1 (VIIRS NOAA-20/21 NRT, rolling 24 h)",
+    "fire_clusters": [],
+    "volcanic_thermal_excluded": {}
+   },
+   "volcano_status": {
+    "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+    "valid_at": "2026-11-01T00:58:31.487347+00:00",
+    "volcanoes": {
+     "kilauea": {
+      "alert_level": "ADVISORY",
+      "aviation_color": "YELLOW",
+      "erupting": "episodic_pause",
+      "activity_summary": "The Halema'uma'u eruption of Kīlauea remains paused following episode 55 on October 17. The forecast for episode 56 fountaining is now Nov. 3-10, 2026.",
+      "notice_type": "DU",
+      "notice_sent_utc": "2026-10-31 20:36:30",
+      "notice_id": "DOI-USGS-HVO-2026-10-31T18:50:39+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-31T18:50:39+00:00"
+     },
+     "mauna_loa": {
+      "alert_level": "NORMAL",
+      "aviation_color": "GREEN",
+      "erupting": "no",
+      "activity_summary": "Mauna Loa earthquake counts decreased in September compared to August, and minor inflation continues. Mauna Loa had a decrease in seismic activity compared to the previous month; a total of 53 earthquakes were detected in Mauna Loa's summit region during the September reporting period, after 87 in August. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+      "notice_type": "MU",
+      "notice_sent_utc": "2026-10-01 21:30:20",
+      "notice_id": "DOI-USGS-HVO-2026-10-01T01:33:14+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-01T01:33:14+00:00"
+     }
+    }
+   }
+  },
+  "alerts": {
+   "available": false
+  }
+ }
+}
