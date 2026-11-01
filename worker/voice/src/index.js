@@ -293,7 +293,7 @@ async function handleAsk(request, env, origin, allowed) {
       }),
     ]);
     if (!indexRes.ok || !runRes.ok) {
-      return upstreamFailure(origin, allowed, "data_failed");
+      return upstreamFailure(origin, allowed, `data_failed:${indexRes.status}`);
     }
     index = await indexRes.json();
     run = await runRes.json();
