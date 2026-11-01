@@ -10,7 +10,7 @@ const T = {
     howTitle: "How it works",
     footWarn: "Satellite estimate, not an official warning. For official vog information see vog.ivhhn.org; for smoke see fire.airnow.gov.",
     credits: 'Data: <a href="https://earthdata.nasa.gov/gibs">NASA GIBS</a> (GOES-West GeoColor, MODIS), NOAA GOES-18 / NESDIS, NASA FIRMS, <a href="https://www.usgs.gov/observatories/hvo">USGS Hawaiian Volcano Observatory</a>, <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0), <a href="https://www.naturalearthdata.com/">Natural Earth</a>, and the <a href="https://kahuola.org">Kahu Ola</a> public API. Health guidance quoted from the Hawaiʻi Interagency Vog Dashboard (IVHHN / Hawaiʻi DOH) and U.S. EPA AirNow.',
-    kahuola: 'Made in Hawaiʻi for the Meta Global AI Developer Hackathon. Island hazard maps: <a href="https://kahuola.org">kahuola.org</a>.',
+    kahuola: 'Made in Hawaiʻi for the Meta Global AI Developer Hackathon. All code built Oct 31–Nov 4, 2026; the only pre-existing input is the <a href="https://kahuola.org">Kahu Ola</a> public API (same author), used read-only as a data source. Island hazard maps: <a href="https://kahuola.org">kahuola.org</a>.',
     v: { wildfire_smoke: "Likely wildfire smoke", vog_kilauea: "Likely vog from Kīlauea", vog_mauna_loa: "Likely vog from Mauna Loa",
          dust: "Likely dust", cloud: "Cloud", uncertain: "Haze seen, source not confirmed", no_plume: "No haze plume detected" },
     tooCloudy: "Too cloudy to see haze clearly",
@@ -33,7 +33,13 @@ const T = {
     },
     unconfirmed: "Not confirmed (below 70% or unreliable mask)",
     openSteps: "See how this was decided",
-    steps: ["True-color image", "Aerosol signal", "Muse Spark boxes", "SAM masks", "Verdict and evidence", "Alerts"],
+    steps: ["True-color image", "Aerosol signal", "Muse Spark boxes", "SAM masks", "Agent trace", "Verdict and evidence", "Alerts"],
+    sAgent: "Muse Spark decides which tools to call and in what order, then classifies. Every evidence line must cite a tool result (E1, E2, …); a verdict that cites nothing is rejected and the fixed classifier is used instead.",
+    agentCalls: (n, r) => `${n} tool calls in ${r} rounds`, round: "round", verified: "Every evidence line cites a tool result.", rejectedV: "Agent verdict rejected", fixedVs: "Fixed classifier on the same plumes", agentVs: "Agent",
+    noAgent: "No plume in this image, so the agent had nothing to investigate.", agentFixed: "This run used the fixed classifier.", seeAgent: "See the agent at work → Kīlauea replay",
+    guidance: "Official guidance (quoted)", guidanceNote: "Health guidance is quoted from official sources. The AI only selects lines; it does not write health advice.",
+    verbatim: "verbatim", translationLabel: "translation of official guidance, machine-translated", reviewedLabel: "translation of official guidance, reviewed",
+    newWorkTitle: "Built during the hackathon", newWork: "Everything in this project (code, pipeline, site, prompts, tests) was built Oct 31–Nov 4, 2026. Pre-existing external input: the Kahu Ola public API (/api/hazards/smoke-sat, /api/firms/hotspots), built earlier by the same author and used read-only as a data source.",
     replayBanner: "Replay of a past event. Not a current alert.",
     daily: "daily satellite pass",
     s1: "The GOES-West GeoColor (or MODIS) image on a fixed latitude/longitude grid. Everything else is measured on this grid.",
@@ -41,7 +47,7 @@ const T = {
     s3: "Muse Spark looks at the image and draws a box around each haze or plume, plus one point inside it.",
     s4: "SAM 3.1 turns each box and point into a pixel mask. A second pass widens the box by 15% to catch faint tails, and is kept only if the mask stays coherent and does not spill onto land.",
     s5: "Muse Spark weighs the image with measured evidence: wind, distance to the volcanoes, satellite fire detections, and the official USGS volcano status at that time. The overall verdict is the most hazardous class confirmed at 70% or more; anything weaker is shown as not confirmed.",
-    s6: "Muse Spark writes a short alert in five languages using only official health guidance. Muse Image paints a text-free background; the text is drawn by our code.",
+    s6: "Muse Spark writes a short situation summary in five languages and selects official health guidance lines to quote. Muse Image paints a text-free background; the text is drawn by our code.",
     noAdp: "No aerosol detection available for this image.",
     noSam: "No plume to segment.",
     noAlert: "No alert issued. Alerts are written only when a hazard is confirmed at 70% or more.",
@@ -53,7 +59,7 @@ const T = {
     notice: "HVO notice",
     languages: "Language", machine: "Machine-translated", review: "Needs community review", reviewed: "reviewed",
     source: "Source",
-    how1: "Muse Spark (muse-spark-1.3)", how1d: "Vision to find plumes, reasoning to classify them, and the five-language alerts.",
+    how1: "Muse Spark (muse-spark-1.3)", how1d: "Vision to find plumes; an agent that calls our tools (wind, fires, USGS status, geometry) and cites every result; five-language summaries that quote official guidance.",
     how2: "SAM 3.1 (sam-3.1)", how2d: "Box and point prompts become pixel-accurate masks, in two passes.",
     how3: "Muse Image (muse-image-1.0)", how3d: "One text-free background per alert set. All text is rendered by our code.",
     costTitle: "Cost per run", costNote: "Pipeline cost from the API usage of each run. Alerts add about $0.03–0.05 when issued.",
@@ -68,7 +74,7 @@ const T = {
     howTitle: "Cách hoạt động",
     footWarn: "Ước tính từ vệ tinh, không phải cảnh báo chính thức. Thông tin chính thức về vog: vog.ivhhn.org; về khói: fire.airnow.gov.",
     credits: 'Dữ liệu: <a href="https://earthdata.nasa.gov/gibs">NASA GIBS</a> (GOES-West GeoColor, MODIS), NOAA GOES-18 / NESDIS, NASA FIRMS, <a href="https://www.usgs.gov/observatories/hvo">Đài quan sát núi lửa Hawaiʻi (USGS)</a>, <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0), <a href="https://www.naturalearthdata.com/">Natural Earth</a> và API công khai của <a href="https://kahuola.org">Kahu Ola</a>. Hướng dẫn sức khỏe trích từ Hawaiʻi Interagency Vog Dashboard (IVHHN / Sở Y tế Hawaiʻi) và U.S. EPA AirNow.',
-    kahuola: 'Thực hiện tại Hawaiʻi cho Meta Global AI Developer Hackathon. Bản đồ hiểm họa của quần đảo: <a href="https://kahuola.org">kahuola.org</a>.',
+    kahuola: 'Thực hiện tại Hawaiʻi cho Meta Global AI Developer Hackathon. Toàn bộ mã được xây dựng từ 31/10 đến 4/11/2026; đầu vào có sẵn duy nhất là API công khai của <a href="https://kahuola.org">Kahu Ola</a> (cùng tác giả), chỉ đọc làm nguồn dữ liệu. Bản đồ hiểm họa: <a href="https://kahuola.org">kahuola.org</a>.',
     v: { wildfire_smoke: "Có thể là khói cháy rừng", vog_kilauea: "Có thể là sương mù núi lửa (vog) từ Kīlauea", vog_mauna_loa: "Có thể là sương mù núi lửa (vog) từ Mauna Loa",
          dust: "Có thể là bụi", cloud: "Mây", uncertain: "Có mù, chưa xác định được nguồn", no_plume: "Không phát hiện vệt mù" },
     tooCloudy: "Nhiều mây, khó nhìn thấy mù",
@@ -91,7 +97,13 @@ const T = {
     },
     unconfirmed: "Chưa xác nhận (dưới 70% hoặc mặt nạ không đáng tin)",
     openSteps: "Xem cách đưa ra kết luận",
-    steps: ["Ảnh màu thật", "Tín hiệu sol khí", "Khung của Muse Spark", "Mặt nạ SAM", "Kết luận và bằng chứng", "Cảnh báo"],
+    steps: ["Ảnh màu thật", "Tín hiệu sol khí", "Khung của Muse Spark", "Mặt nạ SAM", "Dấu vết tác tử", "Kết luận và bằng chứng", "Cảnh báo"],
+    sAgent: "Muse Spark tự quyết định gọi công cụ nào và theo thứ tự nào, rồi mới phân loại. Mỗi dòng bằng chứng phải dẫn nguồn một kết quả công cụ (E1, E2, …); kết luận không dẫn nguồn sẽ bị loại và hệ thống dùng bộ phân loại cố định.",
+    agentCalls: (n, r) => `${n} lần gọi công cụ trong ${r} vòng`, round: "vòng", verified: "Mọi dòng bằng chứng đều dẫn nguồn kết quả công cụ.", rejectedV: "Kết luận của tác tử bị loại", fixedVs: "Bộ phân loại cố định trên cùng các vệt", agentVs: "Tác tử",
+    noAgent: "Ảnh này không có vệt mù, nên tác tử không có gì để điều tra.", agentFixed: "Lượt chạy này dùng bộ phân loại cố định.", seeAgent: "Xem tác tử hoạt động → bản xem lại Kīlauea",
+    guidance: "Hướng dẫn chính thức (trích dẫn)", guidanceNote: "Hướng dẫn sức khỏe được trích từ nguồn chính thức. AI chỉ chọn dòng, không tự viết lời khuyên sức khỏe.",
+    verbatim: "nguyên văn", translationLabel: "bản dịch hướng dẫn chính thức, dịch máy", reviewedLabel: "bản dịch hướng dẫn chính thức, đã duyệt",
+    newWorkTitle: "Xây dựng trong thời gian hackathon", newWork: "Toàn bộ dự án này (mã nguồn, quy trình, trang web, prompt, kiểm thử) được xây dựng từ 31/10 đến 4/11/2026. Đầu vào có sẵn từ trước: API công khai của Kahu Ola (/api/hazards/smoke-sat, /api/firms/hotspots), do cùng tác giả xây dựng trước đó, chỉ được đọc làm nguồn dữ liệu.",
     replayBanner: "Xem lại sự kiện đã qua. Không phải cảnh báo hiện tại.",
     daily: "lượt chụp vệ tinh hằng ngày",
     s1: "Ảnh GOES-West GeoColor (hoặc MODIS) trên lưới kinh độ/vĩ độ cố định. Mọi phép đo khác đều dựa trên lưới này.",
@@ -99,7 +111,7 @@ const T = {
     s3: "Muse Spark xem ảnh và vẽ một khung quanh mỗi vệt mù, cùng một điểm nằm bên trong.",
     s4: "SAM 3.1 biến mỗi khung và điểm thành mặt nạ điểm ảnh. Lượt thứ hai nới khung thêm 15% để bắt phần đuôi mờ, và chỉ được giữ nếu mặt nạ liền mạch, không tràn lên đất liền.",
     s5: "Muse Spark cân nhắc ảnh cùng các bằng chứng đo được: gió, khoảng cách tới núi lửa, điểm cháy từ vệ tinh và tình trạng núi lửa chính thức của USGS lúc đó. Kết luận chung là loại nguy hiểm nhất được xác nhận từ 70% trở lên; các vệt yếu hơn được ghi là chưa xác nhận.",
-    s6: "Muse Spark viết cảnh báo ngắn bằng năm ngôn ngữ, chỉ dựa trên hướng dẫn sức khỏe chính thức. Muse Image vẽ nền không có chữ; chữ do mã của chúng tôi vẽ lên.",
+    s6: "Muse Spark viết tóm tắt tình hình ngắn bằng năm ngôn ngữ và chọn các dòng hướng dẫn sức khỏe chính thức để trích dẫn. Muse Image vẽ nền không có chữ; chữ do mã của chúng tôi vẽ lên.",
     noAdp: "Không có dữ liệu phát hiện sol khí cho ảnh này.",
     noSam: "Không có vệt mù để tách.",
     noAlert: "Không phát cảnh báo. Cảnh báo chỉ được viết khi một mối nguy được xác nhận từ 70% trở lên.",
@@ -111,7 +123,7 @@ const T = {
     notice: "Thông báo HVO",
     languages: "Ngôn ngữ", machine: "Dịch máy", review: "Cần cộng đồng duyệt lại", reviewed: "đã duyệt",
     source: "Nguồn",
-    how1: "Muse Spark (muse-spark-1.3)", how1d: "Thị giác để tìm vệt mù, suy luận để phân loại, và viết cảnh báo năm ngôn ngữ.",
+    how1: "Muse Spark (muse-spark-1.3)", how1d: "Thị giác để tìm vệt mù; tác tử gọi công cụ (gió, điểm cháy, tình trạng USGS, hình học) và dẫn nguồn mọi kết quả; tóm tắt năm ngôn ngữ trích dẫn hướng dẫn chính thức.",
     how2: "SAM 3.1 (sam-3.1)", how2d: "Khung và điểm trở thành mặt nạ chính xác tới từng điểm ảnh, qua hai lượt.",
     how3: "Muse Image (muse-image-1.0)", how3d: "Một ảnh nền không chữ cho mỗi bộ cảnh báo. Toàn bộ chữ do mã của chúng tôi vẽ.",
     costTitle: "Chi phí mỗi lượt chạy", costNote: "Chi phí quy trình tính từ mức sử dụng API của từng lượt. Cảnh báo tốn thêm khoảng 0,03–0,05 USD khi được phát.",
@@ -254,13 +266,13 @@ async function renderViewer() {
     onclick: () => select(state.current, i),
     onkeydown: (e) => {
       const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-      if (d) { e.preventDefault(); const n = (state.step + d + 6) % 6; select(state.current, n).then(() => $(`#step-${n}`).focus()); }
+      if (d) { e.preventDefault(); const n = (state.step + d + 7) % 7; select(state.current, n).then(() => $(`#step-${n}`).focus()); }
     },
   }, el("b", { text: String(i + 1) }), name)));
   const active = tabs.querySelector('[aria-selected="true"]');
   if (active) tabs.scrollLeft = Math.max(0, active.offsetLeft - tabs.offsetLeft - 16);
   $("#explain").setAttribute("aria-labelledby", `step-${state.step}`);
-  [step1, step2, step3, step4, step5, step6][state.step](run);
+  [step1, step2, step3, step4, stepAgent, step5, step6][state.step](run);
 }
 
 function frame(path, file, caption) {
@@ -320,6 +332,27 @@ function step4(run) {
         el("td", { text: `${r.kept}: ${r.reason}` }))))) : el("p", { text: t().noSam }),
     el("p", { class: "small", text: t().concepts }));
 }
+function stepAgent(run) {
+  const a = run.steps.agent || { calls: [] };
+  if (!a.calls || !a.calls.length) {
+    emptyFrame(run, hasVisiblePlume(run) ? t().agentFixed : t().noAgent, { step: 4, label: t().seeAgent });
+    explain(el("h3", { text: t().steps[4] }), el("p", { text: t().sAgent }));
+    return;
+  }
+  frame(state.current, run.steps.classify.overlay, t().agentCalls(a.calls.length, a.rounds));
+  explain(
+    el("h3", { text: t().steps[4] }), el("p", { text: t().sAgent }),
+    el("p", { class: "small", text: `${t().agentCalls(a.calls.length, a.rounds)} · $${(a.cost_usd || 0).toFixed(3)}` }),
+    el("ol", { class: "trace" }, a.calls.map((c) => el("li", {},
+      el("span", { class: "cite", text: c.cite }), " ",
+      el("strong", { text: c.name }),
+      el("span", { class: "small", text: ` ${t().round} ${c.round} · ${Object.entries(c.arguments).map(([k, v]) => `${k}=${Array.isArray(v) ? "[" + v.join(", ") + "]" : v}`).join(", ")}` }),
+      el("div", { text: c.summary })))),
+    a.valid ? el("p", { class: "ok-note", text: t().verified }) : el("p", { class: "status-note", text: `${t().rejectedV}: ${a.rejected}` }),
+    a.compare && a.compare.standard ? dl([[t().agentVs, t().v[a.compare.agent] || a.compare.agent || "—"],
+                                          [t().fixedVs, t().v[a.compare.standard] || a.compare.standard]]) : "",
+  );
+}
 function step5(run) {
   const s = run.steps.classify;
   const v = verdictKey(run);
@@ -328,7 +361,7 @@ function step5(run) {
   const plumeInfo = Object.fromEntries((s.plumes || []).map((p) => [p.plume_id, p]));
   const vol = (s.volcano_status && s.volcano_status.volcanoes) || {};
   explain(
-    el("h3", { text: t().steps[4] }), el("p", { text: t().s5 }),
+    el("h3", { text: t().steps[5] }), el("p", { text: t().s5 }),
     el("p", { class: "verdict-line", "data-v": v, text: `${t().v[v]}${ov.confidence >= 0.7 ? ` (${pct(ov.confidence)})` : ""}` }),
     (ov.unconfirmed || []).length ? el("p", { class: "small", text: `${t().unconfirmed}: ` + ov.unconfirmed.map((u) =>
       `#${u.plume_id} ${t().v[u.class] || u.class} ${pct(u.confidence)}${u.not_confirmed_because ? " (" + u.not_confirmed_because + ")" : ""}`).join("; ") }) : "",
@@ -358,8 +391,8 @@ function step5(run) {
 function step6(run) {
   const a = run.steps.alerts;
   if (!a.available) {
-    emptyFrame(run, t().noAlert, { step: 5, label: t().seeAlerts });
-    explain(el("h3", { text: t().steps[5] }), el("p", { text: t().s6 }), el("p", { class: "status-note", text: t().noAlert }));
+    emptyFrame(run, t().noAlert, { step: 6, label: t().seeAlerts });
+    explain(el("h3", { text: t().steps[6] }), el("p", { text: t().s6 }), el("p", { class: "status-note", text: t().noAlert }));
     return;
   }
   const lang = a.items.some((x) => x.lang === state.alertLang) ? state.alertLang : (state.lang === "vi" ? "vi" : "en");
@@ -367,7 +400,7 @@ function step6(run) {
   const f = $("#frame");
   f.replaceChildren(it.card ? el("img", { src: `data/${state.current}/${it.card}${ver(state.current)}`, alt: `${it.headline}. ${it.summary}`, width: 900, height: 506 }) : "", el("figcaption", { text: it.language }));
   explain(
-    el("h3", { text: t().steps[5] }), el("p", { text: t().s6 }),
+    el("h3", { text: t().steps[6] }), el("p", { text: t().s6 }),
     el("div", { class: "tabs", role: "tablist", "aria-label": t().languages }, a.items.map((x) => el("button", {
       type: "button", role: "tab", "aria-selected": String(x.lang === lang),
       onclick: () => { state.alertLang = x.lang; step6(run); }, text: x.language }))),
@@ -375,7 +408,12 @@ function step6(run) {
     el("p", {}, it.machine_translated ? el("span", { class: "flag", text: t().machine }) : "", it.needs_community_review ? el("span", { class: "flag", text: t().review }) : ""),
     el("p", { class: "verdict-line", "data-v": verdictKey(run), text: it.headline }),
     el("p", { text: it.summary }),
-    el("ul", {}, it.actions.map((x) => el("li", {}, x.text, " ", el("a", { class: "src", href: x.source_url, title: x.excerpt_en, text: `(${t().source}${x.reviewed ? ", " + t().reviewed : ""})` })))),
+    el("h4", { class: "guidance-h", text: t().guidance }),
+    el("p", { class: "small", text: t().guidanceNote }),
+    el("ul", { class: "guidance" }, it.actions.map((x) => el("li", {},
+      el("span", { text: x.text }),
+      el("span", { class: "src" }, " — ", el("a", { href: x.source_url, text: x.publisher || t().source }),
+        ` (${x.verbatim ? t().verbatim : (x.reviewed ? t().reviewedLabel : t().translationLabel)})`)))),
     el("p", { class: "small", text: `${it.confidence_label}. ${it.disclaimer}` }),
     el("p", { class: "small" }, el("a", { href: it.official_source_url, text: it.official_source_url })),
   );
@@ -395,7 +433,9 @@ async function renderHow() {
         el("td", { text: r.title[state.lang] || r.title.en }),
         el("td", { text: t().v[verdictKey(r)] }),
         el("td", { text: `$${(r.cost_usd || 0).toFixed(3)}` }))))),
-    el("p", { class: "small", text: t().costNote }));
+    el("p", { class: "small", text: t().costNote }),
+    el("h3", { text: t().newWorkTitle }),
+    el("p", { class: "small", text: t().newWork }));
 }
 
 /* ---------------- boot ---------------- */
@@ -418,7 +458,7 @@ function routeFromHash() {
   const live = state.runs.live;
   const fallback = live && hasVisiblePlume(live) ? "live" : (demoPath() || known[0]);
   return { path: m && known.includes(m[1]) ? m[1] : fallback,
-           step: m && m[2] ? Math.min(5, Math.max(0, Number(m[2]) - 1)) : 0 };
+           step: m && m[2] ? Math.min(6, Math.max(0, Number(m[2]) - 1)) : 0 };
 }
 window.addEventListener("hashchange", () => {
   if (!state.index) return;

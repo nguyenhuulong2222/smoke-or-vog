@@ -2,7 +2,7 @@
  "slug": "mauna_loa_20221201",
  "case": "mauna_loa_20221201",
  "mode": "replay",
- "run_id": "mauna_loa_20221201_20261031T225554Z",
+ "run_id": "mauna_loa_20221201_20261101T012354Z",
  "title": {
   "en": "Mauna Loa eruption · Dec 1, 2022 (honest uncertainty)",
   "vi": "Phun trào Mauna Loa · 1/12/2022 (không chắc chắn, trung thực)"
@@ -12,21 +12,21 @@
  "verdict": {
   "class": "uncertain",
   "confidence": 0.0,
-  "max_plume_confidence": 0.38,
+  "max_plume_confidence": 0.62,
   "plume_id": null,
   "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
   "confirmed": [],
   "unconfirmed": [
    {
     "plume_id": 1,
-    "class": "uncertain",
-    "confidence": 0.38,
-    "source_hint": "far-field haze SW of Oahu/Molokai; Big Island vog source cloud-obscured vs small Honolulu fire"
+    "class": "vog_mauna_loa",
+    "confidence": 0.62,
+    "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE"
    }
   ]
  },
  "detection": null,
- "cost_usd": 0.043553,
+ "cost_usd": 0.083363,
  "models": [
   {
    "stage": "2 Localize",
@@ -39,9 +39,9 @@
    "what": "box + point prompts → pixel masks (two passes)"
   },
   {
-   "stage": "4 Classify",
+   "stage": "4 Agent",
    "model": "muse-spark-1.3",
-   "what": "reasoning over image + wind, vents, FIRMS, USGS status"
+   "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"
   },
   {
    "stage": "5 Alerts",
@@ -70,17 +70,17 @@
   },
   "spark": {
    "src": "spark_boxes.jpg",
-   "scene": "True-color view of the main Hawaiian Islands from northwestern islands to the large island in the southeast, with scattered white cumulus and elongated cloud bands over dark ocean and a thin gray veil over the ocean southwest of the central islands.",
+   "scene": "True-color satellite view of the main Hawaiian Islands from Niihau and Kauai in the northwest to Hawaii in the southeast, with scattered bright white cumulus over ocean and islands, large clear dark-ocean gaps in the center, and a diffuse gray translucent veil in the central area southwest of Oahu and Molokai.",
    "cloud_cover": "partly",
    "plumes": [
     {
-     "label": "thin gray streak southwest of central islands",
-     "visual_description": "thin translucent pale gray veil over dark ocean extending southwest from near the central islands, distinct from brighter white cumulus and cirrus",
+     "label": "diffuse gray veil southwest of the central islands",
+     "visual_description": "elongated translucent light-gray veil extending southwest over dark ocean, fainter and grayer than adjacent bright white cumulus",
      "visibility": "faint"
     }
    ],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.011825
+   "cost_usd": 0.019084
   },
   "sam": {
    "src": "sam_two_pass.jpg",
@@ -90,54 +90,30 @@
      "objects": 1,
      "score": {
       "objects": 1,
-      "mask_px": 26656,
-      "mean_confidence": 0.484,
-      "frac_inside_spark_boxes": 0.999,
-      "spark_box_fill": 0.57
+      "mask_px": 32250,
+      "mean_confidence": 0.52,
+      "frac_inside_spark_boxes": 0.994,
+      "spark_box_fill": 0.645
      }
     },
     "box+point": {
      "objects": 1,
      "score": {
       "objects": 1,
-      "mask_px": 27426,
-      "mean_confidence": 0.516,
-      "frac_inside_spark_boxes": 0.997,
-      "spark_box_fill": 0.585
-     }
-    },
-    "concept:smoke": {
-     "objects": 0,
-     "score": {
-      "objects": 0,
-      "mask_px": 0,
-      "mean_confidence": null
-     }
-    },
-    "concept:volcanic plume": {
-     "objects": 0,
-     "score": {
-      "objects": 0,
-      "mask_px": 0,
-      "mean_confidence": null
-     }
-    },
-    "concept:haze": {
-     "objects": 0,
-     "score": {
-      "objects": 0,
-      "mask_px": 0,
-      "mean_confidence": null
+      "mask_px": 27304,
+      "mean_confidence": 0.625,
+      "frac_inside_spark_boxes": 0.999,
+      "spark_box_fill": 0.549
      }
     }
    },
    "two_pass": [
     {
      "plume_id": 1,
-     "pass1_px": 27426,
-     "pass2_px": 35629,
+     "pass1_px": 27304,
+     "pass2_px": 37313,
      "kept": "pass2",
-     "reason": "pass 2 larger (1.30x) and coherent"
+     "reason": "pass 2 larger (1.37x) and coherent"
     }
    ]
   },
@@ -145,54 +121,98 @@
    "overlay": "overlay.jpg",
    "per_plume": [
     {
-     "class": "uncertain",
-     "confidence": 0.38,
-     "evidence": [
-      "plume_id 1: thin gray streak SW of central islands, centroid 20.912,-158.187, length 236 km, area 10300 km2, land_frac 0.0, faint",
-      "upwind_end 21.26,-158.205 is 335.7 km from Mauna Loa and 367.8 km from Kilauea, not trailing from active vent",
-      "closest fire 18.7 km Honolulu n=21 far from summit (344.1 km) could be smoke source but size mismatch; other nearby clusters n=196 and n=86 at 333-335 km are within 5-22 km of Mauna Loa summit and are lava during eruption, not wildfire",
-      "volcanic_thermal_excluded 309 Mauna Loa + 91 Kilauea confirms active vents but summit region cloud-obscured in true-color",
-      "color thin pale gray favors aged vog over brown wildfire smoke or bright white cloud, but far-field transport not proven"
-     ],
      "plume_id": 1,
-     "source_hint": "far-field haze SW of Oahu/Molokai; Big Island vog source cloud-obscured vs small Honolulu fire"
+     "class": "vog_mauna_loa",
+     "confidence": 0.62,
+     "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE",
+     "evidence": [
+      "Both volcanoes erupting at image time, but Mauna Loa at WARNING/RED with Northeast Rift Zone fissures feeding large flows while Kilauea confined to Halemaumau crater, making Mauna Loa the dominant SO2 source. [E1]",
+      "FIRMS shows massive lava thermal clusters near Mauna Loa summit (1354, 196, 174 pixels) and volcanic_thermal counts 309 at Mauna Loa vs 91 at Kilauea, supporting dominant Mauna Loa emission. [E5]",
+      "No major wildfire near plume upwind end at 21.245N, -157.49E east of Oahu; only small 21-pixel Honolulu cluster 344 km from summits, arguing against wildfire_smoke for a 10803 km2, 212-km veil. [E5, E6]",
+      "Plume-centroid wind from 34 deg at 23.4 kmh blows toward SW, placing the SW-of-Oahu/Molokai veil downwind; summit-area winds light/variable from 338 deg and 252 deg, permitting NW-ward drift of Big Island vog to central islands. [E4, E6, E7, E8]",
+      "Mask purely oceanic with land_frac 0.0 and large diffuse extent 10803 km2 over 212 km, consistent with translucent gray veil over dark ocean fainter/grayer than adjacent bright white cumulus rather than island-orographic cloud. [E2, E3]",
+      "Centroid 282.4 km from Mauna Loa summit vs 315.4 km from Kilauea summit, slightly favoring Mauna Loa for far-field aged vog despite detachment. [E3]"
+     ],
+     "evidence_cited": [
+      {
+       "cites": [
+        "E1"
+       ],
+       "text": "Both volcanoes erupting at image time, but Mauna Loa at WARNING/RED with Northeast Rift Zone fissures feeding large flows while Kilauea confined to Halemaumau crater, making Mauna Loa the dominant SO2 source."
+      },
+      {
+       "cites": [
+        "E5"
+       ],
+       "text": "FIRMS shows massive lava thermal clusters near Mauna Loa summit (1354, 196, 174 pixels) and volcanic_thermal counts 309 at Mauna Loa vs 91 at Kilauea, supporting dominant Mauna Loa emission."
+      },
+      {
+       "cites": [
+        "E5",
+        "E6"
+       ],
+       "text": "No major wildfire near plume upwind end at 21.245N, -157.49E east of Oahu; only small 21-pixel Honolulu cluster 344 km from summits, arguing against wildfire_smoke for a 10803 km2, 212-km veil."
+      },
+      {
+       "cites": [
+        "E4",
+        "E6",
+        "E7",
+        "E8"
+       ],
+       "text": "Plume-centroid wind from 34 deg at 23.4 kmh blows toward SW, placing the SW-of-Oahu/Molokai veil downwind; summit-area winds light/variable from 338 deg and 252 deg, permitting NW-ward drift of Big Island vog to central islands."
+      },
+      {
+       "cites": [
+        "E2",
+        "E3"
+       ],
+       "text": "Mask purely oceanic with land_frac 0.0 and large diffuse extent 10803 km2 over 212 km, consistent with translucent gray veil over dark ocean fainter/grayer than adjacent bright white cumulus rather than island-orographic cloud."
+      },
+      {
+       "cites": [
+        "E3"
+       ],
+       "text": "Centroid 282.4 km from Mauna Loa summit vs 315.4 km from Kilauea summit, slightly favoring Mauna Loa for far-field aged vog despite detachment."
+      }
+     ]
     }
    ],
-   "caveats": "Segmentation faint with low sam_confidence 0.45; Big Island source region is cloud-covered so continuity to vent cannot be verified; near-summit FIRMS clusters are lava from ongoing Mauna Loa NE rift eruption, not wildfires; light winds 6-17 kmh limit transport inference.",
+   "caveats": "Far-field detached veil ~278-308 km from vents with dual contemporaneous eruptions, so a Kilauea contribution cannot be excluded and no SO2 measurement confirms composition.",
    "plumes": [
     {
      "plume_id": 1,
-     "label": "thin gray streak southwest of central islands",
-     "area_km2": 10300,
-     "length_km": 236,
+     "label": "diffuse gray veil southwest of the central islands",
+     "area_km2": 10803,
+     "length_km": 212,
      "upwind_end_distance_km": {
-      "kilauea_summit": 367.8,
-      "mauna_loa_summit": 335.7
+      "kilauea_summit": 382.5,
+      "mauna_loa_summit": 350.5
      },
      "nearest_fire_clusters": [
       {
        "near": "Honolulu (35 km)",
        "n": 21,
        "nearest_summit_km": 344.1,
-       "distance_km": 18.7
+       "distance_km": 14.8
       },
       {
        "near": "Mauna Loa summit (22 km)",
        "n": 86,
        "nearest_summit_km": 22.5,
-       "distance_km": 333.2
+       "distance_km": 347.7
       },
       {
        "near": "Mauna Loa summit (5 km)",
        "n": 196,
        "nearest_summit_km": 5.5,
-       "distance_km": 335.7
+       "distance_km": 350.6
       }
      ],
      "land": {
       "land_frac": 0.0,
       "islands_covered": {
-       "Molokaʻi": 0.006
+       "Oʻahu": 0.0
       },
       "land_spill": false,
       "islands_swallowed": []
@@ -307,6 +327,112 @@
     }
    }
   },
+  "agent": {
+   "used": true,
+   "valid": true,
+   "rejected": null,
+   "rounds": 3,
+   "cost_usd": 0.032721,
+   "calls": [
+    {
+     "cite": "E1",
+     "round": 1,
+     "name": "get_volcano_status",
+     "arguments": {
+      "time_utc": "2022-12-01T23:30:00Z"
+     },
+     "ok": true,
+     "summary": "Kīlauea WATCH/ORANGE, erupting; Mauna Loa WARNING/RED, erupting"
+    },
+    {
+     "cite": "E2",
+     "round": 1,
+     "name": "land_fraction",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "0% of mask over land (Oʻahu 0%)"
+    },
+    {
+     "cite": "E3",
+     "round": 1,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "upwind end 315.4 km from Kīlauea, 282.4 km from Mauna Loa; area 10803 km², length 212 km"
+    },
+    {
+     "cite": "E4",
+     "round": 1,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 20.828,
+      "lon": -157.897,
+      "time_utc": "2022-12-01T23:30:00Z"
+     },
+     "ok": true,
+     "summary": "23.4 km/h from 34° (2022-12-02T00:00)"
+    },
+    {
+     "cite": "E5",
+     "round": 1,
+     "name": "get_firms",
+     "arguments": {
+      "bbox": [
+       -160.0,
+       19.0,
+       -155.0,
+       22.0
+      ],
+      "date": "2022-12-01"
+     },
+     "ok": true,
+     "summary": "7 fire cluster(s): Mauna Loa summit (15 km) (1354), Mauna Loa summit (5 km) (196), Mauna Loa summit (6 km) (174); summit glow excluded: mauna-loa-summit 309, kilauea-summit 91"
+    },
+    {
+     "cite": "E6",
+     "round": 2,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 1,
+      "wind_from_deg": 34.0
+     },
+     "ok": true,
+     "summary": "upwind end 307.8 km from Kīlauea, 277.9 km from Mauna Loa; area 10803 km², length 212 km"
+    },
+    {
+     "cite": "E7",
+     "round": 2,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 19.5,
+      "lon": -155.6,
+      "time_utc": "2022-12-01T23:30:00Z"
+     },
+     "ok": true,
+     "summary": "12.8 km/h from 338° (2022-12-02T00:00)"
+    },
+    {
+     "cite": "E8",
+     "round": 2,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 19.6,
+      "lon": -155.9,
+      "time_utc": "2022-12-01T23:30:00Z"
+     },
+     "ok": true,
+     "summary": "10.6 km/h from 252° (2022-12-02T00:00)"
+    }
+   ],
+   "compare": {
+    "standard": "uncertain",
+    "agent": "uncertain"
+   }
+  },
   "alerts": {
    "available": true,
    "mode": "replay",
@@ -322,8 +448,8 @@
     {
      "lang": "en",
      "language": "English",
-     "headline": "Satellite haze check: source unclear",
-     "summary": "Daily satellite pass on Dec 1, 2022 could not confirm the haze source.",
+     "headline": "Satellite haze source unconfirmed",
+     "summary": "On Dec 1, 2022, the daily satellite pass could not confirm the haze source. No area within 15 km was confirmed.",
      "confidence_label": "Confidence: 0%",
      "disclaimer": "Satellite estimate, not an official warning.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
@@ -334,15 +460,21 @@
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Pay attention to local air quality reports and health warnings.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "text": "Do not smoke: Also, avoid secondhand smoke.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "verbatim": true,
+       "label": "Official guidance (quoted)",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       },
       {
-       "text": "Limit strenuous outdoor activity when vog levels are high.",
+       "text": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
        "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
+       "verbatim": true,
+       "label": "Official guidance (quoted)",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       }
      ],
@@ -351,27 +483,33 @@
     {
      "lang": "vi",
      "language": "Vietnamese (Tiếng Việt)",
-     "headline": "Kiểm tra mù từ vệ tinh: chưa rõ nguồn",
-     "summary": "Ảnh vệ tinh ngày 1 tháng 12, 2022 đã không xác nhận được nguồn mù.",
+     "headline": "Không xác nhận được nguồn mù từ vệ tinh",
+     "summary": "Vào ngày 1 tháng 12 năm 2022, ảnh vệ tinh hằng ngày đã không xác nhận được nguồn mù. Không có khu vực nào trong vòng 15 km được xác nhận.",
      "confidence_label": "Độ tin cậy: 0%",
      "disclaimer": "Ước tính từ vệ tinh, không phải cảnh báo chính thức.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": false,
      "official_source_url": "https://www.airnow.gov/",
-     "replay_banner": "PHÁT LẠI · 1 tháng 12, 2022 · không phải cảnh báo hiện tại",
+     "replay_banner": "PHÁT LẠI · ngày 1 tháng 12 năm 2022 · không phải cảnh báo hiện tại",
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Theo dõi báo cáo chất lượng không khí tại địa phương và các cảnh báo về khói cháy rừng.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
-       "reviewed": true
+       "text": "Không hút thuốc: Đồng thời, tránh khói thuốc thụ động.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
+       "reviewed": false
       },
       {
-       "text": "Hạn chế hoạt động gắng sức ngoài trời khi sương mù núi lửa (vog) dày đặc.",
+       "text": "Hãy uống đủ nước: Uống nhiều chất lỏng để giúp làm loãng tắc nghẽn.",
        "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       }
      ],
@@ -380,27 +518,33 @@
     {
      "lang": "ilo",
      "language": "Ilocano (Ilokano)",
-     "headline": "Satellite check: saan a nakumpirma",
-     "summary": "Ti ladawan ti satellite idi Dis 1, 2022 ket saan a nakumpirma ti paggapuan ti asuk.",
+     "headline": "Saan a nakumpirma ti satellite ti gapu ti asuk",
+     "summary": "Idi Dis 1, 2022, saan a nakumpirma ti satellite ti gapu ti asuk. Awan ti nakumpirma a lugar iti 15 km.",
      "confidence_label": "Talek: 0%",
      "disclaimer": "Tantiya ti satellite, saan nga opisial a pakdaar.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://www.airnow.gov/",
-     "replay_banner": "ULIT · Dis 1, 2022 · saan a damdama nga alerto",
+     "replay_banner": "REPLAY · Dis 1, 2022 · saan a pakdaar ita",
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Denggen dagiti report ti kalidad ti angin ken dagiti pakdaar ti salun-at.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "text": "Saan nga agsigarilyo: Liklikam met ti asuk ti sigarilyo.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       },
       {
-       "text": "Limitan ti nadagsen nga aramid iti ruar no nangato ti vog.",
+       "text": "Agtalinaed a nainom: Uminom iti adu a likido tapno malukay ti bara.",
        "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       }
      ],
@@ -409,27 +553,33 @@
     {
      "lang": "tl",
      "language": "Tagalog",
-     "headline": "Satellite check: hindi nakumpirma",
-     "summary": "Hindi nakumpirma ng satellite image noong Dis 1, 2022 ang pinagmulan ng haze.",
+     "headline": "Hindi nakumpirma ng satellite ang pinagmulan ng haze",
+     "summary": "Noong Dis 1, 2022, hindi nakumpirma ng pang-araw-araw na satellite ang pinagmulan ng haze. Walang kumpirmadong lugar sa loob ng 15 km.",
      "confidence_label": "Kumpiyansa: 0%",
      "disclaimer": "Tantiya ng satellite, hindi opisyal na babala.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://www.airnow.gov/",
-     "replay_banner": "REPLAY · Dis 1, 2022 · hindi ito kasalukuyang alerto",
+     "replay_banner": "REPLAY · Dis 1, 2022 · hindi ito kasalukuyang babala",
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Makinig sa mga ulat ng kalidad ng hangin at mga babalang pangkalusugan.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "text": "Huwag manigarilyo: Iwasan din ang usok ng sigarilyo.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       },
       {
-       "text": "Limitahan ang mabigat na gawain sa labas kapag mataas ang vog.",
+       "text": "Uminom ng sapat na tubig: Uminom ng maraming likido para lumuwag ang bara.",
        "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       }
      ],
@@ -438,27 +588,33 @@
     {
      "lang": "haw",
      "language": "ʻŌlelo Hawaiʻi",
-     "headline": "Nānā ukali: akaka ʻole ke kumu",
-     "summary": "ʻAʻole i hōʻoia ka ukali i ke kumu o ka ʻohu ma ka lā 1 Kekemapa 2022.",
+     "headline": "ʻAʻole i hōʻoia ʻia ke kumu o ka ʻehu",
+     "summary": "I ka lā 1 o Kekemapa 2022, ʻaʻole i hōʻoia ka ukali i ke kumu o ka ʻehu. ʻAʻohe wahi i hōʻoia ʻia i loko o 15 km.",
      "confidence_label": "Hilinaʻi: 0%",
-     "disclaimer": "He manaʻo ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
+     "disclaimer": "Manaʻo mai ka ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://www.airnow.gov/",
-     "replay_banner": "HOʻOPĀ HOU · 1 Kekemapa 2022 · ʻaʻole he makaʻala o kēia manawa",
+     "replay_banner": "HOʻOPUKA HOU · Kek 1, 2022 · ʻaʻole he makaʻala o kēia manawa",
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "E nānā i nā hōʻike ʻea a me nā ʻōlelo aʻo ola.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "text": "Mai puhi: E hōʻalo pū i ka uahi lua.",
+       "source_url": "https://vog.ivhhn.org/vog-protection",
+       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       },
       {
-       "text": "E hoʻemi i ka hana ikaika ma waho ke piʻi ka vog.",
+       "text": "E inu wai: E inu i nā wai he nui e heheʻe ai ke paʻa.",
        "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
+       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "Hawaii Interagency Vog Information Dashboard",
        "reviewed": false
       }
      ],

@@ -15,12 +15,15 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+from .alerts import HEALTH
 from .pipeline import CASES
+
+HEALTH_PUBLISHERS = {k: v["publisher"].split(" (")[0] for k, v in HEALTH["sources"].items()}
 
 MODELS_USED = [
     {"stage": "2 Localize", "model": "muse-spark-1.3", "what": "vision: find haze/plume boxes and points"},
     {"stage": "3 Segment", "model": "sam-3.1", "what": "box + point prompts → pixel masks (two passes)"},
-    {"stage": "4 Classify", "model": "muse-spark-1.3", "what": "reasoning over image + wind, vents, FIRMS, USGS status"},
+    {"stage": "4 Agent", "model": "muse-spark-1.3", "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"},
     {"stage": "5 Alerts", "model": "muse-spark-1.3", "what": "5-language alerts from official guidance only"},
     {"stage": "5 Cards", "model": "muse-image-1.0", "what": "text-free background illustration"},
 ]
@@ -33,6 +36,38 @@ TITLES = {
                            "vi": "Phun trào Mauna Loa · 1/12/2022 (không chắc chắn, trung thực)"},
     "live": {"en": "Live now", "vi": "Trực tiếp"},
 }
+
+
+def _summarize_tool(name: str, out: dict) -> str:
+    """One readable line per tool result for the site's agent trace."""
+    if not out.get("ok"):
+        return "error: " + str(out.get("error"))[:120]
+    r = out.get("result") or {}
+    try:
+        if name == "get_wind":
+            return f"{r.get('speed_kmh')} km/h from {r.get('from_deg')}° ({r.get('time')})"
+        if name == "get_volcano_status":
+            er = {"yes": "erupting", "no": "not erupting", "episodic_pause": "paused between episodes",
+                  "unknown": "status unclear"}
+            return "; ".join(f"{'Kīlauea' if k == 'kilauea' else 'Mauna Loa'} {v.get('alert_level')}/"
+                             f"{v.get('aviation_color')}, {er.get(v.get('erupting'), v.get('erupting'))}"
+                             for k, v in r.get("volcanoes", {}).items())
+        if name == "get_firms":
+            fc = r.get("fire_clusters", [])
+            vt = r.get("volcanic_thermal") or {}
+            top = ", ".join(f"{c['near']} ({c['n']})" for c in fc[:3])
+            return (f"{len(fc)} fire cluster(s)" + (f": {top}" if top else "")
+                    + (f"; summit glow excluded: {', '.join(f'{z} {n}' for z, n in vt.items())}" if vt else ""))
+        if name == "distance_to_vents":
+            d = r.get("distance_km") or r.get("upwind_end_distance_km") or {}
+            return (f"upwind end {d.get('kilauea_summit')} km from Kīlauea, {d.get('mauna_loa_summit')} km "
+                    f"from Mauna Loa; area {r.get('area_km2')} km², length {r.get('length_km')} km")
+        if name == "land_fraction":
+            isl = ", ".join(f"{k} {v:.0%}" for k, v in (r.get("islands_covered") or {}).items())
+            return f"{r.get('land_frac', 0):.0%} of mask over land" + (f" ({isl})" if isl else "")
+    except Exception:  # noqa: BLE001
+        pass
+    return json.dumps(r, ensure_ascii=False)[:140]
 
 
 def _jpg(src: Path | Image.Image, dst: Path, width: int = 1000, q: int = 74) -> str:
@@ -143,6 +178,24 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
                   "volcanic_thermal_excluded": c["firms"].get("volcanic_thermal_excluded")},
         "volcano_status": c.get("volcano_status"),
     }
+    trace_f = run_dir / "04_agent_trace.json"
+    compare_f = run_dir / "04_compare.json"
+    if trace_f.exists():
+        tr = json.loads(trace_f.read_text())
+        cmp_ = json.loads(compare_f.read_text()) if compare_f.exists() else {}
+        steps["agent"] = {
+            "used": cls.get("meta", {}).get("classifier") == "agent",
+            "valid": tr.get("valid"), "rejected": tr.get("rejected"),
+            "rounds": tr["meta"].get("rounds"), "cost_usd": tr["meta"].get("cost_usd"),
+            "calls": [{"cite": t.get("cite"), "round": t["round"], "name": t["name"],
+                       "arguments": json.loads(t["arguments"] or "{}"),
+                       "ok": t["output"].get("ok"), "summary": _summarize_tool(t["name"], t["output"])}
+                      for t in tr["trace"]],
+            "compare": {k: (v.get("overall") or {}).get("class") if isinstance(v, dict) else None
+                        for k, v in cmp_.items()},
+        }
+    else:
+        steps["agent"] = {"used": False, "calls": []}
     alerts_dir = run_dir / "alerts"
     if (alerts_dir / "alerts.json").exists():
         al = json.loads((alerts_dir / "alerts.json").read_text())
@@ -157,6 +210,9 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
                                             "replay_banner_en")}
                          | {"actions": [{"text": x["text"], "source_url": x["url"],
                                          "excerpt_en": x["excerpt_en"],
+                                         "verbatim": bool(x.get("verbatim")),
+                                         "label": x.get("label"),
+                                         "publisher": HEALTH_PUBLISHERS.get(x["source_id"], x["source_id"]),
                                          "reviewed": bool(x.get("reviewed_override"))}
                                         for x in a["actions"]],
                             "card": "cards/" + _jpg(card, out_dir / "cards" / (card.stem + ".jpg"),

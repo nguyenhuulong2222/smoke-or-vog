@@ -26,6 +26,31 @@ information, see <https://vog.ivhhn.org/>.
 > Mauna Loa 2022-12-01). Curated outputs are in [`demo/`](demo/).
 > No alert generation or demo UI yet. See [PLAN.md](PLAN.md).
 
+## Built during the hackathon (Oct 31–Nov 4, 2026)
+
+Everything in this repository is new work, created during the hackathon (first commit
+Oct 31, 2026, 12:16 HST). That includes the pipeline, the agentic classifier, alerts, the live
+publisher, the website, tests, scripts and docs. Full list: [`docs/NEW_WORK.md`](docs/NEW_WORK.md).
+
+**Pre-existing external inputs:** the **Kahu Ola public API** (`/api/hazards/smoke-sat`,
+`/api/firms/hotspots`). It was built before the event by the same author and is used here
+**read-only, as a data source**, over HTTPS like any public API. No Kahu Ola source code is in
+this repository.
+
+## The AI does not give medical advice
+
+The system never generates health advice. Health guidance on every alert is **quoted** from
+official sources stored in [`assets/health_sources.json`](assets/health_sources.json):
+Hawaiʻi DOH / IVHHN for vog, EPA AirNow for smoke. Muse Spark may only **select** which
+official lines to show:
+- English lines are always the verbatim official text. The code discards any model wording.
+- Other languages are labelled "translation of official guidance, machine-translated".
+- A verifier (`alerts.verify_guidance`) rejects any guidance line that doesn't trace to the
+  source file, and it is covered by tests.
+
+The model writes only a short situation summary (what the satellite shows, where and when) and
+the "satellite estimate, not an official warning" disclaimer.
+
 ## Setup
 
 Requires Python 3.10+.
@@ -71,7 +96,8 @@ prices on dev.meta.ai/docs/pricing-rate-limits.
 .venv/bin/python -m src.pipeline --case maui_20230808     # Maui wildfire smoke test case
 .venv/bin/python -m src.pipeline --case mauna_loa_20221201 # Mauna Loa eruption vog test case
 .venv/bin/python -m src.alerts out/runs/<run_id>          # stage 5: 5-language alerts + cards
-.venv/bin/python -m pytest                                # 69 offline tests, Meta API mocked
+.venv/bin/python -m src.pipeline --case kilauea_20261017 --classifier both  # agent vs fixed classifier
+.venv/bin/python -m pytest                                # 84 offline tests, Meta API mocked
 ```
 
 **Overall verdict rule (safety first):** each plume is classified separately. The overall
@@ -92,6 +118,21 @@ can't be seen, honest uncertainty is the correct output.
 **SAM is run in two passes:** pass 1 uses the Muse Spark box and point. Pass 2 re-prompts with
 the pass-1 mask's bounding box plus a 15% margin. Pass 2 is kept only if it's larger and still
 coherent, with no ocean-wide spill.
+
+**Agentic classification (`--classifier agent|both`):** Muse Spark calls our tools through
+native tool calling. It decides which tools to call and in what order, then classifies. The tools:
+- `get_wind(lat, lon, time)`
+- `get_firms(bbox, date)` (summit glow filtered into `volcanic_thermal`)
+- `get_volcano_status(time)` (USGS HVO)
+- `distance_to_vents(plume_id, wind_from_deg)` (from the SAM mask)
+- `land_fraction(plume_id)`
+
+Every evidence item must cite a tool result (`E1`, `E2`, …), and a verdict that cites nothing,
+or cites a failed or unknown call, is rejected. The fixed classifier stays as the fallback. The
+full trace is saved to `04_agent_trace.json` and shown on the site as step 5 "Agent trace". On
+the four cases, the agent's overall verdicts matched the fixed classifier's. It gave higher
+confidence on Kīlauea (0.82 vs 0.70) and named the right class on Mauna Loa (`vog_mauna_loa`
+0.62, still unconfirmed), for about $0.01 more per plume run. Live scans use agent mode.
 
 **Summit glow is not fire:** FIRMS detections inside the Kīlauea and Mauna Loa summit calderas
 (Kahu Ola `volcanic_zone` flag, or the same caldera boxes for historical data) are reported as

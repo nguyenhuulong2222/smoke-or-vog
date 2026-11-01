@@ -72,7 +72,8 @@ def test_vog_uses_ivhhn_and_smoke_uses_airnow():
 def test_prompt_contains_only_the_verdicts_sources():
     p = alerts.build_prompt("wildfire_smoke", 0.88, {"near": ["Kula (Maui)"]}, "x", [])
     assert "airnow.gov/air-quality-and-health" in p and "vog.ivhhn.org" not in p
-    assert "Do NOT add any other health or medical advice" in p
+    assert "Do NOT write any other health or medical advice" in p
+    assert "never written by you" in p
 
 
 # ---------------------------------------------------------------- grounding
@@ -271,3 +272,54 @@ def test_reviewed_vi_override_for_airnow_line():
     assert "các cảnh báo về khói cháy rừng" in vi["text"] and vi["reviewed_override"] is True
     en = next(a for a in doc["alerts"] if a["lang"] == "en")["actions"][0]
     assert "reviewed_override" not in en
+
+
+# ---------------------------------------------------------------- medical-advice rule
+
+def good_doc(verdict="wildfire_smoke"):
+    raw = fake_raw(verdict)
+    g = alerts.validate_spark_alerts(verdict, raw)
+    return alerts.assemble("r", verdict, 0.9, {}, "2023-08-08", raw, g, {}, mode="replay")
+
+
+def test_english_guidance_is_verbatim_official_text_even_if_model_paraphrases():
+    doc = good_doc()   # fake model wrote "action 0", "action 1" for English
+    en = next(a for a in doc["alerts"] if a["lang"] == "en")
+    for act in en["actions"]:
+        src = alerts.HEALTH["sources"][act["source_id"]]["excerpts"][act["index"]]
+        assert act["text"] == src and act["verbatim"] is True
+    alerts.verify_guidance(doc)  # passes
+
+
+def test_translations_are_labelled():
+    doc = good_doc()
+    for a in doc["alerts"]:
+        if a["lang"] != "en":
+            assert all(x["label"].startswith("Translation of official guidance") for x in a["actions"])
+
+
+@pytest.mark.parametrize("tamper", ["en_text", "source", "index", "excerpt", "label", "url"])
+def test_untraceable_guidance_is_rejected(tamper):
+    doc = good_doc()
+    en = next(a for a in doc["alerts"] if a["lang"] == "en")
+    vi = next(a for a in doc["alerts"] if a["lang"] == "vi")
+    if tamper == "en_text":
+        en["actions"][0]["text"] = "Drink ginger tea to clear smoke from your lungs."
+    elif tamper == "source":
+        en["actions"][0]["source_id"] = "made_up_blog"
+    elif tamper == "index":
+        en["actions"][0]["index"] = 999
+    elif tamper == "excerpt":
+        vi["actions"][0]["excerpt_en"] = "Wear any mask outdoors."
+    elif tamper == "label":
+        vi["actions"][0]["label"] = "Health advice"
+    elif tamper == "url":
+        en["actions"][0]["url"] = "https://example.com/"
+    with pytest.raises(ValueError):
+        alerts.verify_guidance(doc)
+
+
+def test_every_official_excerpt_in_source_file_is_reachable():
+    for verdict in alerts.VERDICTS:
+        for sid in alerts.HEALTH["verdict_sources"][verdict]:
+            assert alerts.HEALTH["sources"][sid]["excerpts"]

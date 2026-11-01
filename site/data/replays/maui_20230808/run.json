@@ -2,7 +2,7 @@
  "slug": "maui_20230808",
  "case": "maui_20230808",
  "mode": "replay",
- "run_id": "maui_20230808_20261031T230423Z",
+ "run_id": "maui_20230808_20261101T012222Z",
  "title": {
   "en": "Maui wildfire smoke · Aug 8, 2023",
   "vi": "Khói cháy rừng Maui · 8/8/2023"
@@ -19,19 +19,26 @@
     "plume_id": 2,
     "class": "wildfire_smoke",
     "confidence": 0.9,
-    "source_hint": "Kula, Maui fire ~3 km away (n=201 cluster)"
+    "source_hint": "Kula / Lahaina Maui wildfires"
    },
    {
     "plume_id": 1,
     "class": "wildfire_smoke",
-    "confidence": 0.78,
-    "source_hint": "Hawaii Island leeward fires plus regional smoke transport; no eruption source"
+    "confidence": 0.82,
+    "source_hint": "Hawai'i Island west-side / Kona wildfires"
    }
   ],
-  "unconfirmed": []
+  "unconfirmed": [
+   {
+    "plume_id": 3,
+    "class": "wildfire_smoke",
+    "confidence": 0.68,
+    "source_hint": "Oahu (Honolulu-area) wildfire"
+   }
+  ]
  },
  "detection": null,
- "cost_usd": 0.040672,
+ "cost_usd": 0.064595,
  "models": [
   {
    "stage": "2 Localize",
@@ -44,9 +51,9 @@
    "what": "box + point prompts → pixel masks (two passes)"
   },
   {
-   "stage": "4 Classify",
+   "stage": "4 Agent",
    "model": "muse-spark-1.3",
-   "what": "reasoning over image + wind, vents, FIRMS, USGS status"
+   "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"
   },
   {
    "stage": "5 Alerts",
@@ -75,86 +82,74 @@
   },
   "spark": {
    "src": "spark_boxes.jpg",
-   "scene": "True-color view of the Hawaiian Island chain with scattered small white trade cumulus north and south. Two diffuse gray haze veils are visible leeward over the ocean, the largest and densest west to southwest of the southeastern large island and a fainter elongated veil west of the central islands.",
+   "scene": "True-color satellite view of the main Hawaiian Islands from the northwestern islands to the large southeastern island, showing dark ocean with scattered white cumulus clouds and translucent gray haze extending west and southwest of the islands.",
    "cloud_cover": "partly",
    "plumes": [
     {
-     "label": "large diffuse gray haze west of the large island",
-     "visual_description": "broad light-gray diffuse veil over ocean extending west and southwest from the western coast of the large southeastern island",
+     "label": "large gray haze west of southeastern island",
+     "visual_description": "broad diffuse light-gray translucent haze blanket extending west and southwest from the west coast of the large southeastern island over the ocean",
      "visibility": "clear"
     },
     {
-     "label": "thin gray veil west of the central islands",
-     "visual_description": "elongated faint gray translucent streak extending west-northwest over ocean from the vicinity of the small central islands",
+     "label": "elongated gray streak west of central islands",
+     "visual_description": "long narrow light-gray translucent streak extending west-southwest from the vicinity of the central small islands",
      "visibility": "faint"
+    },
+    {
+     "label": "faint gray streak west of north-central island",
+     "visual_description": "small faint gray-white translucent wedge extending west from the western tip of the north-central island",
+     "visibility": "very_faint"
     }
    ],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.009815
+   "cost_usd": 0.015977
   },
   "sam": {
    "src": "sam_two_pass.jpg",
    "prompt_used": "box+point",
    "variants": {
     "box": {
-     "objects": 2,
+     "objects": 3,
      "score": {
-      "objects": 2,
-      "mask_px": 102918,
-      "mean_confidence": 0.814,
-      "frac_inside_spark_boxes": 0.988,
-      "spark_box_fill": 0.431
+      "objects": 3,
+      "mask_px": 82057,
+      "mean_confidence": 0.772,
+      "frac_inside_spark_boxes": 0.993,
+      "spark_box_fill": 0.38
      }
     },
     "box+point": {
-     "objects": 2,
+     "objects": 3,
      "score": {
-      "objects": 2,
-      "mask_px": 102845,
-      "mean_confidence": 0.85,
-      "frac_inside_spark_boxes": 0.991,
-      "spark_box_fill": 0.432
-     }
-    },
-    "concept:smoke": {
-     "objects": 0,
-     "score": {
-      "objects": 0,
-      "mask_px": 0,
-      "mean_confidence": null
-     }
-    },
-    "concept:volcanic plume": {
-     "objects": 0,
-     "score": {
-      "objects": 0,
-      "mask_px": 0,
-      "mean_confidence": null
-     }
-    },
-    "concept:haze": {
-     "objects": 0,
-     "score": {
-      "objects": 0,
-      "mask_px": 0,
-      "mean_confidence": null
+      "objects": 3,
+      "mask_px": 91199,
+      "mean_confidence": 0.799,
+      "frac_inside_spark_boxes": 0.995,
+      "spark_box_fill": 0.423
      }
     }
    },
    "two_pass": [
     {
      "plume_id": 1,
-     "pass1_px": 59772,
-     "pass2_px": 65504,
+     "pass1_px": 57045,
+     "pass2_px": 64116,
      "kept": "pass2",
-     "reason": "pass 2 larger (1.10x) and coherent"
+     "reason": "pass 2 larger (1.12x) and coherent"
     },
     {
      "plume_id": 2,
-     "pass1_px": 43073,
-     "pass2_px": 49460,
+     "pass1_px": 29942,
+     "pass2_px": 42103,
      "kept": "pass2",
-     "reason": "pass 2 larger (1.15x) and coherent"
+     "reason": "pass 2 larger (1.41x) and coherent"
+    },
+    {
+     "plume_id": 3,
+     "pass1_px": 4212,
+     "pass2_px": 6699,
+     "kept": "pass2",
+     "reason": "pass 2 larger (1.59x) and coherent"
     }
    ]
   },
@@ -162,59 +157,164 @@
    "overlay": "overlay.jpg",
    "per_plume": [
     {
-     "class": "wildfire_smoke",
-     "confidence": 0.78,
-     "evidence": [
-      "Large broad light-gray diffuse veil west-southwest of Hawaii Island, not bright white cloud",
-      "Volcanoes not erupting per HVO, so not vog despite 68.9 km to Mauna Loa summit and 85.3 km to Kilauea summit from upwind end at 18.93N, -155.92W off SW coast",
-      "Coincident Hawaii Island wildfire activity: clusters n=206, n=46 near west Hawaii and n=21 Mauna Loa flank 17.2 km from summit (wildfire since no eruption)",
-      "Leeward position west of island under easterly trade flow favors smoke accumulation offshore"
-     ],
      "plume_id": 1,
-     "source_hint": "Hawaii Island leeward fires plus regional smoke transport; no eruption source"
+     "class": "wildfire_smoke",
+     "confidence": 0.82,
+     "source_hint": "Hawai'i Island west-side / Kona wildfires",
+     "evidence": [
+      "Both volcanoes not erupting at image time: Kilauea ADVISORY/YELLOW 'is not erupting', Mauna Loa NORMAL/GREEN 'no', ruling against vog. [E1]",
+      "Multiple large wildfire clusters on Hawai'i Island west side: Kailua-Kona clusters n=206 and n=46, plus n=21 near Mauna Loa summit slopes, providing smoke source on west coast. [E5]",
+      "Plume 1 upwind end far from vents: 277.8 km to Kilauea, 246.8 km to Mauna Loa, inconsistent with vog point source. [E9]",
+      "Mask is 0.1% land over ocean west/southwest of Hawai'i Island, a diffuse translucent gray blanket over ocean, not white cumulus cloud. [E6, E2]"
+     ],
+     "evidence_cited": [
+      {
+       "cites": [
+        "E1"
+       ],
+       "text": "Both volcanoes not erupting at image time: Kilauea ADVISORY/YELLOW 'is not erupting', Mauna Loa NORMAL/GREEN 'no', ruling against vog."
+      },
+      {
+       "cites": [
+        "E5"
+       ],
+       "text": "Multiple large wildfire clusters on Hawai'i Island west side: Kailua-Kona clusters n=206 and n=46, plus n=21 near Mauna Loa summit slopes, providing smoke source on west coast."
+      },
+      {
+       "cites": [
+        "E9"
+       ],
+       "text": "Plume 1 upwind end far from vents: 277.8 km to Kilauea, 246.8 km to Mauna Loa, inconsistent with vog point source."
+      },
+      {
+       "cites": [
+        "E6",
+        "E2"
+       ],
+       "text": "Mask is 0.1% land over ocean west/southwest of Hawai'i Island, a diffuse translucent gray blanket over ocean, not white cumulus cloud."
+      }
+     ]
     },
     {
+     "plume_id": 2,
      "class": "wildfire_smoke",
      "confidence": 0.9,
+     "source_hint": "Kula / Lahaina Maui wildfires",
      "evidence": [
-      "Elongated faint gray translucent streak extending west-northwest from vicinity of central islands",
-      "Upwind end 20.695N, -156.475W only 22.1 km from large Kula, Maui fire cluster n=201, nearest_summit 165.2 km, far from volcanoes (163.1 km Mauna Loa, 189.9 km Kilauea)",
-      "Wind at fire_cluster_2 30.5 km/h from 83 deg (east) directly aligns with west-northwest transport direction",
-      "Volcanoes not erupting, ruling out vog; color/texture gray veil not white cloud"
+      "Volcanoes not erupting, so elongated gray streak is not vog despite downwind location. [E1]",
+      "Very large fire cluster at Kula, Maui (3 km) n=201, the dominant fire in the scene, co-located with streak origin. [E5]",
+      "Upwind end at 20.7N, -156.47E near Maui, 163-190 km from Mauna Loa/Kilauea summits, not centered on vents. [E10]",
+      "NE wind from 58 deg at 24.3 km/h blows toward WSW, matching long narrow streak extending west-southwest from central islands. [E3]",
+      "Mask 0% land over ocean, ruling out land-cover artifact. [E7]"
      ],
-     "plume_id": 2,
-     "source_hint": "Kula, Maui fire ~3 km away (n=201 cluster)"
+     "evidence_cited": [
+      {
+       "cites": [
+        "E1"
+       ],
+       "text": "Volcanoes not erupting, so elongated gray streak is not vog despite downwind location."
+      },
+      {
+       "cites": [
+        "E5"
+       ],
+       "text": "Very large fire cluster at Kula, Maui (3 km) n=201, the dominant fire in the scene, co-located with streak origin."
+      },
+      {
+       "cites": [
+        "E10"
+       ],
+       "text": "Upwind end at 20.7N, -156.47E near Maui, 163-190 km from Mauna Loa/Kilauea summits, not centered on vents."
+      },
+      {
+       "cites": [
+        "E3"
+       ],
+       "text": "NE wind from 58 deg at 24.3 km/h blows toward WSW, matching long narrow streak extending west-southwest from central islands."
+      },
+      {
+       "cites": [
+        "E7"
+       ],
+       "text": "Mask 0% land over ocean, ruling out land-cover artifact."
+      }
+     ]
+    },
+    {
+     "plume_id": 3,
+     "class": "wildfire_smoke",
+     "confidence": 0.68,
+     "source_hint": "Oahu (Honolulu-area) wildfire",
+     "evidence": [
+      "Volcanoes not erupting, disfavoring vog for Oahu-region haze 332-364 km from vents. [E1]",
+      "Fire cluster near Honolulu (21 km) n=44 provides local wildfire source upwind of streak. [E5]",
+      "Upwind end at 21.31N, -158.13W just west of Oahu, 332.7 km to Mauna Loa and 364.6 km to Kilauea. [E11]",
+      "ENE wind from 68 deg at 27.6 km/h blows toward west, consistent with small wedge extending west from western tip of Oahu. [E4]",
+      "Mask 0% land over ocean, faint gray-white translucent wedge distinct from bright white cumulus. [E8]"
+     ],
+     "evidence_cited": [
+      {
+       "cites": [
+        "E1"
+       ],
+       "text": "Volcanoes not erupting, disfavoring vog for Oahu-region haze 332-364 km from vents."
+      },
+      {
+       "cites": [
+        "E5"
+       ],
+       "text": "Fire cluster near Honolulu (21 km) n=44 provides local wildfire source upwind of streak."
+      },
+      {
+       "cites": [
+        "E11"
+       ],
+       "text": "Upwind end at 21.31N, -158.13W just west of Oahu, 332.7 km to Mauna Loa and 364.6 km to Kilauea."
+      },
+      {
+       "cites": [
+        "E4"
+       ],
+       "text": "ENE wind from 68 deg at 27.6 km/h blows toward west, consistent with small wedge extending west from western tip of Oahu."
+      },
+      {
+       "cites": [
+        "E8"
+       ],
+       "text": "Mask 0% land over ocean, faint gray-white translucent wedge distinct from bright white cumulus."
+      }
+     ]
     }
    ],
-   "caveats": "Segmentation upwind ends are offshore and approximate; wind varies locally and with height. FIRMS counts are rendered marker pixels, not individual detections. Summit thermal glow (45 px at Kilauea) is excluded and not used as eruption proof. Plume 1 upwind is ~70-85 km from summits and >85 km from nearest listed fire pixels, so exact fire of origin cannot be isolated from this context alone.",
+   "caveats": "Winds at plume 1 location are westerly (from 272 deg) likely due to island wake/lee eddy south-west of Hawai'i Island, so transport direction there is less clean than the NE trades at plumes 2-3; plume 3 is very faint and small so cloud vs thin smoke cannot be fully excluded.",
    "plumes": [
     {
      "plume_id": 1,
-     "label": "large diffuse gray haze west of the large island",
-     "area_km2": 19149,
-     "length_km": 308,
+     "label": "large gray haze west of southeastern island",
+     "area_km2": 18751,
+     "length_km": 275,
      "upwind_end_distance_km": {
-      "kilauea_summit": 85.3,
-      "mauna_loa_summit": 68.9
+      "kilauea_summit": 86.9,
+      "mauna_loa_summit": 70.1
      },
      "nearest_fire_clusters": [
       {
        "near": "Mauna Loa summit (17 km)",
        "n": 21,
        "nearest_summit_km": 17.2,
-       "distance_km": 85.9
+       "distance_km": 87.2
       },
       {
        "near": "Kailua-Kona (52 km)",
        "n": 46,
        "nearest_summit_km": 60.5,
-       "distance_km": 122.7
+       "distance_km": 123.6
       },
       {
        "near": "Kailua-Kona (52 km)",
        "n": 206,
        "nearest_summit_km": 73.1,
-       "distance_km": 128.8
+       "distance_km": 129.4
       }
      ],
      "land": {
@@ -228,19 +328,19 @@
     },
     {
      "plume_id": 2,
-     "label": "thin gray veil west of the central islands",
-     "area_km2": 14363,
-     "length_km": 317,
+     "label": "elongated gray streak west of central islands",
+     "area_km2": 12213,
+     "length_km": 298,
      "upwind_end_distance_km": {
       "kilauea_summit": 189.9,
-      "mauna_loa_summit": 163.1
+      "mauna_loa_summit": 163.3
      },
      "nearest_fire_clusters": [
       {
        "near": "Kula, Maui (3 km)",
        "n": 201,
        "nearest_summit_km": 165.2,
-       "distance_km": 22.1
+       "distance_km": 21.3
       },
       {
        "near": "Kailua-Kona (52 km)",
@@ -258,7 +358,45 @@
      "land": {
       "land_frac": 0.0,
       "islands_covered": {
-       "Lānaʻi": 0.005
+       "Lānaʻi": 0.002
+      },
+      "land_spill": false,
+      "islands_swallowed": []
+     }
+    },
+    {
+     "plume_id": 3,
+     "label": "faint gray streak west of north-central island",
+     "area_km2": 1933,
+     "length_km": 110,
+     "upwind_end_distance_km": {
+      "kilauea_summit": 364.6,
+      "mauna_loa_summit": 332.7
+     },
+     "nearest_fire_clusters": [
+      {
+       "near": "Honolulu (21 km)",
+       "n": 44,
+       "nearest_summit_km": 331.2,
+       "distance_km": 17.2
+      },
+      {
+       "near": "Kula, Maui (3 km)",
+       "n": 201,
+       "nearest_summit_km": 165.2,
+       "distance_km": 197.6
+      },
+      {
+       "near": "Kailua-Kona (52 km)",
+       "n": 206,
+       "nearest_summit_km": 73.1,
+       "distance_km": 272.2
+      }
+     ],
+     "land": {
+      "land_frac": 0.0,
+      "islands_covered": {
+       "Oʻahu": 0.0
       },
       "land_spill": false,
       "islands_swallowed": []
@@ -365,6 +503,144 @@
     }
    }
   },
+  "agent": {
+   "used": true,
+   "valid": true,
+   "rejected": null,
+   "rounds": 3,
+   "cost_usd": 0.024394,
+   "calls": [
+    {
+     "cite": "E1",
+     "round": 1,
+     "name": "get_volcano_status",
+     "arguments": {
+      "time_utc": "2023-08-08T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "Kīlauea ADVISORY/YELLOW, not erupting; Mauna Loa NORMAL/GREEN, not erupting"
+    },
+    {
+     "cite": "E2",
+     "round": 1,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 19.26,
+      "lon": -156.757,
+      "time_utc": "2023-08-08T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "12.6 km/h from 272° (2023-08-08T21:00)"
+    },
+    {
+     "cite": "E3",
+     "round": 1,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 20.493,
+      "lon": -157.808,
+      "time_utc": "2023-08-08T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "24.3 km/h from 58° (2023-08-08T21:00)"
+    },
+    {
+     "cite": "E4",
+     "round": 1,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 21.335,
+      "lon": -158.56,
+      "time_utc": "2023-08-08T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "27.6 km/h from 68° (2023-08-08T21:00)"
+    },
+    {
+     "cite": "E5",
+     "round": 1,
+     "name": "get_firms",
+     "arguments": {
+      "bbox": [
+       -161.0,
+       18.0,
+       -154.0,
+       23.0
+      ],
+      "date": "2023-08-08"
+     },
+     "ok": true,
+     "summary": "5 fire cluster(s): Kailua-Kona (52 km) (206), Kula, Maui (3 km) (201), Kailua-Kona (52 km) (46); summit glow excluded: kilauea-summit 45"
+    },
+    {
+     "cite": "E6",
+     "round": 1,
+     "name": "land_fraction",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "0% of mask over land (Hawaiʻi 0%)"
+    },
+    {
+     "cite": "E7",
+     "round": 1,
+     "name": "land_fraction",
+     "arguments": {
+      "plume_id": 2
+     },
+     "ok": true,
+     "summary": "0% of mask over land (Lānaʻi 0%)"
+    },
+    {
+     "cite": "E8",
+     "round": 1,
+     "name": "land_fraction",
+     "arguments": {
+      "plume_id": 3
+     },
+     "ok": true,
+     "summary": "0% of mask over land (Oʻahu 0%)"
+    },
+    {
+     "cite": "E9",
+     "round": 2,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 1,
+      "wind_from_deg": 272.0
+     },
+     "ok": true,
+     "summary": "upwind end 277.8 km from Kīlauea, 246.8 km from Mauna Loa; area 18751 km², length 275 km"
+    },
+    {
+     "cite": "E10",
+     "round": 2,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 2,
+      "wind_from_deg": 58.0
+     },
+     "ok": true,
+     "summary": "upwind end 189.9 km from Kīlauea, 163.3 km from Mauna Loa; area 12213 km², length 298 km"
+    },
+    {
+     "cite": "E11",
+     "round": 2,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 3,
+      "wind_from_deg": 68.0
+     },
+     "ok": true,
+     "summary": "upwind end 364.6 km from Kīlauea, 332.7 km from Mauna Loa; area 1933 km², length 110 km"
+    }
+   ],
+   "compare": {
+    "standard": "wildfire_smoke",
+    "agent": "wildfire_smoke"
+   }
+  },
   "alerts": {
    "available": true,
    "mode": "replay",
@@ -372,8 +648,7 @@
     "near": [
      "Lahaina (Maui)",
      "Kīhei (Maui)",
-     "Lānaʻi City",
-     "Kaunakakai (Molokaʻi)"
+     "Lānaʻi City"
     ],
     "method": "within 15 km of plume mask",
     "source_side": "Kīhei (Maui)",
@@ -386,8 +661,8 @@
     {
      "lang": "en",
      "language": "English",
-     "headline": "Wildfire smoke near Lahaina (Maui)",
-     "summary": "Satellite image on Aug 8, 2023 suggested wildfire smoke within 15 km of Lahaina (Maui), Kīhei (Maui), Lānaʻi City, Kaunakakai (Molokaʻi).",
+     "headline": "Satellite suggested wildfire smoke near Lahaina",
+     "summary": "On Aug 8, 2023, satellite suggested wildfire smoke within 15 km of Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Confidence: 90%",
      "disclaimer": "Satellite estimate, not an official warning.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
@@ -398,15 +673,30 @@
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
       {
-       "text": "Follow local air quality reports and smoke news or health warnings.",
+       "text": "The biggest health threat from smoke is from fine particles.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
+       "verbatim": true,
+       "label": "Official guidance (quoted)",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       },
       {
-       "text": "If told to stay indoors, keep indoor air as clean as possible.",
+       "text": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "verbatim": true,
+       "label": "Official guidance (quoted)",
+       "publisher": "U.S. EPA AirNow",
+       "reviewed": false
+      },
+      {
+       "text": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
+       "verbatim": true,
+       "label": "Official guidance (quoted)",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],
@@ -415,27 +705,42 @@
     {
      "lang": "vi",
      "language": "Vietnamese (Tiếng Việt)",
-     "headline": "Khói cháy rừng gần Lahaina (Maui)",
-     "summary": "Ảnh vệ tinh ngày 8/8/2023 đã cho thấy khói cháy rừng trong vòng 15 km quanh Lahaina (Maui), Kīhei (Maui), Lānaʻi City, Kaunakakai (Molokaʻi).",
+     "headline": "Vệ tinh đã thấy khói cháy rừng gần Lahaina",
+     "summary": "Ngày 8 tháng 8, 2023, vệ tinh đã gợi ý khói cháy rừng trong vòng 15 km của Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Độ tin cậy: 90%",
-     "disclaimer": "Ước tính từ vệ tinh, không phải cảnh báo chính thức.",
+     "disclaimer": "Ước tính vệ tinh, không phải cảnh báo chính thức.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": false,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "PHÁT LẠI · 8 tháng 8 năm 2023 · không phải cảnh báo hiện tại",
+     "replay_banner": "PHÁT LẠI · 8 tháng 8, 2023 · không phải cảnh báo hiện tại",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
+      {
+       "text": "Mối đe dọa sức khỏe lớn nhất từ khói là từ các hạt mịn.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
+       "reviewed": false
+      },
       {
        "text": "Theo dõi báo cáo chất lượng không khí tại địa phương và các cảnh báo về khói cháy rừng.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "verbatim": false,
+       "label": "Translation of official guidance, reviewed",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": true
       },
       {
-       "text": "Nếu được yêu cầu ở trong nhà, hãy giữ không khí trong nhà sạch nhất có thể.",
+       "text": "Nếu được khuyên ở trong nhà, hãy thực hiện các bước để giữ không khí trong nhà sạch nhất có thể.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],
@@ -444,27 +749,42 @@
     {
      "lang": "ilo",
      "language": "Ilocano (Ilokano)",
-     "headline": "Aso ti wildfire idiay Lahaina (Maui)",
-     "summary": "Ti ladawan ti satellite idi Ago 8, 2023 ket nagpakita ti aso ti wildfire iti 15 km ti Lahaina (Maui), Kīhei (Maui), Lānaʻi City, Kaunakakai (Molokaʻi).",
-     "confidence_label": "Panagtalek: 90%",
-     "disclaimer": "Tantiya ti satellite, saan nga opisial a ballaag.",
+     "headline": "Impakita ti satellite ti asuk ti wildfire idiay Lahaina",
+     "summary": "Idi Ago 8, 2023, impakita ti satellite ti asuk ti wildfire iti 15 km ti Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
+     "confidence_label": "Ti talek: 90%",
+     "disclaimer": "Tantia ti satellite, saan nga opisial a ballaag.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "REPLAY · Ago 8, 2023 · saan nga agdama a ballaag",
+     "replay_banner": "PAMMAKITA MANEN · Ago 8, 2023 · saan a dada nga alerto",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
       {
-       "text": "Denggen dagiti report ti kalidad ti angin ken damag wenno ballaag maipanggep iti aso.",
+       "text": "Ti kadakkelan a pagpeggad ti salun-at manipud iti asuk ket dagiti bassit a particle.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       },
       {
-       "text": "No ibagada nga agtalinaed iti uneg, aramiden amin tapno nadalus ti angin iti uneg.",
+       "text": "Ipangag dagiti report ti kalidad ti angin. Agannad kadagiti damag maipanggep iti asuk wenno ballaag.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
+       "reviewed": false
+      },
+      {
+       "text": "No ibagada nga agtalinaedka iti uneg, aramidem ti kabaelam a mangtaginayon iti nadalus nga angin iti uneg.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],
@@ -473,27 +793,42 @@
     {
      "lang": "tl",
      "language": "Tagalog",
-     "headline": "Usok ng wildfire sa Lahaina (Maui)",
-     "summary": "Ang larawan ng satellite noong Ago 8, 2023 ay nagpakita ng usok ng wildfire sa loob ng 15 km ng Lahaina (Maui), Kīhei (Maui), Lānaʻi City, Kaunakakai (Molokaʻi).",
+     "headline": "Nakita ng satellite ang wildfire smoke sa Lahaina",
+     "summary": "Noong Ago 8, 2023, nakita ng satellite ang wildfire smoke sa loob ng 15 km ng Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Kumpiyansa: 90%",
-     "disclaimer": "Tantya ng satellite, hindi opisyal na babala.",
+     "disclaimer": "Tantiya ng satellite, hindi opisyal na babala.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "REPLAY · Ago 8, 2023 · hindi ito kasalukuyang alerto",
+     "replay_banner": "MULING PAGPAPAKITA · Ago 8, 2023 · hindi ito kasalukuyang alerto",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
       {
-       "text": "Subaybayan ang lokal na ulat ng kalidad ng hangin at balita o babala tungkol sa usok.",
+       "text": "Ang pinakamalaking banta sa kalusugan mula sa usok ay mula sa maliliit na particle.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       },
       {
-       "text": "Kung pinayuhang manatili sa loob, panatilihing malinis ang hangin sa loob.",
+       "text": "Pansinin ang lokal na ulat ng kalidad ng hangin. Maging alerto sa balita sa usok o babalang pangkalusugan.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
+       "reviewed": false
+      },
+      {
+       "text": "Kung pinayuhang manatili sa loob, gumawa ng mga hakbang upang mapanatiling malinis ang hangin sa loob.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],
@@ -502,27 +837,42 @@
     {
      "lang": "haw",
      "language": "ʻŌlelo Hawaiʻi",
-     "headline": "Uahi ahi nahele ma Lahaina (Maui)",
-     "summary": "Ua hōʻike ke kiʻi ukali o ʻAuk. 8, 2023 i ka uahi ahi nahele ma loko o 15 km o Lahaina (Maui), Kīhei (Maui), Lānaʻi City, Kaunakakai (Molokaʻi).",
+     "headline": "Ua ʻike ka ukali i ka uwahi ahi ma Lahaina",
+     "summary": "I ka ʻAuk. 8, 2023, ua ʻike ka ukali i ka uwahi ahi ma loko o 15 km o Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Hilinaʻi: 90%",
-     "disclaimer": "He manaʻo koho mai ka ukali, ʻaʻole ia he ʻōlelo aʻo kūhelu.",
+     "disclaimer": "He koho ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "HOʻOPĀʻANI HOU · ʻAuk. 8, 2023 · ʻaʻole ia he makaʻala o kēia manawa",
+     "replay_banner": "HOʻOPĀʻANI HOU · ʻAuk. 8, 2023 · ʻaʻole he makaʻala o kēia manawa",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
       {
-       "text": "E nānā i nā hōʻike ʻea o ia wahi a me nā nūhou a ʻōlelo aʻo e pili ana i ka uahi.",
+       "text": "ʻO ka ʻāpana liʻiliʻi ka pōʻino nui o ke olakino mai ka uwahi.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       },
       {
-       "text": "Inā ʻōlelo ʻia e noho i loko, e mālama i ka maʻemaʻe o ka ea o loko.",
+       "text": "E nānā i nā hōʻike ʻea o ia wahi. E makaʻala i ka nūhou uwahi a i nā ʻōlelo aʻo olakino.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
+       "reviewed": false
+      },
+      {
+       "text": "Inā ʻōlelo ʻia e noho i loko, e mālama i ka ea o loko e maʻemaʻe.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
+       "verbatim": false,
+       "label": "Translation of official guidance, machine-translated",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],

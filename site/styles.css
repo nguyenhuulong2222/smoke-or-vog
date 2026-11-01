@@ -182,3 +182,11 @@ section { padding-top: 2.2rem; }
   .frame img { animation: lens 280ms ease-out; }
   @keyframes lens { from { opacity: 0.35; filter: saturate(0.4); } to { opacity: 1; filter: none; } }
 }
+
+.trace { padding-left: 0; list-style: none; margin: 0 0 1rem; }
+.trace li { border-left: 3px solid var(--pacific); padding: 6px 0 6px 10px; margin-bottom: 6px; background: var(--paper); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.cite { display: inline-block; min-width: 2.2em; font-weight: 700; color: #fff; background: var(--pacific); border-radius: 4px; padding: 0 5px; text-align: center; }
+.ok-note { padding: 8px 12px; border-left: 4px solid var(--lichen); background: #E3EEE5; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.guidance-h { margin: 12px 0 2px; font-size: 1rem; }
+.guidance li { margin-bottom: 8px; }
+.guidance .src { font-size: 0.82rem; color: var(--basalt-soft); }

@@ -1,0 +1,3 @@
+# False positive: public Kahu Ola frame URL query parameter (?key=hawaii%2Fframes%2F...), not a credential.
+33a7b18215a143817f0d56247d1f42a8020daef2:out/costs.csv:generic-api-key:7
+out/costs.csv:generic-api-key:7

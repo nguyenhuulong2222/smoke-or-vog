@@ -187,10 +187,12 @@ def build_prompt(verdict: str, confidence: float, places: dict, when_hst: str,
         "these languages: " + ", ".join(f"{k} = {v}" for k, v in LANGS.items()) + ". "
         "Return one alert per language (exactly 5).\n\n"
         "RULES\n"
-        "1. Health guidance: choose 2 or 3 excerpts from OFFICIAL SOURCES below "
-        "(selected_excerpts: source_id + index) and write each alert's 'actions' as faithful, "
-        "plain-language renderings of exactly those excerpts, in the same order, one action per "
-        "excerpt. Do NOT add any other health or medical advice, product, dose, or claim.\n"
+        "1. Health guidance is QUOTED, never written by you: SELECT 2 or 3 excerpts from OFFICIAL "
+        "SOURCES below (selected_excerpts: source_id + index). In each alert, 'actions' holds "
+        "those excerpts in the same order, one per excerpt: in English copy the excerpt "
+        "verbatim; in other languages give a faithful translation of the excerpt, adding and "
+        "removing nothing. Do NOT write any other health or medical advice anywhere. The "
+        "headline and summary only describe what the satellite shows, where and when.\n"
         "2. headline <= 60 characters; summary <= 200 characters; each action <= 110 characters.\n"
         "3. Say what the satellite suggests and where, using the facts only. Never say the air is "
         "safe. Do not exaggerate. For 'uncertain', say the satellite could not confirm the haze "
@@ -238,12 +240,48 @@ def validate_spark_alerts(verdict: str, raw: dict) -> list[dict]:
     return grounded
 
 
+GUIDANCE_HEADING = "Official guidance (quoted)"
+TRANSLATION_LABEL = "Translation of official guidance, machine-translated"
+REVIEWED_LABEL = "Translation of official guidance, reviewed"
+
+
 def apply_override(lang: str, g: dict, text: str) -> dict:
+    """English guidance is always the verbatim official excerpt (model text is discarded).
+    Other languages: the model's translation of that excerpt, or a reviewed override."""
+    if lang == "en":
+        return {"text": g["excerpt_en"], **g, "verbatim": True, "label": GUIDANCE_HEADING}
     o = OVERRIDES.get(lang, {}).get(f"{g['source_id']}#{g['index']}")
     if o:
-        return {"text": o["text"], **g, "reviewed_override": True,
-                "model_text": unicodedata.normalize("NFC", text)}
-    return {"text": unicodedata.normalize("NFC", text), **g}
+        return {"text": o["text"], **g, "verbatim": False, "reviewed_override": True,
+                "label": REVIEWED_LABEL, "model_text": unicodedata.normalize("NFC", text)}
+    return {"text": unicodedata.normalize("NFC", text), **g, "verbatim": False,
+            "label": TRANSLATION_LABEL}
+
+
+def verify_guidance(doc: dict) -> None:
+    """Raise unless every guidance line traces to assets/health_sources.json:
+    English lines must equal the official excerpt verbatim; translations must point to an
+    official excerpt and be labelled as translations. The AI never authors health advice."""
+    for a in doc["alerts"]:
+        allowed = set(HEALTH["verdict_sources"][doc["verdict"]])
+        if not a["actions"]:
+            raise ValueError(f"{a['lang']}: no guidance lines")
+        for act in a["actions"]:
+            src = HEALTH["sources"].get(act.get("source_id"))
+            idx = act.get("index")
+            if act.get("source_id") not in allowed or src is None or not isinstance(idx, int) \
+                    or not 0 <= idx < len(src["excerpts"]):
+                raise ValueError(f"{a['lang']}: guidance line not traceable to an official source: {act}")
+            excerpt = src["excerpts"][idx]
+            if act.get("excerpt_en") != excerpt or act.get("url") != src["url"]:
+                raise ValueError(f"{a['lang']}: excerpt/url does not match the source file")
+            if a["lang"] == "en":
+                if act.get("text") != excerpt or not act.get("verbatim"):
+                    raise ValueError(f"en: guidance line is not the verbatim official text: {act.get('text')!r}")
+            else:
+                if act.get("verbatim") or act.get("label") not in (TRANSLATION_LABEL, REVIEWED_LABEL) \
+                        or not act.get("text", "").strip():
+                    raise ValueError(f"{a['lang']}: translation not labelled as such")
 
 
 def assemble(run_id: str, verdict: str, confidence: float, places: dict, when_utc: str,
@@ -370,12 +408,15 @@ def render_card(bg: Image.Image, alert: dict, verdict: str) -> Image.Image:
            fill=(220, 225, 235, 255))
 
     # Fit headline + summary + actions in the body area by shrinking fonts if needed.
-    for scale in (1.0, 0.92, 0.85, 0.78, 0.72, 0.66):
+    label = GUIDANCE_HEADING if alert["lang"] == "en" else \
+        f"{GUIDANCE_HEADING} · {alert['actions'][0].get('label', TRANSLATION_LABEL)}"
+    for scale in (1.0, 0.92, 0.85, 0.78, 0.72, 0.66, 0.6, 0.55):
         hf, sf, af = font(int(46 * scale), True), font(int(25 * scale)), font(int(23 * scale))
+        lf = font(max(13, int(18 * scale)), True)
         hl = wrap(d, alert["headline"], hf, inner)
         sl = wrap(d, alert["summary"], sf, inner)
         al = [wrap(d, a["text"], af, inner - 30) for a in alert["actions"]]
-        h = (len(hl) * hf.size * 1.18 + 14 + len(sl) * sf.size * 1.35 + 18 +
+        h = (len(hl) * hf.size * 1.18 + 14 + len(sl) * sf.size * 1.35 + 18 + lf.size * 1.5 +
              sum(len(x) * af.size * 1.32 + 8 for x in al))
         if h <= 400 - top:
             break
@@ -388,6 +429,8 @@ def render_card(bg: Image.Image, alert: dict, verdict: str) -> Image.Image:
         d.text((pad, y), line, font=sf, fill=(228, 232, 240, 255))
         y += sf.size * 1.35
     y += 18
+    d.text((pad, y), label, font=lf, fill=(255, 214, 102, 255))
+    y += lf.size * 1.5
     for lines in al:
         d.ellipse([pad + 4, y + af.size * 0.45, pad + 14, y + af.size * 0.45 + 10], fill=color + (255,))
         for line in lines:
@@ -404,7 +447,8 @@ def render_card(bg: Image.Image, alert: dict, verdict: str) -> Image.Image:
     for line in wrap(d, disc, df, inner)[:2]:
         fy += 32
         d.text((pad, fy), line, font=df, fill=(255, 255, 255, 255))
-    d.text((pad, CARD_H - 38), "Official info: " + alert["official_source_url"], font=font(19),
+    srcs = sorted({a["url"] for a in alert["actions"]})
+    d.text((pad, CARD_H - 38), "Guidance quoted from: " + ", ".join(srcs), font=font(17),
            fill=(190, 210, 255, 255))
     tag = "Smoke or Vog? · satellite estimate"
     tf = font(16)
@@ -459,6 +503,7 @@ def run_alerts(run_dir: Path, effort: str = "medium") -> Path:
         bg_cost = MUSE_IMAGE_PER_IMAGE
     for a in doc["alerts"]:
         render_card(bg, a, verdict).save(out / a["card"])
+    verify_guidance(doc)
     (out / "alerts.json").write_text(json.dumps(doc, indent=2, ensure_ascii=False))
     print(f"alerts: {out}  verdict={verdict} ({conf:.2f})  text ${meta['cost_usd']:.4f} + "
           f"background ${bg_cost:.2f}")

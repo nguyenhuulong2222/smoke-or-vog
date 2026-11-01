@@ -101,7 +101,7 @@ def main() -> None:
 
         from . import alerts, pipeline
 
-        run_dir = pipeline.run("live", concepts=False)
+        run_dir = pipeline.run("live", concepts=False, classifier="agent")
         verdict = json.loads((run_dir / "04_classify.json").read_text())["result"]
         if verdict.get("overall", {}).get("class") in HAZARDS:
             alerts.run_alerts(run_dir)

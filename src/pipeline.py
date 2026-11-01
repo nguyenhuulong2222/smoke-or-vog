@@ -22,7 +22,7 @@ from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
-from . import geo, land, models, sources
+from . import agent, geo, land, models, sources
 from .aggregate import aggregate
 from .common import OUT, SAM_PER_IMAGE, check_budget, total_spend
 
@@ -264,7 +264,13 @@ def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes,
 
 # ------------------------------------------------------------------ run
 
-def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True) -> Path:
+def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True,
+        classifier: str = "standard") -> Path:
+    """classifier: 'standard' (fixed context, default), 'agent' (Muse Spark tool calling,
+    falls back to standard if its verdict is not verifiable), or 'both' (run both on the
+    same plumes, record the comparison, use the agent verdict when it is valid)."""
+    if classifier not in ("standard", "agent", "both"):
+        raise ValueError(classifier)
     cfg = CASES[case]
     check_budget(RUN_COST_CAP)
     spend_start = total_spend()
@@ -484,7 +490,54 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True
     for p in cls_ctx["plumes"]:
         p["geometry"].pop("upwind_end_px", None)
     if plumes or loc["plumes"]:
-        cls, cls_meta = models.spark_classify(run_id, im, cls_ctx, effort=classify_effort)
+        std = std_meta = agent_out = None
+        if classifier in ("standard", "both"):
+            std, std_meta = models.spark_classify(run_id, im, cls_ctx, effort=classify_effort)
+        if classifier in ("agent", "both"):
+            facts = {
+                "image_time": cfg.get("approx_utc") or t, "layer": cfg["layer"],
+                "image_bbox_lonlat": [geo.WEST, geo.SOUTH, geo.EAST, geo.NORTH],
+                "historical": cfg["historical"],
+                "plumes": [{"plume_id": p["plume_id"], "label": p["spark_label"],
+                            "sam_confidence": p["sam_confidence"],
+                            **{k: p["geometry"].get(k) for k in ("centroid", "bbox_lonlat",
+                                                                  "area_km2", "length_km")}}
+                           for p in plumes],
+                "spark_scene": cls_ctx["spark_scene"],
+            }
+            agent_out = agent.classify_agentic(run_id, rd, im, cls_ctx["plumes"], facts,
+                                               cfg["historical"], effort=classify_effort)
+            _save_json(rd / "04_agent_trace.json", {k: agent_out.get(k) for k in (
+                "valid", "rejected", "meta", "trace", "final")})
+            print(f"  4a agent: {len(agent_out['trace'])} tool calls in "
+                  f"{agent_out['meta']['rounds']} rounds, valid={agent_out['valid']}"
+                  + (f" ({agent_out['rejected']})" if agent_out["rejected"] else "")
+                  + f", ${agent_out['meta']['cost_usd']:.4f}")
+            if not agent_out["valid"] and std is None:  # agent-only mode: fall back
+                std, std_meta = models.spark_classify(run_id, im, cls_ctx, effort=classify_effort)
+        if agent_out and agent_out["valid"]:
+            cls, cls_meta = agent_out["result"], {"classifier": "agent", **agent_out["meta"],
+                                                  "model": models.SPARK}
+        else:
+            cls, cls_meta = std, {"classifier": "standard", **std_meta}
+            if agent_out:
+                cls_meta["agent_rejected"] = agent_out["rejected"]
+        if std is not None:
+            _save_json(rd / "04_classify_standard.json", {"result": std, "meta": std_meta})
+        if std is not None and agent_out is not None:
+            unrel = {p["plume_id"]: r for p in plumes
+                     if (r := land.unreliable_reason(p["geometry"].get("land", {})))}
+            _save_json(rd / "04_compare.json", {
+                "standard": {"overall": aggregate(std["per_plume"], unreliable=unrel),
+                             "per_plume": [(x["plume_id"], x["class"], x["confidence"]) for x in std["per_plume"]],
+                             "cost_usd": std_meta.get("cost_usd")},
+                "agent": {"valid": agent_out["valid"], "rejected": agent_out["rejected"],
+                          "overall": aggregate(agent_out["result"]["per_plume"], unreliable=unrel)
+                          if agent_out["valid"] else None,
+                          "per_plume": [(x["plume_id"], x["class"], x["confidence"])
+                                        for x in (agent_out["final"] or {}).get("per_plume", [])],
+                          "tool_calls": [x["name"] for x in agent_out["trace"]],
+                          "cost_usd": agent_out["meta"]["cost_usd"]}})
     else:
         cls = {"detection": "no_plume", "class": "uncertain", "confidence": 0.0,
                "evidence": ["no plume localised by Muse Spark or segmented by SAM"],
@@ -520,10 +573,12 @@ def main() -> None:
     ap.add_argument("--case", choices=list(CASES), default="live")
     ap.add_argument("--no-concepts", action="store_true",
                     help="skip SAM concept prompts (they return nothing on satellite imagery)")
+    ap.add_argument("--classifier", default="standard", choices=["standard", "agent", "both"],
+                    help="stage 4: fixed context (default), agentic tool calling, or both")
     ap.add_argument("--classify-effort", default=CLASSIFY_EFFORT,
                     choices=["minimal", "low", "medium", "high"])
     a = ap.parse_args()
-    run(a.case, a.classify_effort, concepts=not a.no_concepts)
+    run(a.case, a.classify_effort, concepts=not a.no_concepts, classifier=a.classifier)
 
 
 if __name__ == "__main__":
