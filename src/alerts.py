@@ -43,6 +43,30 @@ VERDICTS = ["wildfire_smoke", "vog_kilauea", "vog_mauna_loa", "dust", "uncertain
 DISCLAIMER_EN = "Satellite estimate, not an official warning."
 
 
+HAWAIIAN_NAMES = ["Kaʻū", "Nāʻālehu", "Pāhala", "Pāhoa", "Kīlauea", "Kīhei", "Lānaʻi", "Molokaʻi",
+                  "Oʻahu", "Kauaʻi", "Hawaiʻi", "Līhuʻe", "Kahoʻolawe", "Niʻihau", "Mokuʻāweoweo",
+                  "Halemaʻumaʻu"]
+_PLAIN = str.maketrans("āēīōūĀĒĪŌŪ", "aeiouAEIOU")
+
+
+def fix_place_names(text: str) -> str:
+    """Restore the official spelling of Hawaiian place names (ʻokina U+02BB, kahakō) when a
+    model wrote them without diacritics or with an ASCII/curly apostrophe."""
+    import re
+
+    for name in HAWAIIAN_NAMES:
+        base = name.translate(_PLAIN)
+        variants = {base, base.replace("ʻ", "'"), base.replace("ʻ", "‘"), base.replace("ʻ", "’"),
+                    base.replace("ʻ", ""), name.replace("ʻ", "'"), name.replace("ʻ", "‘"),
+                    name.replace("ʻ", "’"), name.replace("ʻ", "")}
+        for v in sorted(variants - {name}, key=len, reverse=True):
+            # never touch a fully unmarked short form (e.g. "Kau" is also a Hawaiian word)
+            if len(v) >= 3 and not (len(name) < 5 and "ʻ" not in v and v == v.translate(_PLAIN)
+                                    and not any(c in v for c in "'‘’")):
+                text = re.sub(rf"(?<![\wʻ']){re.escape(v)}(?![\wʻ'])", name, text)
+    return text
+
+
 def replay_banner_en(date_label: str) -> str:
     return f"REPLAY · {date_label} · not a current alert"
 
@@ -131,13 +155,19 @@ def affected_places(plume: dict | None, mask: Image.Image | None = None,
             "source_side_km": round(geo.haversine_km(ue["lat"], ue["lon"], *PLACES[src]))}
 
 
-def sources_for(verdict: str) -> list[dict]:
+# ------------------------------------------------------------------ guidance (deterministic)
+
+def guidance_for(verdict: str) -> list[dict]:
+    """The curated official lines for a verdict, resolved verbatim from the source file.
+    Depends ONLY on the verdict; no model is involved. Raises if a curated line is missing."""
     out = []
-    for sid in HEALTH["verdict_sources"][verdict]:
-        src = HEALTH["sources"][sid]
-        out.append({"id": sid, "publisher": src["publisher"], "title": src["title"],
-                    "url": src["url"],
-                    "excerpts": {str(i): t for i, t in enumerate(src["excerpts"])}})
+    for g in HEALTH["verdict_guidance"][verdict]:
+        src = HEALTH["sources"][g["source_id"]]
+        hits = [i for i, t in enumerate(src["excerpts"]) if t.startswith(g["starts_with"])]
+        if len(hits) != 1:
+            raise ValueError(f"curated guidance {g} matches {len(hits)} official lines (need exactly 1)")
+        out.append({"source_id": g["source_id"], "index": hits[0],
+                    "excerpt_en": src["excerpts"][hits[0]], "url": src["url"]})
     return out
 
 
@@ -160,16 +190,8 @@ def alerts_schema(verdict: str) -> dict:
     }
     return {
         "type": "object", "additionalProperties": False,
-        "properties": {
-            "selected_excerpts": {"type": "array", "items": {
-                "type": "object", "additionalProperties": False,
-                "properties": {"source_id": {"type": "string",
-                                             "enum": HEALTH["verdict_sources"][verdict]},
-                               "index": {"type": "integer"}},
-                "required": ["source_id", "index"]}},
-            "alerts": {"type": "array", "items": alert},
-        },
-        "required": ["selected_excerpts", "alerts"],
+        "properties": {"alerts": {"type": "array", "items": alert}},
+        "required": ["alerts"],
     }
 
 
@@ -187,13 +209,14 @@ def build_prompt(verdict: str, confidence: float, places: dict, when_hst: str,
         "these languages: " + ", ".join(f"{k} = {v}" for k, v in LANGS.items()) + ". "
         "Return one alert per language (exactly 5).\n\n"
         "RULES\n"
-        "1. Health guidance is QUOTED, never written by you: SELECT 2 or 3 excerpts from OFFICIAL "
-        "SOURCES below (selected_excerpts: source_id + index). In each alert, 'actions' holds "
-        "those excerpts in the same order, one per excerpt: in English copy the excerpt "
-        "verbatim; in other languages give a faithful translation of the excerpt, adding and "
-        "removing nothing. Do NOT write any other health or medical advice anywhere. The "
-        "headline and summary only describe what the satellite shows, where and when.\n"
-        "2. headline <= 60 characters; summary <= 200 characters; each action <= 110 characters.\n"
+        "1. Health guidance is fixed in advance and is never chosen or written by you. "
+        "'actions' must hold the OFFICIAL GUIDANCE LINES below, in the same order, one per "
+        "line: in English copy each line verbatim; in other languages give a faithful "
+        "translation of each line, adding and removing nothing. If there are no lines, return "
+        "an empty list. Do NOT write any health or medical advice anywhere else. The headline "
+        "and summary only describe what the satellite shows, where and when.\n"
+        "2. headline <= 60 characters; summary <= 200 characters. Guidance lines have NO length "
+        "limit: translate each one completely, sentence by sentence, without shortening.\n"
         "3. Say what the satellite suggests and where, using the facts only. Never say the air is "
         "safe. Do not exaggerate. For 'uncertain', say the satellite could not confirm the haze "
         "source. For 'no_plume', say no haze plume was detected in the satellite image, which "
@@ -212,31 +235,25 @@ def build_prompt(verdict: str, confidence: float, places: dict, when_hst: str,
         "alert' translated into the alert's language (localize the date naturally). If mode is "
         "'live', set replay_banner to an empty string.\n\n"
         "FACTS (JSON):\n" + json.dumps(facts, ensure_ascii=False) + "\n\n"
-        "OFFICIAL SOURCES (JSON; excerpts keyed by index):\n"
-        + json.dumps(sources_for(verdict), ensure_ascii=False)
+        f"OFFICIAL GUIDANCE LINES (verbatim, in order; 'actions' must have exactly "
+        f"{len(guidance_for(verdict))} item(s) in every language, one per line, never split "
+        "or merged):\n"
+        + json.dumps([g["excerpt_en"] for g in guidance_for(verdict)], ensure_ascii=False)
     )
 
 
 def validate_spark_alerts(verdict: str, raw: dict) -> list[dict]:
-    """Enforce grounding: excerpts must exist and belong to the verdict's sources;
-    5 languages exactly once; one action per selected excerpt."""
-    allowed = set(HEALTH["verdict_sources"][verdict])
-    sel = raw["selected_excerpts"]
-    if not 1 <= len(sel) <= 3:
-        raise ValueError(f"expected 1-3 selected excerpts, got {len(sel)}")
-    grounded = []
-    for s in sel:
-        src = HEALTH["sources"].get(s["source_id"])
-        if s["source_id"] not in allowed or src is None or not 0 <= s["index"] < len(src["excerpts"]):
-            raise ValueError(f"ungrounded excerpt reference {s}")
-        grounded.append({"source_id": s["source_id"], "index": s["index"],
-                         "excerpt_en": src["excerpts"][s["index"]], "url": src["url"]})
+    """Guidance comes from guidance_for(verdict) only. Checks the model returned exactly
+    5 languages and one translated line per curated guidance line."""
+    grounded = guidance_for(verdict)
     langs = [a["lang"] for a in raw["alerts"]]
     if sorted(langs) != sorted(LANGS):
         raise ValueError(f"languages {langs} != {list(LANGS)}")
     for a in raw["alerts"]:
+        if a["lang"] == "en":
+            continue  # English guidance is always the verbatim official text; model lines are discarded
         if len(a["actions"]) != len(grounded):
-            raise ValueError(f"{a['lang']}: {len(a['actions'])} actions for {len(grounded)} excerpts")
+            raise ValueError(f"{a['lang']}: {len(a['actions'])} lines for {len(grounded)} guidance lines")
     return grounded
 
 
@@ -262,10 +279,13 @@ def verify_guidance(doc: dict) -> None:
     """Raise unless every guidance line traces to assets/health_sources.json:
     English lines must equal the official excerpt verbatim; translations must point to an
     official excerpt and be labelled as translations. The AI never authors health advice."""
+    expected = [(g["source_id"], g["index"]) for g in guidance_for(doc["verdict"])]
     for a in doc["alerts"]:
         allowed = set(HEALTH["verdict_sources"][doc["verdict"]])
-        if not a["actions"]:
-            raise ValueError(f"{a['lang']}: no guidance lines")
+        got = [(x.get("source_id"), x.get("index")) for x in a["actions"]]
+        if got != expected:
+            raise ValueError(f"{a['lang']}: guidance {got} differs from the curated lines for "
+                             f"{doc['verdict']} {expected}")
         for act in a["actions"]:
             src = HEALTH["sources"].get(act.get("source_id"))
             idx = act.get("index")
@@ -298,8 +318,8 @@ def assemble(run_id: str, verdict: str, confidence: float, places: dict, when_ut
             "lang": code, "language": LANGS[code], "mode": mode,
             "replay_banner": (local_banner or banner_en) if mode == "replay" else "",
             "replay_banner_en": banner_en,
-            "headline": unicodedata.normalize("NFC", a["headline"]),
-            "summary": unicodedata.normalize("NFC", a["summary"]),
+            "headline": fix_place_names(unicodedata.normalize("NFC", a["headline"])),
+            "summary": fix_place_names(unicodedata.normalize("NFC", a["summary"])),
             "actions": [apply_override(code, g, t) for t, g in zip(a["actions"], grounded)],
             "confidence": round(confidence, 2),
             "confidence_label": a["confidence_label"],
@@ -408,7 +428,7 @@ def render_card(bg: Image.Image, alert: dict, verdict: str) -> Image.Image:
            fill=(220, 225, 235, 255))
 
     # Fit headline + summary + actions in the body area by shrinking fonts if needed.
-    label = GUIDANCE_HEADING if alert["lang"] == "en" else \
+    label = "" if not alert["actions"] else GUIDANCE_HEADING if alert["lang"] == "en" else \
         f"{GUIDANCE_HEADING} · {alert['actions'][0].get('label', TRANSLATION_LABEL)}"
     for scale in (1.0, 0.92, 0.85, 0.78, 0.72, 0.66, 0.6, 0.55):
         hf, sf, af = font(int(46 * scale), True), font(int(25 * scale)), font(int(23 * scale))
@@ -429,8 +449,9 @@ def render_card(bg: Image.Image, alert: dict, verdict: str) -> Image.Image:
         d.text((pad, y), line, font=sf, fill=(228, 232, 240, 255))
         y += sf.size * 1.35
     y += 18
-    d.text((pad, y), label, font=lf, fill=(255, 214, 102, 255))
-    y += lf.size * 1.5
+    if label:
+        d.text((pad, y), label, font=lf, fill=(255, 214, 102, 255))
+        y += lf.size * 1.5
     for lines in al:
         d.ellipse([pad + 4, y + af.size * 0.45, pad + 14, y + af.size * 0.45 + 10], fill=color + (255,))
         for line in lines:
@@ -447,9 +468,9 @@ def render_card(bg: Image.Image, alert: dict, verdict: str) -> Image.Image:
     for line in wrap(d, disc, df, inner)[:2]:
         fy += 32
         d.text((pad, fy), line, font=df, fill=(255, 255, 255, 255))
-    srcs = sorted({a["url"] for a in alert["actions"]})
-    d.text((pad, CARD_H - 38), "Guidance quoted from: " + ", ".join(srcs), font=font(17),
-           fill=(190, 210, 255, 255))
+    srcs = sorted({a["url"] for a in alert["actions"]}) or [alert["official_source_url"]]
+    d.text((pad, CARD_H - 38), ("Guidance quoted from: " if alert["actions"] else "Official info: ")
+           + ", ".join(srcs), font=font(17), fill=(190, 210, 255, 255))
     tag = "Smoke or Vog? · satellite estimate"
     tf = font(16)
     d.text((CARD_W - pad - d.textlength(tag, font=tf), CARD_H - 36), tag, font=tf,
@@ -488,9 +509,16 @@ def run_alerts(run_dir: Path, effort: str = "medium") -> Path:
     out = run_dir / "alerts"
     out.mkdir(exist_ok=True)
     prompt = build_prompt(verdict, conf, places, when_hst, unconfirmed, mode, date_label(t))
-    raw, meta = _spark_json(run["run_id"], "alerts", [{"type": "input_text", "text": prompt}],
-                            alerts_schema(verdict), "multilingual_alerts", effort=effort)
-    grounded = validate_spark_alerts(verdict, raw)
+    for attempt in (1, 2):  # one retry if a translation is misaligned with the fixed lines
+        raw, meta = _spark_json(run["run_id"], "alerts", [{"type": "input_text", "text": prompt}],
+                                alerts_schema(verdict), "multilingual_alerts", effort=effort)
+        try:
+            grounded = validate_spark_alerts(verdict, raw)
+            break
+        except ValueError as e:
+            if attempt == 2:
+                raise
+            print(f"alerts: retrying ({e})")
     doc = assemble(run["run_id"], verdict, conf, places, t, raw, grounded, meta, mode=mode)
 
     bg_path = out / "background.png"
@@ -510,6 +538,25 @@ def run_alerts(run_dir: Path, effort: str = "medium") -> Path:
     return out
 
 
+def rerender(run_dir: Path) -> Path:
+    """Re-apply deterministic fixes and re-render cards from a saved alerts.json (no API calls)."""
+    out = Path(run_dir) / "alerts"
+    doc = json.loads((out / "alerts.json").read_text())
+    for a in doc["alerts"]:
+        a["headline"], a["summary"] = fix_place_names(a["headline"]), fix_place_names(a["summary"])
+    verify_guidance(doc)
+    bg = Image.open(out / "background.png").convert("RGB")
+    for a in doc["alerts"]:
+        render_card(bg, a, doc["verdict"]).save(out / a["card"])
+    (out / "alerts.json").write_text(json.dumps(doc, indent=2, ensure_ascii=False))
+    return out
+
+
 if __name__ == "__main__":
-    for rd in sys.argv[1:]:
-        run_alerts(Path(rd))
+    args = sys.argv[1:]
+    if args and args[0] == "--rerender":
+        for rd in args[1:]:
+            print("rerendered", rerender(Path(rd)))
+    else:
+        for rd in args:
+            run_alerts(Path(rd))

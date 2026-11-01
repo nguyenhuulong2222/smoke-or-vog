@@ -1,87 +1,54 @@
 {
   "variants": {
     "box": {
-      "prompt": "<0f>1<|box;x1=1008;y1=780;x2=1239;y2=960;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=994;y1=820;x2=1225;y2=965;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 21663,
-        "mean_confidence": 0.527,
-        "frac_inside_spark_boxes": 0.945,
-        "spark_box_fill": 0.487
+        "mask_px": 17110,
+        "mean_confidence": 0.48,
+        "frac_inside_spark_boxes": 0.921,
+        "spark_box_fill": 0.465
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.52734375,
+          "confidence": 0.48046875,
           "box": [
-            987,
-            776,
-            1199,
-            948
+            978,
+            809,
+            1166,
+            951
           ],
-          "mask_px": 21663
+          "mask_px": 17110
         }
       ]
     },
     "box+point": {
-      "prompt": "<0f>1<|box;x1=1008;y1=780;x2=1239;y2=960;w=1400;h=1000|><|point;x=1120;y=870;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=994;y1=820;x2=1225;y2=965;w=1400;h=1000|><|point;x=1099;y=895;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 22565,
-        "mean_confidence": 0.523,
-        "frac_inside_spark_boxes": 0.964,
-        "spark_box_fill": 0.518
+        "mask_px": 16446,
+        "mean_confidence": 0.52,
+        "frac_inside_spark_boxes": 0.928,
+        "spark_box_fill": 0.451
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.5234375,
+          "confidence": 0.51953125,
           "box": [
-            993,
-            779,
-            1190,
-            947
+            979,
+            810,
+            1142,
+            950
           ],
-          "mask_px": 22565
+          "mask_px": 16446
         }
       ]
-    },
-    "concept:smoke": {
-      "prompt": "smoke",
-      "outcome": "completed",
-      "error": null,
-      "score": {
-        "objects": 0,
-        "mask_px": 0,
-        "mean_confidence": null
-      },
-      "objects": []
-    },
-    "concept:volcanic plume": {
-      "prompt": "volcanic plume",
-      "outcome": "completed",
-      "error": null,
-      "score": {
-        "objects": 0,
-        "mask_px": 0,
-        "mean_confidence": null
-      },
-      "objects": []
-    },
-    "concept:haze": {
-      "prompt": "haze",
-      "outcome": "completed",
-      "error": null,
-      "score": {
-        "objects": 0,
-        "mask_px": 0,
-        "mean_confidence": null
-      },
-      "objects": []
     }
   },
   "chosen_for_classification": "box+point",
@@ -89,47 +56,47 @@
     {
       "plume_id": 1,
       "spark_box": [
-        1008,
-        780,
-        1239,
-        960
+        994,
+        820,
+        1225,
+        965
       ],
       "pass2_box": [
-        963,
-        754,
-        1219,
-        971
+        955,
+        789,
+        1165,
+        969
       ],
       "pass1": {
-        "area_px": 22565,
-        "coherence": 0.998,
-        "bbox_frac": 0.0236,
+        "area_px": 16446,
+        "coherence": 0.995,
+        "bbox_frac": 0.0162,
         "edges_touched": 0,
         "land": {
-          "land_frac": 0.042,
+          "land_frac": 0.001,
           "islands_covered": {
-            "Hawaiʻi": 0.026
+            "Hawaiʻi": 0.0
           },
           "land_spill": false,
           "islands_swallowed": []
         }
       },
       "pass2": {
-        "area_px": 31887,
-        "coherence": 1.0,
-        "bbox_frac": 0.0376,
+        "area_px": 22607,
+        "coherence": 0.987,
+        "bbox_frac": 0.0243,
         "edges_touched": 0,
         "land": {
-          "land_frac": 0.027,
+          "land_frac": 0.034,
           "islands_covered": {
-            "Hawaiʻi": 0.024
+            "Hawaiʻi": 0.021
           },
           "land_spill": false,
           "islands_swallowed": []
         }
       },
       "kept": "pass2",
-      "reason": "pass 2 larger (1.41x) and coherent"
+      "reason": "pass 2 larger (1.37x) and coherent"
     }
   ]
 }

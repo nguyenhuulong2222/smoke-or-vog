@@ -1,0 +1,63 @@
+{
+  "standard": {
+    "overall": {
+      "class": "vog_kilauea",
+      "confidence": 0.7,
+      "plume_id": 1,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [
+        {
+          "plume_id": 1,
+          "class": "vog_kilauea",
+          "confidence": 0.7,
+          "source_hint": "Kilauea summit"
+        }
+      ],
+      "unconfirmed": []
+    },
+    "per_plume": [
+      [
+        1,
+        "vog_kilauea",
+        0.7
+      ]
+    ],
+    "cost_usd": 0.012621
+  },
+  "agent": {
+    "valid": true,
+    "rejected": null,
+    "overall": {
+      "class": "vog_kilauea",
+      "confidence": 0.82,
+      "plume_id": 1,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [
+        {
+          "plume_id": 1,
+          "class": "vog_kilauea",
+          "confidence": 0.82,
+          "source_hint": "Kilauea summit, Hawaii Island"
+        }
+      ],
+      "unconfirmed": []
+    },
+    "per_plume": [
+      [
+        1,
+        "vog_kilauea",
+        0.82
+      ]
+    ],
+    "tool_calls": [
+      "get_volcano_status",
+      "get_wind",
+      "distance_to_vents",
+      "land_fraction",
+      "get_firms",
+      "distance_to_vents",
+      "get_wind"
+    ],
+    "cost_usd": 0.024491
+  }
+}

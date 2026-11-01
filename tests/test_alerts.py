@@ -37,10 +37,10 @@ ALERTS_FILE_SCHEMA = {
 }
 
 
-def fake_raw(verdict, n_actions=2, langs=None):
-    sid = alerts.HEALTH["verdict_sources"][verdict][0]
+def fake_raw(verdict, n_actions=None, langs=None):
+    if n_actions is None:
+        n_actions = len(alerts.guidance_for(verdict))
     return {
-        "selected_excerpts": [{"source_id": sid, "index": i} for i in range(n_actions)],
         "alerts": [{"lang": code, "headline": f"Headline {code} Kaʻū",
                     "summary": "Satellite suggests haze near Pāhala (Kaʻū).",
                     "actions": [f"action {i}" for i in range(n_actions)],
@@ -69,30 +69,32 @@ def test_vog_uses_ivhhn_and_smoke_uses_airnow():
     assert "airnow.gov" in alerts.HEALTH["sources"]["airnow_fires_and_health"]["url"]
 
 
-def test_prompt_contains_only_the_verdicts_sources():
+def test_prompt_gives_fixed_lines_and_no_choice():
     p = alerts.build_prompt("wildfire_smoke", 0.88, {"near": ["Kula (Maui)"]}, "x", [])
-    assert "airnow.gov/air-quality-and-health" in p and "vog.ivhhn.org" not in p
-    assert "Do NOT write any other health or medical advice" in p
-    assert "never written by you" in p
+    for g in alerts.guidance_for("wildfire_smoke"):
+        assert g["excerpt_en"] in p
+    assert "never chosen or written by you" in p
+    assert "Stay indoors:" not in p          # vog lines are not offered for smoke
+    assert "Do NOT write any health or medical advice" in p
+    assert "NO length limit" in p and "each action <= 110" not in p
 
 
 # ---------------------------------------------------------------- grounding
 
-def test_grounding_rejects_bad_references():
-    with pytest.raises(ValueError):  # index out of range
-        raw = fake_raw("vog_kilauea")
-        raw["selected_excerpts"][0]["index"] = 999
-        alerts.validate_spark_alerts("vog_kilauea", raw)
-    with pytest.raises(ValueError):  # source not allowed for this verdict
-        raw = fake_raw("vog_kilauea")
-        raw["selected_excerpts"][0]["source_id"] = "airnow_fires_and_health"
-        alerts.validate_spark_alerts("vog_kilauea", raw)
+def test_model_output_shape_is_enforced():
     with pytest.raises(ValueError):  # missing a language
         alerts.validate_spark_alerts("vog_kilauea", fake_raw("vog_kilauea", langs=["en", "vi"]))
-    with pytest.raises(ValueError):  # action count must match excerpts
+    with pytest.raises(ValueError):  # extra translated line = misaligned with the fixed lines
         raw = fake_raw("vog_kilauea")
-        raw["alerts"][0]["actions"].append("invented advice")
+        raw["alerts"][1]["actions"].append("invented advice")
         alerts.validate_spark_alerts("vog_kilauea", raw)
+    # English model lines are ignored entirely (verbatim official text is used instead)
+    raw = fake_raw("vog_kilauea")
+    raw["alerts"][0]["actions"] = ["a", "b", "c", "d", "e", "f", "g"]
+    g = alerts.validate_spark_alerts("vog_kilauea", raw)
+    doc = alerts.assemble("r", "vog_kilauea", 0.8, {}, "2026-10-17T21:00:00Z", raw, g, {}, mode="replay")
+    en = next(a for a in doc["alerts"] if a["lang"] == "en")
+    assert [x["text"] for x in en["actions"]] == [x["excerpt_en"] for x in g]
 
 
 def test_assembled_alerts_file_schema_flags_and_disclaimer():
@@ -264,9 +266,9 @@ def test_historical_and_unknown_cases_are_replay():
 
 
 def test_reviewed_vi_override_for_airnow_line():
-    raw = fake_raw("wildfire_smoke", n_actions=1)
-    raw["selected_excerpts"] = [{"source_id": "airnow_fires_and_health", "index": 4}]
+    raw = fake_raw("wildfire_smoke")
     g = alerts.validate_spark_alerts("wildfire_smoke", raw)
+    assert (g[0]["source_id"], g[0]["index"]) == ("airnow_fires_and_health", 4)
     doc = alerts.assemble("r", "wildfire_smoke", 0.9, {}, "2023-08-08", raw, g, {}, mode="replay")
     vi = next(a for a in doc["alerts"] if a["lang"] == "vi")["actions"][0]
     assert "các cảnh báo về khói cháy rừng" in vi["text"] and vi["reviewed_override"] is True
@@ -298,7 +300,7 @@ def test_translations_are_labelled():
             assert all(x["label"].startswith("Translation of official guidance") for x in a["actions"])
 
 
-@pytest.mark.parametrize("tamper", ["en_text", "source", "index", "excerpt", "label", "url"])
+@pytest.mark.parametrize("tamper", ["en_text", "source", "index", "excerpt", "label", "url", "swap"])
 def test_untraceable_guidance_is_rejected(tamper):
     doc = good_doc()
     en = next(a for a in doc["alerts"] if a["lang"] == "en")
@@ -315,6 +317,9 @@ def test_untraceable_guidance_is_rejected(tamper):
         vi["actions"][0]["label"] = "Health advice"
     elif tamper == "url":
         en["actions"][0]["url"] = "https://example.com/"
+    elif tamper == "swap":  # a real official line, but not the curated one for this verdict
+        src = alerts.HEALTH["sources"]["airnow_fires_and_health"]
+        en["actions"][0].update(index=7, excerpt_en=src["excerpts"][7], text=src["excerpts"][7])
     with pytest.raises(ValueError):
         alerts.verify_guidance(doc)
 
@@ -323,3 +328,73 @@ def test_every_official_excerpt_in_source_file_is_reachable():
     for verdict in alerts.VERDICTS:
         for sid in alerts.HEALTH["verdict_sources"][verdict]:
             assert alerts.HEALTH["sources"][sid]["excerpts"]
+
+
+# ---------------------------------------------------------------- deterministic guidance
+
+CURATED = {
+    "vog_kilauea": ["Limit strenuous activities:", "Stay indoors:", "Keep medications handy:"],
+    "vog_mauna_loa": ["Limit strenuous activities:", "Stay indoors:", "Keep medications handy:"],
+    "wildfire_smoke": ["Pay attention to local air quality reports.", "If you are advised to stay indoors"],
+    "dust": ["When AQI values are above 100"],
+    "uncertain": ["Pay attention to local air quality reports."],
+    "no_plume": [],
+}
+
+
+@pytest.mark.parametrize("verdict", alerts.VERDICTS)
+def test_curated_lines_exist_verbatim_in_source(verdict):
+    g = alerts.guidance_for(verdict)
+    assert [x["excerpt_en"][:len(p)] for x, p in zip(g, CURATED[verdict])] == CURATED[verdict]
+    assert len(g) == len(CURATED[verdict]) <= 3
+    for x in g:
+        assert x["excerpt_en"] in alerts.HEALTH["sources"][x["source_id"]]["excerpts"]
+
+
+def test_guidance_depends_only_on_verdict():
+    """Different model outputs, places, confidences and modes never change the guidance."""
+    for verdict in alerts.VERDICTS:
+        seen = set()
+        for conf, places, mode, text in [(0.71, {"near": ["Hilo"]}, "live", "A"),
+                                         (0.99, {"near": []}, "replay", "totally different words")]:
+            raw = fake_raw(verdict)
+            for a in raw["alerts"]:
+                a["actions"] = [text] * len(a["actions"])
+            g = alerts.validate_spark_alerts(verdict, raw)
+            doc = alerts.assemble("r", verdict, conf, places, "2023-08-08", raw, g, {}, mode=mode)
+            alerts.verify_guidance(doc)
+            for a in doc["alerts"]:
+                seen.add(tuple((x["source_id"], x["index"]) for x in a["actions"]))
+        assert len(seen) == 1, verdict
+        en = next(a for a in doc["alerts"] if a["lang"] == "en")
+        assert [x["text"] for x in en["actions"]] == [x["excerpt_en"] for x in alerts.guidance_for(verdict)]
+
+
+def test_missing_curated_line_fails_loudly(monkeypatch):
+    bad = dict(alerts.HEALTH["verdict_guidance"])
+    bad["wildfire_smoke"] = [{"source_id": "airnow_fires_and_health", "starts_with": "Consider leaving the area"}]
+    monkeypatch.setitem(alerts.HEALTH, "verdict_guidance", bad)
+    with pytest.raises(ValueError):
+        alerts.guidance_for("wildfire_smoke")
+
+
+def test_no_plume_card_renders_without_guidance():
+    raw = fake_raw("no_plume")
+    g = alerts.validate_spark_alerts("no_plume", raw)
+    doc = alerts.assemble("live_x", "no_plume", 0.0, {}, "2026-10-31T21:40:00Z", raw, g, {}, mode="live")
+    alerts.verify_guidance(doc)
+    for a in doc["alerts"]:
+        assert a["actions"] == []
+        assert alerts.render_card(BG, a, "no_plume").size == (alerts.CARD_W, alerts.CARD_H)
+
+
+@pytest.mark.parametrize("bad,good", [
+    ("gần Nā'ālehu (Kaʻu) và Ocean View (Ka'u)", "gần Nāʻālehu (Kaʻū) và Ocean View (Kaʻū)"),
+    ("Kau ka lā ma Kaʻu", "Kau ka lā ma Kaʻū"),  # Hawaiian word "kau" untouched
+    ("vog from Kilauea near Pahala", "vog from Kīlauea near Pāhala"),
+    ("Hawai'i and Lana'i, Molokai", "Hawaiʻi and Lānaʻi, Molokaʻi"),
+    ("Kaʻū already correct; Kauai", "Kaʻū already correct; Kauaʻi"),
+    ("Kaunakakai (Molokaʻi) and Kahului", "Kaunakakai (Molokaʻi) and Kahului"),  # no false hits
+])
+def test_fix_place_names(bad, good):
+    assert alerts.fix_place_names(bad) == good

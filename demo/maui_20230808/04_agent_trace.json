@@ -1,0 +1,430 @@
+{
+  "valid": true,
+  "rejected": null,
+  "meta": {
+    "cost_usd": 0.024394,
+    "input_tokens": 15885,
+    "output_tokens": 3872,
+    "reasoning_tokens": 2128,
+    "rounds": 3
+  },
+  "trace": [
+    {
+      "round": 1,
+      "cite": "E1",
+      "call_id": "call_f122f80d-3109-4aec-aa2f-5a8b4e008321",
+      "name": "get_volcano_status",
+      "arguments": "{\"time_utc\":\"2023-08-08T21:00:00Z\"}",
+      "output": {
+        "cite_as": "E1",
+        "ok": true,
+        "result": {
+          "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+          "valid_at": "2023-08-08T21:00:00+00:00",
+          "volcanoes": {
+            "kilauea": {
+              "alert_level": "ADVISORY",
+              "aviation_color": "YELLOW",
+              "erupting": "no",
+              "activity_summary": "Kīlauea volcano is not erupting. No significant changes have been observed at the summit or in either rift zone over the past week.",
+              "notice_sent_utc": "2023-08-08 19:20:05",
+              "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2023-08-08T12:04:28-07:00",
+              "error": null
+            },
+            "mauna_loa": {
+              "alert_level": "NORMAL",
+              "aviation_color": "GREEN",
+              "erupting": "no",
+              "activity_summary": "",
+              "notice_sent_utc": "2023-08-03 22:15:57",
+              "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2023-08-03T14:27:00-07:00",
+              "error": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E2",
+      "call_id": "call_c9dfaffe-0e8f-4d12-bfa9-965ebdad6ba6",
+      "name": "get_wind",
+      "arguments": "{\"lat\":19.26,\"lon\":-156.757,\"time_utc\":\"2023-08-08T21:00:00Z\"}",
+      "output": {
+        "cite_as": "E2",
+        "ok": true,
+        "result": {
+          "time": "2023-08-08T21:00",
+          "speed_kmh": 12.6,
+          "from_deg": 272,
+          "source": "Open-Meteo archive (ERA5-based reanalysis)"
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E3",
+      "call_id": "call_f052210e-b6b7-49e9-b7c7-a8f483451b08",
+      "name": "get_wind",
+      "arguments": "{\"lat\":20.493,\"lon\":-157.808,\"time_utc\":\"2023-08-08T21:00:00Z\"}",
+      "output": {
+        "cite_as": "E3",
+        "ok": true,
+        "result": {
+          "time": "2023-08-08T21:00",
+          "speed_kmh": 24.3,
+          "from_deg": 58,
+          "source": "Open-Meteo archive (ERA5-based reanalysis)"
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E4",
+      "call_id": "call_2ffb9600-68ab-4b04-a865-7ab8d5c2300b",
+      "name": "get_wind",
+      "arguments": "{\"lat\":21.335,\"lon\":-158.56,\"time_utc\":\"2023-08-08T21:00:00Z\"}",
+      "output": {
+        "cite_as": "E4",
+        "ok": true,
+        "result": {
+          "time": "2023-08-08T21:00",
+          "speed_kmh": 27.6,
+          "from_deg": 68,
+          "source": "Open-Meteo archive (ERA5-based reanalysis)"
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E5",
+      "call_id": "call_3cd12b6d-7d1a-46d0-93d7-1724767ee947",
+      "name": "get_firms",
+      "arguments": "{\"bbox\":[-161.0,18.0,-154.0,23.0],\"date\":\"2023-08-08\"}",
+      "output": {
+        "cite_as": "E5",
+        "ok": true,
+        "result": {
+          "source": "NASA GIBS FIRMS thermal anomaly layers (2023-08-08), rasterised",
+          "fire_clusters": [
+            {
+              "lat": 20.0867,
+              "lon": -155.8632,
+              "n": 206,
+              "near": "Kailua-Kona (52 km)",
+              "nearest_summit_km": 73.1
+            },
+            {
+              "lat": 20.8101,
+              "lon": -156.3022,
+              "n": 201,
+              "near": "Kula, Maui (3 km)",
+              "nearest_summit_km": 165.2
+            },
+            {
+              "lat": 20.013,
+              "lon": -155.6945,
+              "n": 46,
+              "near": "Kailua-Kona (52 km)",
+              "nearest_summit_km": 60.5
+            },
+            {
+              "lat": 21.421,
+              "lon": -158.0148,
+              "n": 44,
+              "near": "Honolulu (21 km)",
+              "nearest_summit_km": 331.2
+            },
+            {
+              "lat": 19.5975,
+              "lon": -155.5075,
+              "n": 21,
+              "near": "Mauna Loa summit (17 km)",
+              "nearest_summit_km": 17.2
+            }
+          ],
+          "volcanic_thermal": {
+            "kilauea-summit": 45
+          },
+          "note": "counts are rendered marker pixels on a 0.005-deg grid, not individual detections"
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E6",
+      "call_id": "call_4004f11e-d0f2-4773-b4eb-7cab43001b16",
+      "name": "land_fraction",
+      "arguments": "{\"plume_id\":1}",
+      "output": {
+        "cite_as": "E6",
+        "ok": true,
+        "result": {
+          "land_frac": 0.001,
+          "islands_covered": {
+            "Hawaiʻi": 0.001
+          },
+          "land_spill": false,
+          "islands_swallowed": []
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E7",
+      "call_id": "call_15d92598-68b1-4ca4-bcd9-a0e59c7c7c42",
+      "name": "land_fraction",
+      "arguments": "{\"plume_id\":2}",
+      "output": {
+        "cite_as": "E7",
+        "ok": true,
+        "result": {
+          "land_frac": 0.0,
+          "islands_covered": {
+            "Lānaʻi": 0.002
+          },
+          "land_spill": false,
+          "islands_swallowed": []
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E8",
+      "call_id": "call_448b0104-c395-416b-86e1-235b6724ea70",
+      "name": "land_fraction",
+      "arguments": "{\"plume_id\":3}",
+      "output": {
+        "cite_as": "E8",
+        "ok": true,
+        "result": {
+          "land_frac": 0.0,
+          "islands_covered": {
+            "Oʻahu": 0.0
+          },
+          "land_spill": false,
+          "islands_swallowed": []
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cite": "E9",
+      "call_id": "call_a43e839d-455f-4dff-a0b8-c0a9ca08a037",
+      "name": "distance_to_vents",
+      "arguments": "{\"plume_id\":1,\"wind_from_deg\":272.0}",
+      "output": {
+        "cite_as": "E9",
+        "ok": true,
+        "result": {
+          "centroid": {
+            "lat": 19.26,
+            "lon": -156.757
+          },
+          "bbox_lonlat": [
+            -157.865,
+            18.52,
+            -155.85,
+            20.105
+          ],
+          "area_km2": 18751,
+          "length_km": 275,
+          "upwind_end": {
+            "lat": 18.825,
+            "lon": -157.855
+          },
+          "distance_km": {
+            "kilauea_summit": 277.8,
+            "mauna_loa_summit": 246.8
+          },
+          "wind_from_deg_used": 272.0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cite": "E10",
+      "call_id": "call_c3d7250d-c99f-4a38-af55-3a4b937183d9",
+      "name": "distance_to_vents",
+      "arguments": "{\"plume_id\":2,\"wind_from_deg\":58.0}",
+      "output": {
+        "cite_as": "E10",
+        "ok": true,
+        "result": {
+          "centroid": {
+            "lat": 20.493,
+            "lon": -157.808
+          },
+          "bbox_lonlat": [
+            -159.12,
+            20.035,
+            -156.455,
+            21.02
+          ],
+          "area_km2": 12213,
+          "length_km": 298,
+          "upwind_end": {
+            "lat": 20.7,
+            "lon": -156.47
+          },
+          "distance_km": {
+            "kilauea_summit": 189.9,
+            "mauna_loa_summit": 163.3
+          },
+          "wind_from_deg_used": 58.0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cite": "E11",
+      "call_id": "call_c007a8f6-b7ca-4d2e-a658-31233116e867",
+      "name": "distance_to_vents",
+      "arguments": "{\"plume_id\":3,\"wind_from_deg\":68.0}",
+      "output": {
+        "cite_as": "E11",
+        "ok": true,
+        "result": {
+          "centroid": {
+            "lat": 21.335,
+            "lon": -158.56
+          },
+          "bbox_lonlat": [
+            -159.08,
+            21.145,
+            -158.12,
+            21.57
+          ],
+          "area_km2": 1933,
+          "length_km": 110,
+          "upwind_end": {
+            "lat": 21.31,
+            "lon": -158.13
+          },
+          "distance_km": {
+            "kilauea_summit": 364.6,
+            "mauna_loa_summit": 332.7
+          },
+          "wind_from_deg_used": 68.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "caveats": "Winds at plume 1 location are westerly (from 272 deg) likely due to island wake/lee eddy south-west of Hawai'i Island, so transport direction there is less clean than the NE trades at plumes 2-3; plume 3 is very faint and small so cloud vs thin smoke cannot be fully excluded.",
+    "class": "wildfire_smoke",
+    "confidence": 0.85,
+    "per_plume": [
+      {
+        "class": "wildfire_smoke",
+        "confidence": 0.82,
+        "evidence": [
+          {
+            "cites": [
+              "E1"
+            ],
+            "text": "Both volcanoes not erupting at image time: Kilauea ADVISORY/YELLOW 'is not erupting', Mauna Loa NORMAL/GREEN 'no', ruling against vog."
+          },
+          {
+            "cites": [
+              "E5"
+            ],
+            "text": "Multiple large wildfire clusters on Hawai'i Island west side: Kailua-Kona clusters n=206 and n=46, plus n=21 near Mauna Loa summit slopes, providing smoke source on west coast."
+          },
+          {
+            "cites": [
+              "E9"
+            ],
+            "text": "Plume 1 upwind end far from vents: 277.8 km to Kilauea, 246.8 km to Mauna Loa, inconsistent with vog point source."
+          },
+          {
+            "cites": [
+              "E6",
+              "E2"
+            ],
+            "text": "Mask is 0.1% land over ocean west/southwest of Hawai'i Island, a diffuse translucent gray blanket over ocean, not white cumulus cloud."
+          }
+        ],
+        "plume_id": 1,
+        "source_hint": "Hawai'i Island west-side / Kona wildfires"
+      },
+      {
+        "class": "wildfire_smoke",
+        "confidence": 0.9,
+        "evidence": [
+          {
+            "cites": [
+              "E1"
+            ],
+            "text": "Volcanoes not erupting, so elongated gray streak is not vog despite downwind location."
+          },
+          {
+            "cites": [
+              "E5"
+            ],
+            "text": "Very large fire cluster at Kula, Maui (3 km) n=201, the dominant fire in the scene, co-located with streak origin."
+          },
+          {
+            "cites": [
+              "E10"
+            ],
+            "text": "Upwind end at 20.7N, -156.47E near Maui, 163-190 km from Mauna Loa/Kilauea summits, not centered on vents."
+          },
+          {
+            "cites": [
+              "E3"
+            ],
+            "text": "NE wind from 58 deg at 24.3 km/h blows toward WSW, matching long narrow streak extending west-southwest from central islands."
+          },
+          {
+            "cites": [
+              "E7"
+            ],
+            "text": "Mask 0% land over ocean, ruling out land-cover artifact."
+          }
+        ],
+        "plume_id": 2,
+        "source_hint": "Kula / Lahaina Maui wildfires"
+      },
+      {
+        "class": "wildfire_smoke",
+        "confidence": 0.68,
+        "evidence": [
+          {
+            "cites": [
+              "E1"
+            ],
+            "text": "Volcanoes not erupting, disfavoring vog for Oahu-region haze 332-364 km from vents."
+          },
+          {
+            "cites": [
+              "E5"
+            ],
+            "text": "Fire cluster near Honolulu (21 km) n=44 provides local wildfire source upwind of streak."
+          },
+          {
+            "cites": [
+              "E11"
+            ],
+            "text": "Upwind end at 21.31N, -158.13W just west of Oahu, 332.7 km to Mauna Loa and 364.6 km to Kilauea."
+          },
+          {
+            "cites": [
+              "E4"
+            ],
+            "text": "ENE wind from 68 deg at 27.6 km/h blows toward west, consistent with small wedge extending west from western tip of Oahu."
+          },
+          {
+            "cites": [
+              "E8"
+            ],
+            "text": "Mask 0% land over ocean, faint gray-white translucent wedge distinct from bright white cumulus."
+          }
+        ],
+        "plume_id": 3,
+        "source_hint": "Oahu (Honolulu-area) wildfire"
+      }
+    ],
+    "source_hint": "2023-08-08 Maui/Hawai'i wildfire outbreak (Lahaina fires), not volcanic vog"
+  }
+}

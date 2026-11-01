@@ -1,0 +1,112 @@
+{
+  "standard": {
+    "overall": {
+      "class": "wildfire_smoke",
+      "confidence": 0.92,
+      "plume_id": 2,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [
+        {
+          "plume_id": 2,
+          "class": "wildfire_smoke",
+          "confidence": 0.92,
+          "source_hint": "Kula, Maui fires (201 px cluster 3 km away)"
+        },
+        {
+          "plume_id": 3,
+          "class": "wildfire_smoke",
+          "confidence": 0.78,
+          "source_hint": "Oahu Honolulu-area fires"
+        },
+        {
+          "plume_id": 1,
+          "class": "wildfire_smoke",
+          "confidence": 0.72,
+          "source_hint": "West Hawaii Island wildfires (Kailua-Kona clusters) plus regional wildfire haze"
+        }
+      ],
+      "unconfirmed": []
+    },
+    "per_plume": [
+      [
+        1,
+        "wildfire_smoke",
+        0.72
+      ],
+      [
+        2,
+        "wildfire_smoke",
+        0.92
+      ],
+      [
+        3,
+        "wildfire_smoke",
+        0.78
+      ]
+    ],
+    "cost_usd": 0.016724
+  },
+  "agent": {
+    "valid": true,
+    "rejected": null,
+    "overall": {
+      "class": "wildfire_smoke",
+      "confidence": 0.9,
+      "plume_id": 2,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [
+        {
+          "plume_id": 2,
+          "class": "wildfire_smoke",
+          "confidence": 0.9,
+          "source_hint": "Kula / Lahaina Maui wildfires"
+        },
+        {
+          "plume_id": 1,
+          "class": "wildfire_smoke",
+          "confidence": 0.82,
+          "source_hint": "Hawai'i Island west-side / Kona wildfires"
+        }
+      ],
+      "unconfirmed": [
+        {
+          "plume_id": 3,
+          "class": "wildfire_smoke",
+          "confidence": 0.68,
+          "source_hint": "Oahu (Honolulu-area) wildfire"
+        }
+      ]
+    },
+    "per_plume": [
+      [
+        1,
+        "wildfire_smoke",
+        0.82
+      ],
+      [
+        2,
+        "wildfire_smoke",
+        0.9
+      ],
+      [
+        3,
+        "wildfire_smoke",
+        0.68
+      ]
+    ],
+    "tool_calls": [
+      "get_volcano_status",
+      "get_wind",
+      "get_wind",
+      "get_wind",
+      "get_firms",
+      "land_fraction",
+      "land_fraction",
+      "land_fraction",
+      "distance_to_vents",
+      "distance_to_vents",
+      "distance_to_vents"
+    ],
+    "cost_usd": 0.024394
+  }
+}

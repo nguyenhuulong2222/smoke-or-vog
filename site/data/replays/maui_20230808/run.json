@@ -661,8 +661,8 @@
     {
      "lang": "en",
      "language": "English",
-     "headline": "Satellite suggested wildfire smoke near Lahaina",
-     "summary": "On Aug 8, 2023, satellite suggested wildfire smoke within 15 km of Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
+     "headline": "Satellite showed wildfire smoke over Maui",
+     "summary": "On Aug 8, 2023, satellite estimate suggested wildfire smoke within 15 km of Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Confidence: 90%",
      "disclaimer": "Satellite estimate, not an official warning.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
@@ -672,15 +672,6 @@
      "replay_banner": "REPLAY · Aug 8, 2023 · not a current alert",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
-      {
-       "text": "The biggest health threat from smoke is from fine particles.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
-       "verbatim": true,
-       "label": "Official guidance (quoted)",
-       "publisher": "U.S. EPA AirNow",
-       "reviewed": false
-      },
       {
        "text": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
@@ -705,26 +696,17 @@
     {
      "lang": "vi",
      "language": "Vietnamese (Tiếng Việt)",
-     "headline": "Vệ tinh đã thấy khói cháy rừng gần Lahaina",
-     "summary": "Ngày 8 tháng 8, 2023, vệ tinh đã gợi ý khói cháy rừng trong vòng 15 km của Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
+     "headline": "Vệ tinh cho thấy khói cháy rừng ở Maui",
+     "summary": "Ngày 8 thg 8, 2023, ước tính vệ tinh đã cho thấy khói cháy rừng trong phạm vi 15 km quanh Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Độ tin cậy: 90%",
-     "disclaimer": "Ước tính vệ tinh, không phải cảnh báo chính thức.",
+     "disclaimer": "Ước tính từ vệ tinh, không phải cảnh báo chính thức.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": false,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "PHÁT LẠI · 8 tháng 8, 2023 · không phải cảnh báo hiện tại",
+     "replay_banner": "PHÁT LẠI · 8 thg 8, 2023 · không phải cảnh báo hiện tại",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
-      {
-       "text": "Mối đe dọa sức khỏe lớn nhất từ khói là từ các hạt mịn.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "U.S. EPA AirNow",
-       "reviewed": false
-      },
       {
        "text": "Theo dõi báo cáo chất lượng không khí tại địa phương và các cảnh báo về khói cháy rừng.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
@@ -735,7 +717,7 @@
        "reviewed": true
       },
       {
-       "text": "Nếu được khuyên ở trong nhà, hãy thực hiện các bước để giữ không khí trong nhà sạch nhất có thể.",
+       "text": "Nếu bạn được khuyên ở trong nhà, hãy thực hiện các bước để giữ không khí trong nhà sạch nhất có thể.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
        "verbatim": false,
@@ -749,28 +731,19 @@
     {
      "lang": "ilo",
      "language": "Ilocano (Ilokano)",
-     "headline": "Impakita ti satellite ti asuk ti wildfire idiay Lahaina",
-     "summary": "Idi Ago 8, 2023, impakita ti satellite ti asuk ti wildfire iti 15 km ti Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
-     "confidence_label": "Ti talek: 90%",
-     "disclaimer": "Tantia ti satellite, saan nga opisial a ballaag.",
+     "headline": "Nakita ti satellite ti asuk ti wildfire idiay Maui",
+     "summary": "Idi Ago 8, 2023, impakita ti satellite a adda asuk ti wildfire iti uneg ti 15 km iti Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
+     "confidence_label": "Pagtatalek: 90%",
+     "disclaimer": "Tantiya ti satellite, saan nga opisial a ballaag.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "PAMMAKITA MANEN · Ago 8, 2023 · saan a dada nga alerto",
+     "replay_banner": "ULITEN · Ago 8, 2023 · saan a damdama nga alerto",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
       {
-       "text": "Ti kadakkelan a pagpeggad ti salun-at manipud iti asuk ket dagiti bassit a particle.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "U.S. EPA AirNow",
-       "reviewed": false
-      },
-      {
-       "text": "Ipangag dagiti report ti kalidad ti angin. Agannad kadagiti damag maipanggep iti asuk wenno ballaag.",
+       "text": "Ikaskaso dagiti lokal a report ti kalidad ti angin. Agtalinaed a naalerto kadagiti damag mainaig iti asuk wenno ballaag iti salun-at.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": false,
@@ -779,7 +752,7 @@
        "reviewed": false
       },
       {
-       "text": "No ibagada nga agtalinaedka iti uneg, aramidem ti kabaelam a mangtaginayon iti nadalus nga angin iti uneg.",
+       "text": "No mabalakadanka nga agtalinaed iti uneg, aramidem dagiti wagas tapno mapagtalinaed a nadalus ti angin iti uneg.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
        "verbatim": false,
@@ -793,28 +766,19 @@
     {
      "lang": "tl",
      "language": "Tagalog",
-     "headline": "Nakita ng satellite ang wildfire smoke sa Lahaina",
-     "summary": "Noong Ago 8, 2023, nakita ng satellite ang wildfire smoke sa loob ng 15 km ng Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
+     "headline": "Nakita ng satellite ang usok ng wildfire sa Maui",
+     "summary": "Noong Ago 8, 2023, ipinakita ng pagtataya ng satellite ang usok ng wildfire sa loob ng 15 km ng Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Kumpiyansa: 90%",
      "disclaimer": "Tantiya ng satellite, hindi opisyal na babala.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "MULING PAGPAPAKITA · Ago 8, 2023 · hindi ito kasalukuyang alerto",
+     "replay_banner": "ULIT · Ago 8, 2023 · hindi ito kasalukuyang alerto",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
       {
-       "text": "Ang pinakamalaking banta sa kalusugan mula sa usok ay mula sa maliliit na particle.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "U.S. EPA AirNow",
-       "reviewed": false
-      },
-      {
-       "text": "Pansinin ang lokal na ulat ng kalidad ng hangin. Maging alerto sa balita sa usok o babalang pangkalusugan.",
+       "text": "Bigyang-pansin ang mga lokal na ulat ng kalidad ng hangin. Manatiling alerto sa mga balitang may kinalaman sa usok o mga babalang pangkalusugan.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": false,
@@ -823,7 +787,7 @@
        "reviewed": false
       },
       {
-       "text": "Kung pinayuhang manatili sa loob, gumawa ng mga hakbang upang mapanatiling malinis ang hangin sa loob.",
+       "text": "Kung pinayuhan kang manatili sa loob ng bahay, gumawa ng mga hakbang upang mapanatiling malinis ang hangin sa loob hangga't maaari.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
        "verbatim": false,
@@ -837,28 +801,19 @@
     {
      "lang": "haw",
      "language": "ʻŌlelo Hawaiʻi",
-     "headline": "Ua ʻike ka ukali i ka uwahi ahi ma Lahaina",
-     "summary": "I ka ʻAuk. 8, 2023, ua ʻike ka ukali i ka uwahi ahi ma loko o 15 km o Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
+     "headline": "ʻIke ka ukali i ka uahi ahi ma Maui",
+     "summary": "Ma ka lā 8 o ʻAukake, 2023, ua hōʻike ka manaʻo ukali i ka uahi ahi nahele ma loko o 15 km o Lahaina (Maui), Kīhei (Maui), Lānaʻi City.",
      "confidence_label": "Hilinaʻi: 90%",
-     "disclaimer": "He koho ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
+     "disclaimer": "He manaʻo ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://fire.airnow.gov/",
-     "replay_banner": "HOʻOPĀʻANI HOU · ʻAuk. 8, 2023 · ʻaʻole he makaʻala o kēia manawa",
+     "replay_banner": "HOʻOPĀHOU · 8 ʻAukake 2023 · ʻaʻole he makaʻala o kēia manawa",
      "replay_banner_en": "REPLAY · Aug 8, 2023 · not a current alert",
      "actions": [
       {
-       "text": "ʻO ka ʻāpana liʻiliʻi ka pōʻino nui o ke olakino mai ka uwahi.",
-       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
-       "excerpt_en": "The biggest health threat from smoke is from fine particles.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "U.S. EPA AirNow",
-       "reviewed": false
-      },
-      {
-       "text": "E nānā i nā hōʻike ʻea o ia wahi. E makaʻala i ka nūhou uwahi a i nā ʻōlelo aʻo olakino.",
+       "text": "E hoʻolohe i nā hōʻike kūloko no ka maikaʻi o ka ea. E makaʻala i nā nūhou e pili ana i ka uahi a i nā ʻōlelo aʻo olakino.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": false,
@@ -867,7 +822,7 @@
        "reviewed": false
       },
       {
-       "text": "Inā ʻōlelo ʻia e noho i loko, e mālama i ka ea o loko e maʻemaʻe.",
+       "text": "Inā ʻōlelo ʻia ʻoe e noho ma loko, e hana i nā ʻanuʻu e mālama i ka ea o loko e maʻemaʻe loa.",
        "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
        "excerpt_en": "If you are advised to stay indoors, take steps to keep indoor air as clean as possible.",
        "verbatim": false,

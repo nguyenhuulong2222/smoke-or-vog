@@ -5,12 +5,12 @@
       "time": "2022-12-01"
     },
     "spark_scene": {
-      "description": "True-color view of the main Hawaiian Islands from northwestern islands to the large island in the southeast, with scattered white cumulus and elongated cloud bands over dark ocean and a thin gray veil over the ocean southwest of the central islands.",
+      "description": "True-color satellite view of the main Hawaiian Islands from Niihau and Kauai in the northwest to Hawaii in the southeast, with scattered bright white cumulus over ocean and islands, large clear dark-ocean gaps in the center, and a diffuse gray translucent veil in the central area southwest of Oahu and Molokai.",
       "cloud_cover": "partly",
       "plumes": [
         {
-          "label": "thin gray streak southwest of central islands",
-          "visual_description": "thin translucent pale gray veil over dark ocean extending southwest from near the central islands, distinct from brighter white cumulus and cirrus",
+          "label": "diffuse gray veil southwest of the central islands",
+          "visual_description": "elongated translucent light-gray veil extending southwest over dark ocean, fainter and grayer than adjacent bright white cumulus",
           "visibility": "faint"
         }
       ]
@@ -19,54 +19,54 @@
     "plumes": [
       {
         "plume_id": 1,
-        "spark_label": "thin gray streak southwest of central islands",
-        "sam_confidence": 0.453125,
+        "spark_label": "diffuse gray veil southwest of the central islands",
+        "sam_confidence": 0.5390625,
         "geometry": {
           "centroid": {
-            "lat": 20.912,
-            "lon": -158.187
+            "lat": 20.828,
+            "lon": -157.897
           },
           "bbox_lonlat": [
-            -159.305,
-            20.465,
-            -157.205,
-            21.27
+            -158.89,
+            20.385,
+            -157.135,
+            21.365
           ],
-          "area_km2": 10300,
-          "length_km": 236,
+          "area_km2": 10803,
+          "length_km": 212,
           "upwind_end": {
-            "lat": 21.26,
-            "lon": -158.205
+            "lat": 21.365,
+            "lon": -158.3
           },
           "wind_site_used": "fire_cluster_2",
           "upwind_end_distance_km": {
-            "kilauea_summit": 367.8,
-            "mauna_loa_summit": 335.7
+            "kilauea_summit": 382.5,
+            "mauna_loa_summit": 350.5
           },
           "nearest_fire_clusters": [
             {
               "near": "Honolulu (35 km)",
               "n": 21,
               "nearest_summit_km": 344.1,
-              "distance_km": 18.7
+              "distance_km": 14.8
             },
             {
               "near": "Mauna Loa summit (22 km)",
               "n": 86,
               "nearest_summit_km": 22.5,
-              "distance_km": 333.2
+              "distance_km": 347.7
             },
             {
               "near": "Mauna Loa summit (5 km)",
               "n": 196,
               "nearest_summit_km": 5.5,
-              "distance_km": 335.7
+              "distance_km": 350.6
             }
           ],
           "land": {
             "land_frac": 0.0,
             "islands_covered": {
-              "Molokaʻi": 0.006
+              "Oʻahu": 0.0
             },
             "land_spill": false,
             "islands_swallowed": []
@@ -206,56 +206,101 @@
     }
   },
   "result": {
-    "caveats": "Segmentation faint with low sam_confidence 0.45; Big Island source region is cloud-covered so continuity to vent cannot be verified; near-summit FIRMS clusters are lava from ongoing Mauna Loa NE rift eruption, not wildfires; light winds 6-17 kmh limit transport inference.",
     "evidence": [
-      "thin translucent pale gray veil over ocean SW of central islands, distinct from bright white textured cumulus/cirrus - not classic cloud, not brown smoke",
-      "both volcanoes officially erupting on 2022-12-01: Kilauea WATCH ORANGE erupting yes in Halema'uma'u, Mauna Loa WARNING RED erupting yes with NE rift fissures - vog plausible",
-      "plume upwind end 335.7 km from Mauna Loa summit and 367.8 km from Kilauea summit, no continuous trail from vent; source gap breaks vog geometry criterion",
-      "nearest non-volcanic fire Honolulu cluster n=21 at 18.7 km upwind, nearest_summit_km 344.1, but 21-pixel fire too small to confidently explain 10300 km2 236-km plume",
-      "10m wind at plume site from 351 deg at 7.3 kmh (northerly to southerly) broadly consistent with SW extension but too light/variable for firm attribution"
+      "Both volcanoes erupting at image time, but Mauna Loa at WARNING/RED with Northeast Rift Zone fissures feeding large flows while Kilauea confined to Halemaumau crater, making Mauna Loa the dominant SO2 source. [E1]",
+      "FIRMS shows massive lava thermal clusters near Mauna Loa summit (1354, 196, 174 pixels) and volcanic_thermal counts 309 at Mauna Loa vs 91 at Kilauea, supporting dominant Mauna Loa emission. [E5]",
+      "No major wildfire near plume upwind end at 21.245N, -157.49E east of Oahu; only small 21-pixel Honolulu cluster 344 km from summits, arguing against wildfire_smoke for a 10803 km2, 212-km veil. [E5, E6]",
+      "Plume-centroid wind from 34 deg at 23.4 kmh blows toward SW, placing the SW-of-Oahu/Molokai veil downwind; summit-area winds light/variable from 338 deg and 252 deg, permitting NW-ward drift of Big Island vog to central islands. [E4, E6, E7, E8]",
+      "Mask purely oceanic with land_frac 0.0 and large diffuse extent 10803 km2 over 212 km, consistent with translucent gray veil over dark ocean fainter/grayer than adjacent bright white cumulus rather than island-orographic cloud. [E2, E3]",
+      "Centroid 282.4 km from Mauna Loa summit vs 315.4 km from Kilauea summit, slightly favoring Mauna Loa for far-field aged vog despite detachment. [E3]"
     ],
+    "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE",
     "per_plume": [
       {
-        "class": "uncertain",
-        "confidence": 0.38,
-        "evidence": [
-          "plume_id 1: thin gray streak SW of central islands, centroid 20.912,-158.187, length 236 km, area 10300 km2, land_frac 0.0, faint",
-          "upwind_end 21.26,-158.205 is 335.7 km from Mauna Loa and 367.8 km from Kilauea, not trailing from active vent",
-          "closest fire 18.7 km Honolulu n=21 far from summit (344.1 km) could be smoke source but size mismatch; other nearby clusters n=196 and n=86 at 333-335 km are within 5-22 km of Mauna Loa summit and are lava during eruption, not wildfire",
-          "volcanic_thermal_excluded 309 Mauna Loa + 91 Kilauea confirms active vents but summit region cloud-obscured in true-color",
-          "color thin pale gray favors aged vog over brown wildfire smoke or bright white cloud, but far-field transport not proven"
-        ],
         "plume_id": 1,
-        "source_hint": "far-field haze SW of Oahu/Molokai; Big Island vog source cloud-obscured vs small Honolulu fire"
+        "class": "vog_mauna_loa",
+        "confidence": 0.62,
+        "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE",
+        "evidence": [
+          "Both volcanoes erupting at image time, but Mauna Loa at WARNING/RED with Northeast Rift Zone fissures feeding large flows while Kilauea confined to Halemaumau crater, making Mauna Loa the dominant SO2 source. [E1]",
+          "FIRMS shows massive lava thermal clusters near Mauna Loa summit (1354, 196, 174 pixels) and volcanic_thermal counts 309 at Mauna Loa vs 91 at Kilauea, supporting dominant Mauna Loa emission. [E5]",
+          "No major wildfire near plume upwind end at 21.245N, -157.49E east of Oahu; only small 21-pixel Honolulu cluster 344 km from summits, arguing against wildfire_smoke for a 10803 km2, 212-km veil. [E5, E6]",
+          "Plume-centroid wind from 34 deg at 23.4 kmh blows toward SW, placing the SW-of-Oahu/Molokai veil downwind; summit-area winds light/variable from 338 deg and 252 deg, permitting NW-ward drift of Big Island vog to central islands. [E4, E6, E7, E8]",
+          "Mask purely oceanic with land_frac 0.0 and large diffuse extent 10803 km2 over 212 km, consistent with translucent gray veil over dark ocean fainter/grayer than adjacent bright white cumulus rather than island-orographic cloud. [E2, E3]",
+          "Centroid 282.4 km from Mauna Loa summit vs 315.4 km from Kilauea summit, slightly favoring Mauna Loa for far-field aged vog despite detachment. [E3]"
+        ],
+        "evidence_cited": [
+          {
+            "cites": [
+              "E1"
+            ],
+            "text": "Both volcanoes erupting at image time, but Mauna Loa at WARNING/RED with Northeast Rift Zone fissures feeding large flows while Kilauea confined to Halemaumau crater, making Mauna Loa the dominant SO2 source."
+          },
+          {
+            "cites": [
+              "E5"
+            ],
+            "text": "FIRMS shows massive lava thermal clusters near Mauna Loa summit (1354, 196, 174 pixels) and volcanic_thermal counts 309 at Mauna Loa vs 91 at Kilauea, supporting dominant Mauna Loa emission."
+          },
+          {
+            "cites": [
+              "E5",
+              "E6"
+            ],
+            "text": "No major wildfire near plume upwind end at 21.245N, -157.49E east of Oahu; only small 21-pixel Honolulu cluster 344 km from summits, arguing against wildfire_smoke for a 10803 km2, 212-km veil."
+          },
+          {
+            "cites": [
+              "E4",
+              "E6",
+              "E7",
+              "E8"
+            ],
+            "text": "Plume-centroid wind from 34 deg at 23.4 kmh blows toward SW, placing the SW-of-Oahu/Molokai veil downwind; summit-area winds light/variable from 338 deg and 252 deg, permitting NW-ward drift of Big Island vog to central islands."
+          },
+          {
+            "cites": [
+              "E2",
+              "E3"
+            ],
+            "text": "Mask purely oceanic with land_frac 0.0 and large diffuse extent 10803 km2 over 212 km, consistent with translucent gray veil over dark ocean fainter/grayer than adjacent bright white cumulus rather than island-orographic cloud."
+          },
+          {
+            "cites": [
+              "E3"
+            ],
+            "text": "Centroid 282.4 km from Mauna Loa summit vs 315.4 km from Kilauea summit, slightly favoring Mauna Loa for far-field aged vog despite detachment."
+          }
+        ]
       }
     ],
-    "source_hint": "far-field haze southwest of central islands with Big Island source obscured",
-    "model_overall_class": "uncertain",
-    "model_overall_confidence": 0.38,
+    "caveats": "Far-field detached veil ~278-308 km from vents with dual contemporaneous eruptions, so a Kilauea contribution cannot be excluded and no SO2 measurement confirms composition.",
+    "model_overall_class": "vog_mauna_loa",
+    "model_overall_confidence": 0.62,
     "overall": {
       "class": "uncertain",
       "confidence": 0.0,
-      "max_plume_confidence": 0.38,
+      "max_plume_confidence": 0.62,
       "plume_id": null,
       "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
       "confirmed": [],
       "unconfirmed": [
         {
           "plume_id": 1,
-          "class": "uncertain",
-          "confidence": 0.38,
-          "source_hint": "far-field haze SW of Oahu/Molokai; Big Island vog source cloud-obscured vs small Honolulu fire"
+          "class": "vog_mauna_loa",
+          "confidence": 0.62,
+          "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE"
         }
       ]
     }
   },
   "meta": {
-    "model": "muse-spark-1.3",
-    "effort": "medium",
-    "cost_usd": 0.016728,
-    "input_tokens": 3812,
-    "cached_tokens": 271,
-    "output_tokens": 2885,
-    "reasoning_tokens": 2273
+    "classifier": "agent",
+    "cost_usd": 0.032721,
+    "input_tokens": 14534,
+    "output_tokens": 4348,
+    "reasoning_tokens": 3127,
+    "rounds": 3,
+    "model": "muse-spark-1.3"
   }
 }

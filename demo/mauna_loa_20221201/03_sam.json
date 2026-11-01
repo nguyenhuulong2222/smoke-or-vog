@@ -1,87 +1,54 @@
 {
   "variants": {
     "box": {
-      "prompt": "<0f>1<|box;x1=399;y1=355;x2=784;y2=475;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=469;y1=350;x2=735;y2=535;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 26656,
-        "mean_confidence": 0.484,
-        "frac_inside_spark_boxes": 0.999,
-        "spark_box_fill": 0.57
+        "mask_px": 32250,
+        "mean_confidence": 0.52,
+        "frac_inside_spark_boxes": 0.994,
+        "spark_box_fill": 0.645
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.484375,
+          "confidence": 0.51953125,
           "box": [
-            395,
-            357,
-            769,
-            475
+            460,
+            349,
+            743,
+            522
           ],
-          "mask_px": 26656
+          "mask_px": 32250
         }
       ]
     },
     "box+point": {
-      "prompt": "<0f>1<|box;x1=399;y1=355;x2=784;y2=475;w=1400;h=1000|><|point;x=546;y=420;w=1400;h=1000|>",
+      "prompt": "<0f>1<|box;x1=469;y1=350;x2=735;y2=535;w=1400;h=1000|><|point;x=574;y=440;w=1400;h=1000|>",
       "outcome": "completed",
       "error": null,
       "score": {
         "objects": 1,
-        "mask_px": 27426,
-        "mean_confidence": 0.516,
-        "frac_inside_spark_boxes": 0.997,
-        "spark_box_fill": 0.585
+        "mask_px": 27304,
+        "mean_confidence": 0.625,
+        "frac_inside_spark_boxes": 0.999,
+        "spark_box_fill": 0.549
       },
       "objects": [
         {
           "object_id": "1",
-          "confidence": 0.515625,
+          "confidence": 0.625,
           "box": [
-            394,
-            354,
-            760,
-            475
+            473,
+            350,
+            740,
+            520
           ],
-          "mask_px": 27426
+          "mask_px": 27304
         }
       ]
-    },
-    "concept:smoke": {
-      "prompt": "smoke",
-      "outcome": "completed",
-      "error": null,
-      "score": {
-        "objects": 0,
-        "mask_px": 0,
-        "mean_confidence": null
-      },
-      "objects": []
-    },
-    "concept:volcanic plume": {
-      "prompt": "volcanic plume",
-      "outcome": "completed",
-      "error": null,
-      "score": {
-        "objects": 0,
-        "mask_px": 0,
-        "mean_confidence": null
-      },
-      "objects": []
-    },
-    "concept:haze": {
-      "prompt": "haze",
-      "outcome": "completed",
-      "error": null,
-      "score": {
-        "objects": 0,
-        "mask_px": 0,
-        "mean_confidence": null
-      },
-      "objects": []
     }
   },
   "chosen_for_classification": "box+point",
@@ -89,21 +56,21 @@
     {
       "plume_id": 1,
       "spark_box": [
-        399,
-        355,
-        784,
-        475
+        469,
+        350,
+        735,
+        535
       ],
       "pass2_box": [
-        339,
-        337,
-        814,
-        492
+        433,
+        325,
+        778,
+        543
       ],
       "pass1": {
-        "area_px": 27426,
-        "coherence": 0.989,
-        "bbox_frac": 0.0314,
+        "area_px": 27304,
+        "coherence": 0.982,
+        "bbox_frac": 0.0321,
         "edges_touched": 0,
         "land": {
           "land_frac": 0.0,
@@ -113,21 +80,21 @@
         }
       },
       "pass2": {
-        "area_px": 35629,
-        "coherence": 0.994,
-        "bbox_frac": 0.0483,
+        "area_px": 37313,
+        "coherence": 0.996,
+        "bbox_frac": 0.0491,
         "edges_touched": 0,
         "land": {
           "land_frac": 0.0,
           "islands_covered": {
-            "Molokaʻi": 0.006
+            "Oʻahu": 0.0
           },
           "land_spill": false,
           "islands_swallowed": []
         }
       },
       "kept": "pass2",
-      "reason": "pass 2 larger (1.30x) and coherent"
+      "reason": "pass 2 larger (1.37x) and coherent"
     }
   ]
 }

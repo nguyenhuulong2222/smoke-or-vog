@@ -1,0 +1,309 @@
+{
+  "valid": true,
+  "rejected": null,
+  "meta": {
+    "cost_usd": 0.032721,
+    "input_tokens": 14534,
+    "output_tokens": 4348,
+    "reasoning_tokens": 3127,
+    "rounds": 3
+  },
+  "trace": [
+    {
+      "round": 1,
+      "cite": "E1",
+      "call_id": "call_5ff94b2c-7f39-43ab-87f5-d57b5e78d410",
+      "name": "get_volcano_status",
+      "arguments": "{\"time_utc\":\"2022-12-01T23:30:00Z\"}",
+      "output": {
+        "cite_as": "E1",
+        "ok": true,
+        "result": {
+          "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+          "valid_at": "2022-12-01T23:30:00+00:00",
+          "volcanoes": {
+            "kilauea": {
+              "alert_level": "WATCH",
+              "aviation_color": "ORANGE",
+              "erupting": "yes",
+              "activity_summary": "The summit eruption of Kīlauea Volcano, within Halemaʻumaʻu crater, continued over the past 24 hours. All recent eruptive activity has been confined to the crater. No significant changes have been observed at the summit or in either rift zone.",
+              "notice_sent_utc": "2022-12-01 15:30:51",
+              "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2022-12-01T07:29:45-08:00",
+              "error": null
+            },
+            "mauna_loa": {
+              "alert_level": "WARNING",
+              "aviation_color": "RED",
+              "erupting": "yes",
+              "activity_summary": "The Northeast Rift Zone eruption of Mauna Loa continues, with two active fissures feeding lava flows downslope. Fissure 3 remains the dominant source of the largest lava flow. The fissure 3 lava flows are traveling to the north toward the Daniel K.",
+              "notice_sent_utc": "2022-12-01 19:09:15",
+              "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2022-12-01T10:59:06-08:00",
+              "error": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E2",
+      "call_id": "call_ae106f01-304a-41ee-b8e9-80b112e716b0",
+      "name": "land_fraction",
+      "arguments": "{\"plume_id\":1}",
+      "output": {
+        "cite_as": "E2",
+        "ok": true,
+        "result": {
+          "land_frac": 0.0,
+          "islands_covered": {
+            "Oʻahu": 0.0
+          },
+          "land_spill": false,
+          "islands_swallowed": []
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E3",
+      "call_id": "call_0dc7fc91-39b1-407c-b2f6-e09860dd4036",
+      "name": "distance_to_vents",
+      "arguments": "{\"plume_id\":1}",
+      "output": {
+        "cite_as": "E3",
+        "ok": true,
+        "result": {
+          "centroid": {
+            "lat": 20.828,
+            "lon": -157.897
+          },
+          "bbox_lonlat": [
+            -158.89,
+            20.385,
+            -157.135,
+            21.365
+          ],
+          "area_km2": 10803,
+          "length_km": 212,
+          "distance_km": {
+            "kilauea_summit": 315.4,
+            "mauna_loa_summit": 282.4
+          },
+          "wind_from_deg_used": null
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E4",
+      "call_id": "call_ef4da45f-526e-4473-ad80-c24563b52a48",
+      "name": "get_wind",
+      "arguments": "{\"lat\":20.828,\"lon\":-157.897,\"time_utc\":\"2022-12-01T23:30:00Z\"}",
+      "output": {
+        "cite_as": "E4",
+        "ok": true,
+        "result": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 23.4,
+          "from_deg": 34,
+          "source": "Open-Meteo archive (ERA5-based reanalysis)"
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cite": "E5",
+      "call_id": "call_b49616f8-1ee0-4768-86cd-4e9fa85d256e",
+      "name": "get_firms",
+      "arguments": "{\"bbox\":[-160.0,19.0,-155.0,22.0],\"date\":\"2022-12-01\"}",
+      "output": {
+        "cite_as": "E5",
+        "ok": true,
+        "result": {
+          "source": "NASA GIBS FIRMS thermal anomaly layers (2022-12-01), rasterised",
+          "fire_clusters": [
+            {
+              "lat": 19.5677,
+              "lon": -155.5088,
+              "n": 1354,
+              "near": "Mauna Loa summit (15 km)",
+              "nearest_summit_km": 14.6
+            },
+            {
+              "lat": 19.4355,
+              "lon": -155.6392,
+              "n": 196,
+              "near": "Mauna Loa summit (5 km)",
+              "nearest_summit_km": 5.5
+            },
+            {
+              "lat": 19.5134,
+              "lon": -155.5625,
+              "n": 174,
+              "near": "Mauna Loa summit (6 km)",
+              "nearest_summit_km": 6.4
+            },
+            {
+              "lat": 19.6526,
+              "lon": -155.506,
+              "n": 86,
+              "near": "Mauna Loa summit (22 km)",
+              "nearest_summit_km": 22.5
+            },
+            {
+              "lat": 21.4256,
+              "lon": -158.1725,
+              "n": 21,
+              "near": "Honolulu (35 km)",
+              "nearest_summit_km": 344.1
+            },
+            {
+              "lat": 19.5387,
+              "lon": -155.0163,
+              "n": 20,
+              "near": "Hilo (20 km)",
+              "nearest_summit_km": 31.6
+            },
+            {
+              "lat": 19.5425,
+              "lon": -155.4425,
+              "n": 1,
+              "near": "Mauna Loa summit (19 km)",
+              "nearest_summit_km": 18.9
+            }
+          ],
+          "volcanic_thermal": {
+            "mauna-loa-summit": 309,
+            "kilauea-summit": 91
+          },
+          "note": "counts are rendered marker pixels on a 0.005-deg grid, not individual detections"
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cite": "E6",
+      "call_id": "call_25c3f739-7e47-4f67-9b1e-b3179db0fb6f",
+      "name": "distance_to_vents",
+      "arguments": "{\"plume_id\":1,\"wind_from_deg\":34.0}",
+      "output": {
+        "cite_as": "E6",
+        "ok": true,
+        "result": {
+          "centroid": {
+            "lat": 20.828,
+            "lon": -157.897
+          },
+          "bbox_lonlat": [
+            -158.89,
+            20.385,
+            -157.135,
+            21.365
+          ],
+          "area_km2": 10803,
+          "length_km": 212,
+          "upwind_end": {
+            "lat": 21.245,
+            "lon": -157.49
+          },
+          "distance_km": {
+            "kilauea_summit": 307.8,
+            "mauna_loa_summit": 277.9
+          },
+          "wind_from_deg_used": 34.0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cite": "E7",
+      "call_id": "call_6c78531f-580f-49fa-b79a-0fcbe1fd90d8",
+      "name": "get_wind",
+      "arguments": "{\"lat\":19.5,\"lon\":-155.6,\"time_utc\":\"2022-12-01T23:30:00Z\"}",
+      "output": {
+        "cite_as": "E7",
+        "ok": true,
+        "result": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 12.8,
+          "from_deg": 338,
+          "source": "Open-Meteo archive (ERA5-based reanalysis)"
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cite": "E8",
+      "call_id": "call_0dbc0aab-3a87-4572-941a-48b49995016f",
+      "name": "get_wind",
+      "arguments": "{\"lat\":19.6,\"lon\":-155.9,\"time_utc\":\"2022-12-01T23:30:00Z\"}",
+      "output": {
+        "cite_as": "E8",
+        "ok": true,
+        "result": {
+          "time": "2022-12-02T00:00",
+          "speed_kmh": 10.6,
+          "from_deg": 252,
+          "source": "Open-Meteo archive (ERA5-based reanalysis)"
+        }
+      }
+    }
+  ],
+  "final": {
+    "caveats": "Far-field detached veil ~278-308 km from vents with dual contemporaneous eruptions, so a Kilauea contribution cannot be excluded and no SO2 measurement confirms composition.",
+    "class": "vog_mauna_loa",
+    "confidence": 0.62,
+    "per_plume": [
+      {
+        "class": "vog_mauna_loa",
+        "confidence": 0.62,
+        "evidence": [
+          {
+            "cites": [
+              "E1"
+            ],
+            "text": "Both volcanoes erupting at image time, but Mauna Loa at WARNING/RED with Northeast Rift Zone fissures feeding large flows while Kilauea confined to Halemaumau crater, making Mauna Loa the dominant SO2 source."
+          },
+          {
+            "cites": [
+              "E5"
+            ],
+            "text": "FIRMS shows massive lava thermal clusters near Mauna Loa summit (1354, 196, 174 pixels) and volcanic_thermal counts 309 at Mauna Loa vs 91 at Kilauea, supporting dominant Mauna Loa emission."
+          },
+          {
+            "cites": [
+              "E5",
+              "E6"
+            ],
+            "text": "No major wildfire near plume upwind end at 21.245N, -157.49E east of Oahu; only small 21-pixel Honolulu cluster 344 km from summits, arguing against wildfire_smoke for a 10803 km2, 212-km veil."
+          },
+          {
+            "cites": [
+              "E4",
+              "E6",
+              "E7",
+              "E8"
+            ],
+            "text": "Plume-centroid wind from 34 deg at 23.4 kmh blows toward SW, placing the SW-of-Oahu/Molokai veil downwind; summit-area winds light/variable from 338 deg and 252 deg, permitting NW-ward drift of Big Island vog to central islands."
+          },
+          {
+            "cites": [
+              "E2",
+              "E3"
+            ],
+            "text": "Mask purely oceanic with land_frac 0.0 and large diffuse extent 10803 km2 over 212 km, consistent with translucent gray veil over dark ocean fainter/grayer than adjacent bright white cumulus rather than island-orographic cloud."
+          },
+          {
+            "cites": [
+              "E3"
+            ],
+            "text": "Centroid 282.4 km from Mauna Loa summit vs 315.4 km from Kilauea summit, slightly favoring Mauna Loa for far-field aged vog despite detachment."
+          }
+        ],
+        "plume_id": 1,
+        "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE"
+      }
+    ],
+    "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE"
+  }
+}

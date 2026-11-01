@@ -1,0 +1,66 @@
+{
+  "standard": {
+    "overall": {
+      "class": "uncertain",
+      "confidence": 0.0,
+      "max_plume_confidence": 0.4,
+      "plume_id": null,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [],
+      "unconfirmed": [
+        {
+          "plume_id": 1,
+          "class": "uncertain",
+          "confidence": 0.4,
+          "source_hint": "upwind end near Oahu, 15 km south of Honolulu thermal, ~350 km NW of Mauna Loa/Kilauea; wind at site from 351 deg 7.3 kmh"
+        }
+      ]
+    },
+    "per_plume": [
+      [
+        1,
+        "uncertain",
+        0.4
+      ]
+    ],
+    "cost_usd": 0.024058
+  },
+  "agent": {
+    "valid": true,
+    "rejected": null,
+    "overall": {
+      "class": "uncertain",
+      "confidence": 0.0,
+      "max_plume_confidence": 0.62,
+      "plume_id": null,
+      "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+      "confirmed": [],
+      "unconfirmed": [
+        {
+          "plume_id": 1,
+          "class": "vog_mauna_loa",
+          "confidence": 0.62,
+          "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE"
+        }
+      ]
+    },
+    "per_plume": [
+      [
+        1,
+        "vog_mauna_loa",
+        0.62
+      ]
+    ],
+    "tool_calls": [
+      "get_volcano_status",
+      "land_fraction",
+      "distance_to_vents",
+      "get_wind",
+      "get_firms",
+      "distance_to_vents",
+      "get_wind",
+      "get_wind"
+    ],
+    "cost_usd": 0.032721
+  }
+}

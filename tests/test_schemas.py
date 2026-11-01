@@ -49,7 +49,13 @@ def test_saved_demo_outputs_validate(case):
     cls["confidence"] = cls.pop("model_overall_confidence")
     overall = cls.pop("overall")
     assert overall["class"] in models.CLASSES
-    if "detection" not in cls:  # live 'no_plume' result is synthesised, not model output
+    meta = json.loads((DEMO / case / "04_classify.json").read_text()).get("meta", {})
+    if meta.get("classifier") == "agent":
+        from src import agent
+        tr = json.loads((DEMO / case / "04_agent_trace.json").read_text())
+        jsonschema.validate(tr["final"], agent.FINAL_SCHEMA)
+        assert tr["valid"] and agent.verify_citations(tr["final"], tr["trace"]) is None
+    elif "detection" not in cls:  # live 'no_plume' result is synthesised, not model output
         jsonschema.validate(cls, models.CLASSIFY_SCHEMA)
 
 

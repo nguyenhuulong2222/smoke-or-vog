@@ -13,7 +13,7 @@ Everything in this repository is new work, created during the hackathon period:
 | Detection pipeline (imagery, ADP, Muse Spark localisation, SAM 3.1 two-pass segmentation, classification) | `src/pipeline.py`, `src/models.py`, `src/sources.py`, `src/geo.py`, `src/land.py`, `src/common.py` |
 | Agentic classifier (Muse Spark native tool calling, citation-verified evidence) | `src/agent.py` |
 | Safety aggregation (per-plume verdicts, ≥ 0.70 rule, unreliable-mask gate) | `src/aggregate.py` |
-| Multilingual alerts and cards (quoted official guidance, text-free Muse Image backgrounds, PIL rendering) | `src/alerts.py`, `assets/health_sources.json`, `assets/translation_overrides.json` |
+| Multilingual alerts and cards (fixed, quoted official guidance per verdict; text-free Muse Image backgrounds; PIL rendering) | `src/alerts.py`, `assets/health_sources.json`, `assets/translation_overrides.json` |
 | Live publishing and static-site data | `src/live_publish.py`, `src/sitedata.py`, `.github/workflows/live.yml`, `.github/dependabot.yml` |
 | Demo website | `site/` |
 | Tests | `tests/` |

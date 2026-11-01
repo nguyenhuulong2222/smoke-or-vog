@@ -448,8 +448,8 @@
     {
      "lang": "en",
      "language": "English",
-     "headline": "Satellite haze source unconfirmed",
-     "summary": "On Dec 1, 2022, the daily satellite pass could not confirm the haze source. No area within 15 km was confirmed.",
+     "headline": "Satellite could not confirm haze source",
+     "summary": "On Dec 1, 2022, the daily satellite pass could not confirm the haze source. No plume location was confirmed.",
      "confidence_label": "Confidence: 0%",
      "disclaimer": "Satellite estimate, not an official warning.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
@@ -460,21 +460,12 @@
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Do not smoke: Also, avoid secondhand smoke.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "text": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": true,
        "label": "Official guidance (quoted)",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
-       "reviewed": false
-      },
-      {
-       "text": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
-       "verbatim": true,
-       "label": "Official guidance (quoted)",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],
@@ -483,8 +474,8 @@
     {
      "lang": "vi",
      "language": "Vietnamese (Tiếng Việt)",
-     "headline": "Không xác nhận được nguồn mù từ vệ tinh",
-     "summary": "Vào ngày 1 tháng 12 năm 2022, ảnh vệ tinh hằng ngày đã không xác nhận được nguồn mù. Không có khu vực nào trong vòng 15 km được xác nhận.",
+     "headline": "Vệ tinh không xác nhận được nguồn khói mù",
+     "summary": "Vào ngày 1 tháng 12 năm 2022, ảnh vệ tinh hằng ngày đã không xác nhận được nguồn khói mù. Không xác nhận được vị trí vệt khói nào.",
      "confidence_label": "Độ tin cậy: 0%",
      "disclaimer": "Ước tính từ vệ tinh, không phải cảnh báo chính thức.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
@@ -495,22 +486,13 @@
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Không hút thuốc: Đồng thời, tránh khói thuốc thụ động.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "text": "Theo dõi báo cáo chất lượng không khí tại địa phương và các cảnh báo về khói cháy rừng.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
-       "reviewed": false
-      },
-      {
-       "text": "Hãy uống đủ nước: Uống nhiều chất lỏng để giúp làm loãng tắc nghẽn.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
-       "reviewed": false
+       "label": "Translation of official guidance, reviewed",
+       "publisher": "U.S. EPA AirNow",
+       "reviewed": true
       }
      ],
      "card": "cards/alert_vi.jpg"
@@ -519,32 +501,23 @@
      "lang": "ilo",
      "language": "Ilocano (Ilokano)",
      "headline": "Saan a nakumpirma ti satellite ti gapu ti asuk",
-     "summary": "Idi Dis 1, 2022, saan a nakumpirma ti satellite ti gapu ti asuk. Awan ti nakumpirma a lugar iti 15 km.",
-     "confidence_label": "Talek: 0%",
-     "disclaimer": "Tantiya ti satellite, saan nga opisial a pakdaar.",
+     "summary": "Idi Dis 1, 2022, saan a nakumpirma ti inaldaw a ladawan ti satellite ti gapu ti asuk. Awan ti nakumpirma a lokasion ti asuk.",
+     "confidence_label": "Panagtalek: 0%",
+     "disclaimer": "Tantiya ti satellite, saan nga opisial a ballaag.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://www.airnow.gov/",
-     "replay_banner": "REPLAY · Dis 1, 2022 · saan a pakdaar ita",
+     "replay_banner": "ULIT · Dis 1, 2022 · saan nga agdama a ballaag",
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Saan nga agsigarilyo: Liklikam met ti asuk ti sigarilyo.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "text": "Ikaskaso dagiti lokal a report ti kalidad ti angin. Agtalinaed a maalerto kadagiti damag a mainaig iti asuk wenno dagiti ballaag pang-salun-at.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": false,
        "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
-       "reviewed": false
-      },
-      {
-       "text": "Agtalinaed a nainom: Uminom iti adu a likido tapno malukay ti bara.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],
@@ -554,32 +527,23 @@
      "lang": "tl",
      "language": "Tagalog",
      "headline": "Hindi nakumpirma ng satellite ang pinagmulan ng haze",
-     "summary": "Noong Dis 1, 2022, hindi nakumpirma ng pang-araw-araw na satellite ang pinagmulan ng haze. Walang kumpirmadong lugar sa loob ng 15 km.",
+     "summary": "Noong Dis 1, 2022, hindi nakumpirma ng pang-araw-araw na larawan ng satellite ang pinagmulan ng haze. Walang nakumpirmang lokasyon ng usok.",
      "confidence_label": "Kumpiyansa: 0%",
      "disclaimer": "Tantiya ng satellite, hindi opisyal na babala.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://www.airnow.gov/",
-     "replay_banner": "REPLAY · Dis 1, 2022 · hindi ito kasalukuyang babala",
+     "replay_banner": "ULIT · Dis 1, 2022 · hindi ito kasalukuyang alerto",
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Huwag manigarilyo: Iwasan din ang usok ng sigarilyo.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "text": "Bigyang-pansin ang mga lokal na ulat sa kalidad ng hangin. Manatiling alerto sa mga balitang may kinalaman sa usok o mga babalang pangkalusugan.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": false,
        "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
-       "reviewed": false
-      },
-      {
-       "text": "Uminom ng sapat na tubig: Uminom ng maraming likido para lumuwag ang bara.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],
@@ -588,33 +552,24 @@
     {
      "lang": "haw",
      "language": "ʻŌlelo Hawaiʻi",
-     "headline": "ʻAʻole i hōʻoia ʻia ke kumu o ka ʻehu",
-     "summary": "I ka lā 1 o Kekemapa 2022, ʻaʻole i hōʻoia ka ukali i ke kumu o ka ʻehu. ʻAʻohe wahi i hōʻoia ʻia i loko o 15 km.",
-     "confidence_label": "Hilinaʻi: 0%",
-     "disclaimer": "Manaʻo mai ka ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
+     "headline": "ʻAʻole i hōʻoia ka ukali i ke kumu o ka noe",
+     "summary": "Ma ka lā 1 o Kekemapa 2022, ʻaʻole i hōʻoia ke kiʻi ukali o ia lā i ke kumu o ka noe. ʻAʻole i hōʻoia ʻia kahi o ka noe.",
+     "confidence_label": "Hilināʻi: 0%",
+     "disclaimer": "He manaʻo koho mai ka ukali, ʻaʻole he ʻōlelo aʻo kūhelu.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
      "machine_translated": true,
      "needs_community_review": true,
      "official_source_url": "https://www.airnow.gov/",
-     "replay_banner": "HOʻOPUKA HOU · Kek 1, 2022 · ʻaʻole he makaʻala o kēia manawa",
+     "replay_banner": "HOʻOPĀ HOU · 1 Kekemapa 2022 · ʻaʻole he makaʻala o kēia manawa",
      "replay_banner_en": "REPLAY · Dec 1, 2022 · not a current alert",
      "actions": [
       {
-       "text": "Mai puhi: E hōʻalo pū i ka uahi lua.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Do not smoke: Also, avoid secondhand smoke.",
+       "text": "E nānā i nā hōʻike ʻano ea o ia wahi. E makaʻala i nā nūhou e pili ana i ka uahi a i nā ʻōlelo aʻo ola kino.",
+       "source_url": "https://www.airnow.gov/air-quality-and-health/fires-and-your-health/",
+       "excerpt_en": "Pay attention to local air quality reports. Stay alert to smoke-related news coverage or health warnings.",
        "verbatim": false,
        "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
-       "reviewed": false
-      },
-      {
-       "text": "E inu wai: E inu i nā wai he nui e heheʻe ai ke paʻa.",
-       "source_url": "https://vog.ivhhn.org/vog-protection",
-       "excerpt_en": "Stay hydrated: Drink plenty of liquids to help loosen congestion.",
-       "verbatim": false,
-       "label": "Translation of official guidance, machine-translated",
-       "publisher": "Hawaii Interagency Vog Information Dashboard",
+       "publisher": "U.S. EPA AirNow",
        "reviewed": false
       }
      ],

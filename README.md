@@ -39,17 +39,20 @@ this repository.
 
 ## The AI does not give medical advice
 
-The system never generates health advice. Health guidance on every alert is **quoted** from
-official sources stored in [`assets/health_sources.json`](assets/health_sources.json):
-Hawaiʻi DOH / IVHHN for vog, EPA AirNow for smoke. Muse Spark may only **select** which
-official lines to show:
-- English lines are always the verbatim official text. The code discards any model wording.
-- Other languages are labelled "translation of official guidance, machine-translated".
-- A verifier (`alerts.verify_guidance`) rejects any guidance line that doesn't trace to the
-  source file, and it is covered by tests.
-
-The model writes only a short situation summary (what the satellite shows, where and when) and
-the "satellite estimate, not an official warning" disclaimer.
+**Health guidance is never chosen or written by AI.** Each result type (`wildfire_smoke`,
+`vog_kilauea`, `vog_mauna_loa`, `dust`, `uncertain`, `no_plume`) maps to a fixed, curated list of
+two or three official lines, which are quoted verbatim from
+[`assets/health_sources.json`](assets/health_sources.json) (Hawaiʻi DOH / IVHHN for vog, EPA AirNow
+for smoke and particles). `no_plume` gets no guidance. Each curated line is matched by its exact
+opening text, and the build fails if that line doesn't exist in the official text.
+- **English** lines are the official text, unchanged.
+- **The model** (Muse Spark) only translates those fixed lines. Translations are labelled
+  "translation of official guidance, machine-translated". It also writes a short situation
+  summary (what the satellite shows, where and when) and the "satellite estimate, not an
+  official warning" disclaimer.
+- **`alerts.verify_guidance`** rejects any alert whose guidance isn't exactly the curated
+  official lines for its verdict.
+- **Tests** check that guidance depends only on the verdict.
 
 ## Setup
 
@@ -153,11 +156,9 @@ and `alerts/alert_{en,vi,ilo,tl,haw}.png`:
 - **Muse Spark** writes one short alert per language: English, Vietnamese, Ilocano, Tagalog
   and ʻŌlelo Hawaiʻi. Verdicts covered: `wildfire_smoke`, `vog_kilauea`, `vog_mauna_loa`, `dust`,
   `uncertain`, `no_plume`.
-- **Health guidance comes only from official text** in
-  [`assets/health_sources.json`](assets/health_sources.json): Hawaiʻi DOH / IVHHN for vog, EPA
-  AirNow for smoke and particles. The model picks excerpts by index. The code rejects any
-  reference outside the verdict's sources, and attaches the verbatim English excerpt and source
-  URL to every action.
+- **Health guidance is fixed per verdict** and quoted verbatim from
+  [`assets/health_sources.json`](assets/health_sources.json), with the source URL on every line.
+  The model only translates it (see "The AI does not give medical advice").
 - **Every alert carries** the confidence, "Satellite estimate, not an official warning." (in the
   alert's language and in English), and the official link.
 - **Translation labels:** non-English alerts are marked `machine_translated`. Ilocano, Tagalog

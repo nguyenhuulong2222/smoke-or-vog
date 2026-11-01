@@ -53,12 +53,25 @@
     }
   },
   "verdict_sources": {
-    "vog_kilauea": ["ivhhn_hdoh_vog_protection"],
-    "vog_mauna_loa": ["ivhhn_hdoh_vog_protection"],
-    "wildfire_smoke": ["airnow_fires_and_health"],
-    "dust": ["airnow_aqi_basics"],
-    "uncertain": ["airnow_fires_and_health", "ivhhn_hdoh_vog_protection"],
-    "no_plume": ["airnow_aqi_basics"]
+    "vog_kilauea": [
+      "ivhhn_hdoh_vog_protection"
+    ],
+    "vog_mauna_loa": [
+      "ivhhn_hdoh_vog_protection"
+    ],
+    "wildfire_smoke": [
+      "airnow_fires_and_health"
+    ],
+    "dust": [
+      "airnow_aqi_basics"
+    ],
+    "uncertain": [
+      "airnow_fires_and_health",
+      "ivhhn_hdoh_vog_protection"
+    ],
+    "no_plume": [
+      "airnow_aqi_basics"
+    ]
   },
   "verdict_links": {
     "vog_kilauea": "https://vog.ivhhn.org/",
@@ -67,5 +80,59 @@
     "dust": "https://www.airnow.gov/",
     "uncertain": "https://www.airnow.gov/",
     "no_plume": "https://www.airnow.gov/"
+  },
+  "verdict_guidance": {
+    "_about": "Deterministic, curated guidance per verdict. Each entry must match the START of an official excerpt exactly; the code resolves it and fails if the line does not exist. No model involvement.",
+    "vog_kilauea": [
+      {
+        "source_id": "ivhhn_hdoh_vog_protection",
+        "starts_with": "Limit strenuous activities:"
+      },
+      {
+        "source_id": "ivhhn_hdoh_vog_protection",
+        "starts_with": "Stay indoors:"
+      },
+      {
+        "source_id": "ivhhn_hdoh_vog_protection",
+        "starts_with": "Keep medications handy:"
+      }
+    ],
+    "vog_mauna_loa": [
+      {
+        "source_id": "ivhhn_hdoh_vog_protection",
+        "starts_with": "Limit strenuous activities:"
+      },
+      {
+        "source_id": "ivhhn_hdoh_vog_protection",
+        "starts_with": "Stay indoors:"
+      },
+      {
+        "source_id": "ivhhn_hdoh_vog_protection",
+        "starts_with": "Keep medications handy:"
+      }
+    ],
+    "wildfire_smoke": [
+      {
+        "source_id": "airnow_fires_and_health",
+        "starts_with": "Pay attention to local air quality reports."
+      },
+      {
+        "source_id": "airnow_fires_and_health",
+        "starts_with": "If you are advised to stay indoors"
+      }
+    ],
+    "dust": [
+      {
+        "source_id": "airnow_aqi_basics",
+        "starts_with": "When AQI values are above 100"
+      }
+    ],
+    "uncertain": [
+      {
+        "source_id": "airnow_fires_and_health",
+        "starts_with": "Pay attention to local air quality reports."
+      }
+    ],
+    "no_plume": []
   }
 }

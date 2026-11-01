@@ -15,80 +15,112 @@
     "plumes": [
       {
         "bbox": {
-          "x_max": 765,
-          "x_min": 415,
-          "y_max": 875,
-          "y_min": 595
+          "x_max": 755,
+          "x_min": 425,
+          "y_max": 855,
+          "y_min": 590
         },
         "inside_point": {
-          "x": 620,
-          "y": 725
+          "x": 630,
+          "y": 705
         },
-        "label": "large diffuse gray haze west of the large island",
+        "label": "large gray haze west of southeastern island",
         "origin_point": {
-          "x": 745,
-          "y": 695
+          "x": 750,
+          "y": 710
         },
         "visibility": "clear",
-        "visual_description": "broad light-gray diffuse veil over ocean extending west and southwest from the western coast of the large southeastern island"
+        "visual_description": "broad diffuse light-gray translucent haze blanket extending west and southwest from the west coast of the large southeastern island over the ocean"
       },
       {
         "bbox": {
-          "x_max": 625,
+          "x_max": 615,
           "x_min": 260,
-          "y_max": 565,
-          "y_min": 375
+          "y_max": 575,
+          "y_min": 415
         },
         "inside_point": {
-          "x": 440,
-          "y": 475
+          "x": 450,
+          "y": 485
         },
-        "label": "thin gray veil west of the central islands",
+        "label": "elongated gray streak west of central islands",
         "origin_point": {
-          "x": 605,
-          "y": 450
+          "x": 590,
+          "y": 452
         },
         "visibility": "faint",
-        "visual_description": "elongated faint gray translucent streak extending west-northwest over ocean from the vicinity of the small central islands"
+        "visual_description": "long narrow light-gray translucent streak extending west-southwest from the vicinity of the central small islands"
+      },
+      {
+        "bbox": {
+          "x_max": 405,
+          "x_min": 275,
+          "y_max": 360,
+          "y_min": 300
+        },
+        "inside_point": {
+          "x": 335,
+          "y": 330
+        },
+        "label": "faint gray streak west of north-central island",
+        "origin_point": {
+          "x": 398,
+          "y": 315
+        },
+        "visibility": "very_faint",
+        "visual_description": "small faint gray-white translucent wedge extending west from the western tip of the north-central island"
       }
     ],
-    "scene_description": "True-color view of the Hawaiian Island chain with scattered small white trade cumulus north and south. Two diffuse gray haze veils are visible leeward over the ocean, the largest and densest west to southwest of the southeastern large island and a fainter elongated veil west of the central islands."
+    "scene_description": "True-color satellite view of the main Hawaiian Islands from the northwestern islands to the large southeastern island, showing dark ocean with scattered white cumulus clouds and translucent gray haze extending west and southwest of the islands."
   },
   "pixels": [
     {
-      "label": "large diffuse gray haze west of the large island",
+      "label": "large gray haze west of southeastern island",
       "box": [
-        581,
         595,
-        1071,
-        875
+        590,
+        1057,
+        855
       ],
       "inside": [
-        868,
-        725
+        882,
+        705
       ]
     },
     {
-      "label": "thin gray veil west of the central islands",
+      "label": "elongated gray streak west of central islands",
       "box": [
         364,
-        375,
-        875,
-        565
+        415,
+        861,
+        575
       ],
       "inside": [
-        616,
-        475
+        630,
+        485
+      ]
+    },
+    {
+      "label": "faint gray streak west of north-central island",
+      "box": [
+        385,
+        300,
+        567,
+        360
+      ],
+      "inside": [
+        469,
+        330
       ]
     }
   ],
   "meta": {
     "model": "muse-spark-1.3",
     "effort": "medium",
-    "cost_usd": 0.009815,
+    "cost_usd": 0.015977,
     "input_tokens": 2208,
-    "cached_tokens": 2156,
-    "output_tokens": 2218,
-    "reasoning_tokens": 1911
+    "cached_tokens": 0,
+    "output_tokens": 3110,
+    "reasoning_tokens": 2714
   }
 }
