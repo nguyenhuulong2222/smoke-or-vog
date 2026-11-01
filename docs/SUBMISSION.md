@@ -69,7 +69,7 @@ that shows each step:
 |---|---|---|
 | Kīlauea vog plume, Oct 17, 2026 | GOES-West GeoColor | **Vog from Kīlauea, 82%**. The agent fetched the USGS notice: the eruption episode had ended 2 h earlier. |
 | Maui wildfires, Aug 8, 2023 | MODIS Terra | **Wildfire smoke, 90%**, traced to the Kula fire cluster about 21 km from the plume's upwind end. USGS showed both volcanoes not erupting. |
-| Mauna Loa eruption, Dec 1, 2022 | MODIS Aqua | **Uncertain (honest).** The vents were under cloud and the visible haze was 320 km downwind. The right class (`vog_mauna_loa`, 62%) is shown but not confirmed. |
+| Mauna Loa eruption, Dec 1, 2022 | MODIS Aqua | **Uncertain (honest).** The vents were under cloud and the visible haze was 320 km downwind. The right class (`vog_mauna_loa`, 62%) is shown but not confirmed. Muse Wonder's independent second opinion also says uncertain. |
 | Live, every daylight hour | GOES-West GeoColor | Mostly "no haze plume detected, mostly cloudy", stated plainly with the scan time. |
 
 On all four cases, the agent's verdicts matched or beat the fixed classifier's on the same plumes.
@@ -83,6 +83,7 @@ On all four cases, the agent's verdicts matched or beat the fixed classifier's o
 | **Muse Spark** | Stage 7 | Five-language situation summaries and translations of fixed official guidance |
 | **SAM 3.1** (`sam-3.1`) | Stage 4 | Box and point prompts → pixel masks, streamed and parsed with `meta-sam-parser`, two-pass refinement |
 | **SAM 3.1 video** (`sam-3.1`, `input_video`) | Stage 4b | **Plume motion tracking**: a 3-hour, 10-minute GOES-West clip seeded with the plume box → per-frame masks → measured drift direction and speed and the trailing source end. The agent reads it with the `track_plume` tool and compares it with the wind. Kīlauea Oct 17: tracked 19/19 frames, drift toward 214° (fit R² 0.98), within 37° of the wind. $0.01 per clip |
+| **Muse Wonder** (`muse-wonder-1.0`) | Stage 5b | **Second-opinion adjudicator** on borderline calls only (top confidence 0.55–0.75, or plumes pointing to different hazards). Gets the same evidence bundle (every tool result and its cite key) but not Spark's verdict, and returns its own cited verdict. Both are shown. If they disagree the verdict stays "uncertain"; Wonder can never raise confidence or override the 0.70 bar. Mauna Loa 2022: Spark `vog_mauna_loa` 62%, Wonder "uncertain" 60% (both volcanoes erupting, upwind end far from either vent) → stays uncertain. About $0.03–0.04 per call |
 | **Muse Image** (`muse-image-1.0`) | Stage 7 | Text-free card backgrounds |
 
 **What we learned:** text prompts like "smoke", "haze" and "volcanic plume" returned no SAM

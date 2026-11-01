@@ -259,3 +259,6 @@ button.cal-day:hover, .cal-day.is-sel { outline: 3px solid var(--pacific); outli
 .cal-swatch { width: 16px; height: 16px; border-radius: 4px; display: inline-block; }
 .day-scans { margin-top: 10px; }
 .table-wrap { overflow-x: auto; }
+
+.second-opinion { border-left: 4px solid var(--pacific); padding: 2px 0 2px 12px; margin: 14px 0; }
+.second-opinion ul { padding-left: 18px; }

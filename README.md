@@ -145,6 +145,14 @@ source end. The agent's `track_plume` tool returns this, and the agent compares 
 `get_wind`. The site shows a time-lapse player in step 4. Daily MODIS replays can't be tracked
 and say so. Cost: $0.01 per clip (50-frame minimum).
 
+**Second opinion (`--wonder`, on in the live job):** when the agent's top confidence is
+0.55–0.75, or two plumes point to different hazards, **Muse Wonder** (`muse-wonder-1.0`, text
+only) gets the same evidence bundle (FACTS plus every tool result with its cite key, but not
+Spark's verdict) and returns its own cited verdict (`src/adjudicate.py`, `04_wonder.json`). If
+they disagree, the headline stays "uncertain". Wonder can never raise confidence or override the
+0.70 bar. Step 5 shows both opinions. It runs only on borderline calls, at low reasoning effort,
+for about $0.03–0.04 each.
+
 **Summit glow is not fire:** FIRMS detections inside the Kīlauea and Mauna Loa summit calderas
 (Kahu Ola `volcanic_zone` flag, or the same caldera boxes for historical data) are reported as
 `volcanic_thermal` and kept out of the fire clusters. Glow alone is not treated as proof of

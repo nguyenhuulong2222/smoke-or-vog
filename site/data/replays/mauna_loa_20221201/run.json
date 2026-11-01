@@ -334,6 +334,31 @@
       "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2022-12-01T10:59:06-08:00"
      }
     }
+   },
+   "second_opinion": {
+    "trigger": "headline confidence 0.62 is within 0.55-0.75",
+    "trigger_code": "band",
+    "trigger_conf": 0.62,
+    "valid": true,
+    "rejected": null,
+    "model": "muse-wonder-1.0",
+    "cost_usd": 0.031976,
+    "agrees": false,
+    "headline_plume": 1,
+    "lowered": false,
+    "spark_overall": "uncertain",
+    "per_plume": [
+     {
+      "plume_id": 1,
+      "spark_class": "vog_mauna_loa",
+      "spark_confidence": 0.62,
+      "wonder_class": "uncertain",
+      "wonder_confidence": 0.6,
+      "agrees": false,
+      "wonder_reasoning": "Both Kilauea and Mauna Loa were erupting on 2022-12-01, so vog source attribution is inherently ambiguous [E1]. Wind at the plume was from 34° [E4], and its calculated upwind end remained about 278 km from Mauna Loa and 308 km from Kilauea [E6], tracing to neither vent. The faint, translucent gray veil could therefore be vog, thin cloud, or another aerosol rather than a confidently attributable volcanic plume."
+     }
+    ],
+    "caveats": "No aerosol composition, back-trajectory, or SO2 data are provided, and local winds are spatially variable."
    }
   },
   "agent": {

@@ -221,6 +221,27 @@ def _adp_overlay(image: Image.Image, mask_path: Path) -> Image.Image:
 LITE = {"on": False}
 
 
+def _second_opinion(run_dir: Path, res: dict) -> dict | None:
+    """Muse Wonder second opinion (src/adjudicate.py), when one was requested."""
+    f = run_dir / "04_wonder.json"
+    if not f.exists():
+        return None
+    w = json.loads(f.read_text())
+    reasons = {p["plume_id"]: p.get("reasoning") for p in ((w.get("wonder") or {}).get("per_plume") or [])}
+    ag = w.get("agreement") or {}
+    trig = w.get("trigger") or ""
+    import re as _re
+    m = _re.search(r"confidence ([0-9.]+)", trig)
+    return {"trigger": trig, "trigger_code": "band" if m else "conflict",
+            "trigger_conf": float(m.group(1)) if m else None, "valid": w.get("valid"), "rejected": w.get("rejected"),
+            "model": w.get("model"), "cost_usd": w.get("cost_usd"), "agrees": ag.get("agrees"),
+            "headline_plume": ag.get("plume_id"),
+            "lowered": bool((w.get("overall") or {}).get("second_opinion_disagreed")),
+            "spark_overall": (res.get("spark_overall") or {}).get("class"),
+            "per_plume": [{**p, "wonder_reasoning": reasons.get(p["plume_id"])} for p in ag.get("per_plume", [])],
+            "caveats": (w.get("wonder") or {}).get("caveats")}
+
+
 def build(run_dir: Path, out_dir: Path, mode: str | None = None, lite: bool = False) -> dict:
     """lite=True (history archive): 900 px images, no full-resolution copies, small
     time-lapse frames, so ~160 archive scans stay deployable."""
@@ -296,6 +317,7 @@ def _build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
                   "fire_clusters": c["firms"].get("fire_clusters", c["firms"].get("clusters", []))[:6],
                   "volcanic_thermal_excluded": c["firms"].get("volcanic_thermal_excluded")},
         "volcano_status": c.get("volcano_status"),
+        "second_opinion": _second_opinion(run_dir, res),
     }
     trace_f = run_dir / "04_agent_trace.json"
     compare_f = run_dir / "04_compare.json"

@@ -203,3 +203,6 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-11-01T03:22:53+00:00,pipeline:agent,muse-spark-1.3,ok,5462,5105,1725,1126,,0.008543,run=kilauea_20261017_20261101T032117Z; round=2
 2026-11-01T03:25:25+00:00,pipeline:alerts,muse-spark-1.3,ok,817,0,9226,6404,,0.040232,run=kilauea_20261017_20261101T032117Z
 2026-11-01T03:25:34+00:00,alerts:background,muse-image-1.0,ok,,,,,1 image,0.010000,run=kilauea_20261017_20261101T032117Z; verdict=vog_kilauea
+2026-11-01T03:44:15+00:00,pipeline:wonder,muse-wonder-1.0,ok,3053,0,7439,7000,,0.160992,run=wonder_test
+2026-11-01T03:44:48+00:00,pipeline:wonder,muse-wonder-1.0,ok,3077,0,1409,1036,,0.040488,run=wonder_test
+2026-11-01T03:46:56+00:00,pipeline:wonder,muse-wonder-1.0,ok,2364,0,1126,931,,0.031976,run=mauna_loa_20221201_20261101T012354Z

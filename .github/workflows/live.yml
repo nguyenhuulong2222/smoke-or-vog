@@ -66,6 +66,7 @@ jobs:
           SMOKEVOG_EXTRA_LEDGERS: out/costs.csv            # development spend (committed)
           SMOKEVOG_STOP_AT_USD: "15"
           SMOKEVOG_TRACK: "1"                              # SAM 3.1 video motion tracking
+          SMOKEVOG_WONDER: "1"                             # Muse Wonder second opinion (borderline only)
         run: |
           python -m src.live_publish --site-data site/data --persist live-data \
             ${{ inputs.force && '--force' || '' }}

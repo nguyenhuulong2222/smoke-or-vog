@@ -102,7 +102,8 @@ def main() -> None:
         from . import alerts, pipeline
 
         run_dir = pipeline.run("live", concepts=False, classifier="agent",
-                               track=os.environ.get("SMOKEVOG_TRACK") == "1")
+                               track=os.environ.get("SMOKEVOG_TRACK") == "1",
+                               wonder=os.environ.get("SMOKEVOG_WONDER") == "1")
         verdict = json.loads((run_dir / "04_classify.json").read_text())["result"]
         if verdict.get("overall", {}).get("class") in HAZARDS:
             alerts.run_alerts(run_dir)

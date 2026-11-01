@@ -308,7 +308,8 @@ def rerender_overlay(run_dir: Path) -> Path:
 # ------------------------------------------------------------------ run
 
 def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True,
-        classifier: str = "standard", track: bool = False, at_time: str | None = None) -> Path:
+        classifier: str = "standard", track: bool = False, at_time: str | None = None,
+        wonder: bool = False) -> Path:
     """classifier: 'standard' (fixed context, default), 'agent' (Muse Spark tool calling,
     falls back to standard if its verdict is not verifiable), or 'both' (run both on the
     same plumes, record the comparison, use the agent verdict when it is valid)."""
@@ -569,8 +570,8 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True
             }
             agent_out = agent.classify_agentic(run_id, rd, im, cls_ctx["plumes"], facts,
                                                cfg["historical"], effort=classify_effort)
-            _save_json(rd / "04_agent_trace.json", {k: agent_out.get(k) for k in (
-                "valid", "rejected", "meta", "trace", "final")})
+            _save_json(rd / "04_agent_trace.json", {**{k: agent_out.get(k) for k in (
+                "valid", "rejected", "meta", "trace", "final")}, "facts": facts})
             print(f"  4a agent: {len(agent_out['trace'])} tool calls in "
                   f"{agent_out['meta']['rounds']} rounds, valid={agent_out['valid']}"
                   + (f" ({agent_out['rejected']})" if agent_out["rejected"] else "")
@@ -610,6 +611,20 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True
     unreliable = {p["plume_id"]: r for p in plumes
                   if (r := land.unreliable_reason(p["geometry"].get("land", {})))}
     cls["overall"] = aggregate(cls["per_plume"], unreliable=unreliable)
+    if wonder and plumes and cls_meta.get("classifier") == "agent":
+        # Muse Wonder second opinion on borderline calls; it can only keep or lower the verdict
+        from . import adjudicate
+        rec = adjudicate.adjudicate(run_id, facts, agent_out["trace"], cls["per_plume"],
+                                    cls["overall"], unreliable)
+        if rec:
+            _save_json(rd / "04_wonder.json", rec)
+            cls["spark_overall"] = cls["overall"]
+            cls["overall"] = rec.get("overall", cls["overall"])
+            cls["second_opinion"] = {k: rec.get(k) for k in (
+                "trigger", "valid", "rejected", "agreement", "model", "cost_usd")}
+            ag = rec.get("agreement") or {}
+            print(f"  4w wonder: {rec['trigger']}; Spark {ag.get('spark_class')} vs Wonder "
+                  f"{ag.get('wonder_class')} -> overall {cls['overall']['class']}; ${rec.get('cost_usd') or 0:.4f}")
     _save_json(rd / "04_classify.json", {"context": cls_ctx, "result": cls, "meta": cls_meta})
     log["stages"]["4_classify"] = {"overall": cls["overall"], **cls_meta}
     ov = cls["overall"]
@@ -638,10 +653,12 @@ def main() -> None:
     ap.add_argument("--classifier", default="standard", choices=["standard", "agent", "both"],
                     help="stage 4: fixed context (default), agentic tool calling, or both")
     ap.add_argument("--track", action="store_true", help="track plume motion with SAM 3.1 video")
+    ap.add_argument("--wonder", action="store_true", help="Muse Wonder second opinion on borderline calls")
     ap.add_argument("--classify-effort", default=CLASSIFY_EFFORT,
                     choices=["minimal", "low", "medium", "high"])
     a = ap.parse_args()
-    run(a.case, a.classify_effort, concepts=not a.no_concepts, classifier=a.classifier, track=a.track)
+    run(a.case, a.classify_effort, concepts=not a.no_concepts, classifier=a.classifier, track=a.track,
+        wonder=a.wonder)
 
 
 if __name__ == "__main__":

@@ -72,6 +72,12 @@ const T = {
     accUncertain: (u) => `Uncertain (${u.scans} scans): SO₂ rose in ${u.so2_elevated}, PM2.5 in ${u.pm25_elevated}, neither in ${u.neither}.`,
     accCaveat: "Small samples: read the counts, not just the percentages. Most vog plumes drift over the ocean where there are no monitors, and satellites see the whole air column while monitors measure ground level. Base rate = how often the same monitors rose on other scans; a verdict is useful only if it beats that.",
     accNA: "no monitor nearby",
+    soTitle: "Second opinion (Muse Wonder)",
+    soWhy: (so) => `Asked because the call was borderline: ${so.trigger_code === "band" ? `the top plume's confidence (${Math.round(so.trigger_conf * 100)}%) is between 55% and 75%` : "two plumes point to different hazards"}. Wonder saw the same evidence (every tool result above) but not Spark's verdict.`,
+    soRow: (id, s, sc, w, wc) => `Plume #${id}: Spark ${s} (${sc}) / Wonder second opinion: ${w} (${wc})`,
+    soAgree: "They agree. Wonder cannot raise confidence, so the 0.70 bar still decides what is confirmed.",
+    soDisagree: "They disagree, so the verdict stays uncertain.",
+    soInvalid: "Wonder's answer was rejected (no valid citations), so it cannot confirm anything.",
     newWorkTitle: "Built during the hackathon", newWork: "Everything in this project (code, pipeline, site, prompts, tests) was built Oct 31–Nov 4, 2026. Pre-existing external input: the Kahu Ola public API (/api/hazards/smoke-sat, /api/firms/hotspots), built earlier by the same author and used read-only as a data source.",
     replayBanner: "Replay of a past event. Not a current alert.",
     daily: "daily satellite pass",
@@ -169,6 +175,12 @@ const T = {
     accUncertain: (u) => `Chưa xác định (${u.scans} lượt): SO₂ tăng ${u.so2_elevated}, PM2.5 tăng ${u.pm25_elevated}, không tăng ${u.neither}.`,
     accCaveat: "Mẫu nhỏ: hãy đọc số lượng, không chỉ phần trăm. Phần lớn vệt vog trôi ra biển, nơi không có trạm đo; vệ tinh nhìn cả cột không khí còn trạm đo chỉ đo ở mặt đất. Tỷ lệ nền = tần suất các trạm đó tăng trong những lượt quét khác; kết luận chỉ hữu ích khi vượt tỷ lệ này.",
     accNA: "không có trạm gần",
+    soTitle: "Ý kiến thứ hai (Muse Wonder)",
+    soWhy: (so) => `Được hỏi vì kết luận nằm sát ngưỡng: ${so.trigger_code === "band" ? `độ tin cậy của vệt chính (${Math.round(so.trigger_conf * 100)}%) nằm trong khoảng 55%–75%` : "hai vệt chỉ về hai mối nguy khác nhau"}. Wonder xem cùng bằng chứng (mọi kết quả công cụ ở trên) nhưng không thấy kết luận của Spark.`,
+    soRow: (id, s, sc, w, wc) => `Vệt #${id}: Spark ${s} (${sc}) / Ý kiến thứ hai của Wonder: ${w} (${wc})`,
+    soAgree: "Hai mô hình đồng ý. Wonder không thể nâng độ tin cậy, nên ngưỡng 0,70 vẫn quyết định điều gì được xác nhận.",
+    soDisagree: "Hai mô hình không đồng ý, nên kết luận vẫn là chưa xác định.",
+    soInvalid: "Câu trả lời của Wonder bị loại (không dẫn nguồn hợp lệ), nên không thể xác nhận điều gì.",
     newWorkTitle: "Xây dựng trong thời gian hackathon", newWork: "Toàn bộ dự án này (mã nguồn, quy trình, trang web, prompt, kiểm thử) được xây dựng từ 31/10 đến 4/11/2026. Đầu vào có sẵn từ trước: API công khai của Kahu Ola (/api/hazards/smoke-sat, /api/firms/hotspots), do cùng tác giả xây dựng trước đó, chỉ được đọc làm nguồn dữ liệu.",
     replayBanner: "Xem lại sự kiện đã qua. Không phải cảnh báo hiện tại.",
     daily: "lượt chụp vệ tinh hằng ngày",
@@ -633,6 +645,7 @@ function step5(run) {
         el("ul", {}, (p.evidence || []).map((e) => el("li", { text: e }))));
     }),
     s.caveats ? el("p", { class: "small" }, el("strong", { text: `${t().caveats}: ` }), s.caveats) : "",
+    secondOpinion(s.second_opinion),
     el("h3", { text: t().usgs }),
     el("ul", {}, Object.entries(vol).map(([k, x]) => el("li", {},
       el("strong", { text: k === "kilauea" ? "Kīlauea" : "Mauna Loa" }),
@@ -646,6 +659,18 @@ function step5(run) {
     s.firms.volcanic_thermal_excluded && Object.keys(s.firms.volcanic_thermal_excluded).length
       ? el("p", { class: "small", text: `${t().volcanic}: ` + Object.entries(s.firms.volcanic_thermal_excluded).map(([z, n]) => `${z} ${n}`).join(", ") }) : "",
   );
+}
+function secondOpinion(so) {
+  if (!so) return "";
+  const nm = (c) => (c ? t().v[c] || c : "—");
+  return el("div", { class: "second-opinion" },
+    el("h3", { text: t().soTitle }),
+    el("p", { class: "small", text: t().soWhy(so) }),
+    el("ul", {}, (so.per_plume || []).map((p) => el("li", {},
+      el("strong", { text: t().soRow(p.plume_id, nm(p.spark_class), pct(p.spark_confidence), nm(p.wonder_class), p.wonder_confidence == null ? "—" : pct(p.wonder_confidence)) }),
+      p.wonder_reasoning ? el("div", { class: "small", text: p.wonder_reasoning }) : ""))),
+    el("p", { class: so.valid && so.agrees ? "ok-note" : "status-note",
+              text: !so.valid ? t().soInvalid : so.agrees ? t().soAgree : t().soDisagree }));
 }
 function step6(run) {
   const a = run.steps.alerts;
