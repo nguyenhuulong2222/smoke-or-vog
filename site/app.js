@@ -948,6 +948,7 @@ async function renderHow() {
 /* ---------------- boot ---------------- */
 async function renderAll() {
   applyStatic();
+  if (!state.index) return;          // language switched before data/index.json loaded; boot renders
   await renderLive();
   renderAsk();
   renderReplays();
