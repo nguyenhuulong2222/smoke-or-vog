@@ -91,11 +91,12 @@ Spark's reasoning with SAM's pixels is the core of the project.
 and the agent), and about **$0.03** more when alerts are issued. The whole hackathon, including
 development, cost under $2.
 
-## Built during the hackathon (Oct 31 – Nov 4, 2026)
+## Built during the hackathon (building period Oct 27 – Nov 4, 2026)
 
-Everything in the repository is new work created during the hackathon: the pipeline, the
-agentic classifier, safety rules, alerts, the live publisher, the website, tests (100 offline,
-with the Meta API mocked) and docs. The first commit was Oct 31, 2026, 12:16 HST. See
+Everything in the repository is new work created during the hackathon's building period
+(Oct 27 – Nov 4, 2026): the pipeline, the agentic classifier, safety rules, alerts, the live
+publisher, the website, tests (100 offline, with the Meta API mocked) and docs. The repository
+was created within that period, on Oct 31, 2026 (first commit 12:16 HST). See
 `docs/NEW_WORK.md`.
 
 **Pre-existing external input:** the **Kahu Ola public API** (`/api/hazards/smoke-sat`,
@@ -133,3 +134,9 @@ hour of the satellite pass. It shows its evidence, says "uncertain" when that's 
 quotes the health agencies word for word in the languages people speak at home. The same
 pattern of open satellite data, a citing agent and quoted official guidance can carry over to
 any place where two hazards look alike from orbit.
+
+This is personal for us: the author lives in Wailuku, Maui. After the hackathon, the plan is to
+offer Smoke or Vog? as an opt-in layer in Kahu Ola (kahuola.org), an existing free civic
+hazard map for Hawaiʻi, so residents can use it in a tool they already know. That integration
+hasn't been built yet. It would follow community review of the translations and a period of
+side-by-side checks against official vog and smoke advisories.
