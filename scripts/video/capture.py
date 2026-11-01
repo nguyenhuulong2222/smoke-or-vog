@@ -23,6 +23,7 @@ SITE = "https://smoke-or-vog.pages.dev/"
 DPR = 2
 WANT: set[str] = set()  # empty = capture everything; else only these shot names (merged)
 VIEW = {"width": 1920, "height": 1080}
+VOICE_WAV = ROOT / "out" / "video" / "ask_question.wav"  # made with macOS `say`, 16 kHz mono
 
 WAIT_IMAGES = """async () => {
   await document.fonts.ready;
@@ -118,11 +119,30 @@ def main() -> None:
         go(page, K, 3)
         scroll_to(page, "#steps", 40)
         snap(page, "s3_spark", shots, {"hl": rect(page, "#frame"), "zoom": rect(page, "#frame")})
-        # S4: SAM masks, then the pass table
+        # S3b: SAM still masks (pass 1 / pass 2)
         go(page, K, 4)
+        page.click("#explain button:has-text('Still masks')")
+        page.wait_for_timeout(400)
+        page.evaluate(WAIT_IMAGES)
         scroll_to(page, "#steps", 40)
         snap(page, "s4_sam", shots, {"hl": rect(page, "#frame"), "zoom": rect(page, "#frame"),
                                      "table": rect(page, "#explain table")})
+        # S4: SAM 3.1 video time-lapse (first frame, then last frame with the drift path) + motion line
+        page.click("#explain button:has-text('Time-lapse')")
+        page.wait_for_timeout(400)
+        page.evaluate(WAIT_IMAGES)
+        scroll_to(page, "#steps", 40)
+        page.evaluate("""() => { const r = document.querySelector('#frame .player input[type=range]');
+            r.value = 0; r.dispatchEvent(new Event('input')); }""")
+        page.wait_for_timeout(500)
+        page.evaluate(WAIT_IMAGES)
+        snap(page, "s4_lapse0", shots, {"hl": rect(page, "#frame"), "zoom": rect(page, "#frame")})
+        page.evaluate("""() => { const r = document.querySelector('#frame .player input[type=range]');
+            r.value = r.max; r.dispatchEvent(new Event('input')); }""")
+        page.wait_for_timeout(500)
+        page.evaluate(WAIT_IMAGES)
+        snap(page, "s4_lapse", shots, {"hl": rect(page, "#frame"), "zoom": rect(page, "#frame"),
+                                       "motion": rect(page, "#explain .motion p")})
         # S5: agent trace (full page for a scroll), then the verification note
         go(page, K, 5)
         scroll_to(page, "#steps", 40)
@@ -156,6 +176,8 @@ def main() -> None:
         snap(page, "s7_mauna_loa", shots, {"hl": rect(page, "#explain .verdict-line"),
                                            "unconf": text_rect(page, "#explain p.small", "Not confirmed"),
                                            "zoom": union(rect(page, "#frame"), rect(page, "#explain .verdict-line"))})
+        scroll_to(page, ".second-opinion", 200)
+        snap(page, "s7_wonder", shots, {"hl": rect(page, ".second-opinion"), "zoom": rect(page, ".second-opinion")})
         # S8: alerts EN card, VI guidance, Hawaiian card
         go(page, K, 7)
         scroll_to(page, "#steps", 40)
@@ -171,12 +193,32 @@ def main() -> None:
         page.evaluate(WAIT_IMAGES)
         scroll_to(page, "#steps", 40)
         snap(page, "s8_haw", shots, {"hl": rect(page, "#frame"), "zoom": rect(page, "#frame")})
-        # S9: live status at the top
-        page.evaluate("window.scrollTo(0, 0)")
-        page.wait_for_timeout(300)
-        sel = ".live__status" if not live["card"] else ".live__card"
-        snap(page, "s9_live", shots, {"hl": rect(page, sel), "zoom": union(rect(page, "#live-h"), rect(page, sel))})
-        # S10a: How it works
+        # S9: History calendar, then the accuracy panel
+        scroll_to(page, "#history-h", 60)
+        snap(page, "s9_history", shots, {"hl": rect(page, "#calendar"),
+                                         "zoom": union(rect(page, "#history-h"), rect(page, "#calendar"), rect(page, "#cal-legend"))})
+        scroll_to(page, "#accuracy-h", 60)
+        snap(page, "s9_accuracy", shots, {"hl": rect(page, ".acc-find li", 1),
+                                          "table": rect(page, "#accuracy .table-wrap"),
+                                          "zoom": union(rect(page, "#accuracy-h"), rect(page, "#accuracy .table-wrap"), rect(page, ".acc-find"))})
+        # S10: Ask panel; one real spoken question (macOS `say` WAV) through the site's own send()
+        if VOICE_WAV.exists():
+            import base64
+            b64 = base64.b64encode(VOICE_WAV.read_bytes()).decode()
+            page.evaluate("""async (b64) => {
+              const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+              ask.lang = 'en'; renderAsk();
+              const fd = new FormData(); fd.append('lang', 'en');
+              fd.append('audio', new Blob([bytes], {type: 'audio/wav'}), 'question.wav');
+              await send(fd);
+            }""", b64)
+            page.wait_for_selector(".ask__answer", timeout=60000)
+        scroll_to(page, "#ask-h", 60)
+        page.evaluate(WAIT_IMAGES)
+        snap(page, "s10_ask", shots, {"langs": rect(page, ".ask__langs"), "mic": rect(page, ".ask__mic"),
+                                      "answer": rect(page, ".ask__answer"),
+                                      "zoom": union(rect(page, "#ask-h"), rect(page, ".ask__answer"))})
+        # S11: How it works
         scroll_to(page, "#how-h", 120)
         snap(page, "s10_how", shots, {"hl": rect(page, ".how__models"),
                                       "zoom": union(rect(page, "#how-h"), rect(page, ".how__models"))})

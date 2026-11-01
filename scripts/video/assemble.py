@@ -33,6 +33,7 @@ NAVY, GOLD, INK = (18, 58, 94), (255, 205, 60), (12, 18, 28)
 TARGET_WPM = 140
 VO_LEAD, VO_TAIL = 0.25, 0.35
 TITLE_S, END_S = 2.0, 4.0
+LAST = 11  # final scene (ends with the end card)
 HOOK_IMAGE = ROOT / "out" / "runs" / "kilauea_20261017_20261101T012112Z" / "00_image.jpg"
 
 
@@ -66,7 +67,7 @@ def prepare_audio(sc: list[dict]) -> list[dict]:
                         "-ar", "48000", "-ac", "1", str(trimmed)], check=True)
         d = ffprobe_dur(trimmed)
         start = s["start"] + (TITLE_S if s["n"] == 1 else 0) + VO_LEAD
-        end_limit = s["end"] - (END_S if s["n"] == 10 else 0) - VO_TAIL
+        end_limit = s["end"] - (END_S if s["n"] == LAST else 0) - VO_TAIL
         budget = end_limit - start
         words = len(s["vo"].split())
         f = d / (words / TARGET_WPM * 60)           # >1 = speed up
@@ -316,48 +317,78 @@ def build_timeline(placed: list[dict], caps: dict[int, list[dict]], meta: dict) 
     hw, hh = hook.size
     start = (0, (hh - hw * 9 / 16) / 2, hw, (hh + hw * 9 / 16) / 2)
     plume = (930, 700, 1290, 990)  # haze south of Hawaiʻi Island (from the run's SAM mask bbox)
-    add(TITLE_S, 15, Still(hook, zoom=plume, pad=0.9, start_win=start, zoom_in=0.95, drift=0, hl=None))
-    # 2 — replay banner, then step 1 (switch on "Step one")
-    t = anchor(caps[2], "Step one", 21)
-    add(15, t, Still(img("s2_banner"), zoom=R("s2_banner")["zoom"], hl=[R("s2_banner")["hl"]], pad=0.06))
-    add(t, 27, Still(img("s2_step1"), zoom=R("s2_step1")["zoom"], hl=[R("s2_step1")["hl"]], pad=0.04, dim=0.3))
-    # 3 — Muse Spark box (zoom into the frame)
-    add(27, 42, Still(img("s3_spark"), zoom=R("s3_spark")["zoom"], hl=[R("s3_spark")["hl"]],
-                      pad=0.05, zoom_in=0.35, dim=0.0, hl_delay=1.2))
-    # 4 — SAM masks, then the pass-1 → pass-2 table (switch on "Here it grew")
-    t = anchor(caps[4], "Here it grew", 53)
-    add(42, t, Still(img("s4_sam"), zoom=R("s4_sam")["zoom"], hl=[R("s4_sam")["hl"]], pad=0.05,
-                     zoom_in=0.3, dim=0.0, hl_delay=1.0))
-    add(t, 62, Still(img("s4_sam"), zoom=R("s4_sam")["table"], hl=[R("s4_sam")["table"]], pad=0.5,
-                     start_win=Still(img("s4_sam")).window(R("s4_sam")["zoom"], 0.05), zoom_in=0.35))
-    # 5 — agent trace scroll, then the verification note (switch on "Every claim")
+    add(TITLE_S, sc[1]["end"], Still(hook, zoom=plume, pad=0.9, start_win=start, zoom_in=0.95, drift=0, hl=None))
+    # Scene boundaries come from docs/VIDEO_SCRIPT.md.
+    B = {p["n"]: (p["start"], p["end"]) for p in placed}
+
+    def St(name, key="zoom", hl="hl", **kw):
+        r = R(name)
+        return Still(img(name), zoom=r[key], hl=[r[hl]] if hl and r.get(hl) else None, **kw)
+
+    # 2 — replay banner, then step 1
+    s0, s1 = B[2]
+    t = anchor(caps[2], "labelled", s0 + 4)
+    add(s0, t, St("s2_banner", pad=0.06))
+    add(t, s1, St("s2_step1", pad=0.04, dim=0.3))
+    # 3 — Muse Spark box, then SAM still masks (switch on "SAM")
+    s0, s1 = B[3]
+    t = anchor(caps[3], "SAM", s0 + 6)
+    add(s0, t, St("s3_spark", pad=0.05, zoom_in=0.35, dim=0.0, hl_delay=1.0))
+    add(t, s1, St("s4_sam", pad=0.05, zoom_in=0.3, dim=0.0, hl_delay=0.8))
+    # 4 — time-lapse: first frame, last frame (on "It drifts"), then the motion line (on "roughly")
+    s0, s1 = B[4]
+    t1 = anchor(caps[4], "It drifts", s0 + 7)
+    t2 = anchor(caps[4], "roughly", s0 + 12)
+    if t2 <= t1 + 1.5:
+        t2 = min(s1 - 2.5, t1 + 3.0)
+    add(s0, t1, St("s4_lapse0", pad=0.04, zoom_in=0.3, dim=0.0, hl_delay=0.6))
+    add(t1, t2, St("s4_lapse", pad=0.04, zoom_in=0.0, dim=0.0, hl=None))
+    lz = Still(img("s4_lapse")).window(R("s4_lapse")["zoom"], 0.04)
+    add(t2, s1, Still(img("s4_lapse"), zoom=R("s4_lapse")["motion"], hl=[R("s4_lapse")["motion"]],
+                      pad=0.35, start_win=lz, zoom_in=0.3))
+    # 5 — agent trace scroll, then the verification note (on "Every claim")
+    s0, s1 = B[5]
     g = S["s5_trace_full"]["geom"]
-    t = anchor(caps[5], "Every claim", 84)
-    add(62, t, Pan(img("s5_trace_full"), y0=g["steps_top"] - 120, y1=g["ok_bottom"] - 2160 + 260,
+    t = anchor(caps[5], "Every claim", s0 + 13)
+    add(s0, t, Pan(img("s5_trace_full"), y0=g["steps_top"] - 120, y1=g["ok_bottom"] - 2160 + 260,
                    hl=(g["x0"], g["trace_top"], g["x1"], g["trace_bottom"])))
     ok = R("s5_ok")
-    add(t, 92, Still(img("s5_ok"), zoom=ok["hl"], hl=[ok["hl"]], pad=1.2, zoom_in=0.3))
-    # 6 — Kīlauea verdict, then Maui verdict (switch on "Maui")
-    t = anchor(caps[6], "Maui", 99)
-    add(92, t, Still(img("s6_kilauea"), zoom=R("s6_kilauea")["zoom"], hl=[R("s6_kilauea")["hl"]], pad=0.04))
-    add(t, 112, Still(img("s6_maui"), zoom=R("s6_maui")["zoom"], hl=[R("s6_maui")["hl"]], pad=0.04))
-    # 7 — Mauna Loa: uncertain headline, then the unconfirmed 62% line (switch on "sixty-two")
-    t = anchor(caps[7], "sixty-two", 120)
-    m = R("s7_mauna_loa")
-    add(112, t, Still(img("s7_mauna_loa"), zoom=m["zoom"], hl=[m["hl"]], pad=0.04))
-    add(t, 127, Still(img("s7_mauna_loa"), zoom=m["unconf"], hl=[m["unconf"]], pad=0.9,
-                      start_win=Still(img("s7_mauna_loa")).window(m["zoom"], 0.04), zoom_in=0.3))
+    add(t, s1, Still(img("s5_ok"), zoom=ok["hl"], hl=[ok["hl"]], pad=1.2, zoom_in=0.3))
+    # 6 — Kīlauea verdict, then Maui (on "Maui")
+    s0, s1 = B[6]
+    t = anchor(caps[6], "Maui", s0 + 7)
+    add(s0, t, St("s6_kilauea", pad=0.04))
+    add(t, s1, St("s6_maui", pad=0.04))
+    # 7 — Mauna Loa uncertain, then the Muse Wonder second-opinion box (on "Muse Wonder")
+    s0, s1 = B[7]
+    t = anchor(caps[7], "Muse Wonder", s0 + 7)
+    add(s0, t, St("s7_mauna_loa", pad=0.04))
+    add(t, s1, St("s7_wonder", pad=0.08, dim=0.25))
     # 8 — EN card, VI quoted guidance (on "Health guidance"), Hawaiian card (on "The AI only")
-    t1 = anchor(caps[8], "Health guidance", 131)
-    t2 = anchor(caps[8], "The AI only", 141)
-    add(127, t1, Still(img("s8_en"), zoom=R("s8_en")["zoom"], hl=[R("s8_en")["hl"]], pad=0.04, dim=0.0, hl_delay=0.8))
-    add(t1, t2, Still(img("s8_vi"), zoom=R("s8_vi")["hl"], hl=[R("s8_vi")["hl"]], pad=0.06))
-    add(t2, 147, Still(img("s8_haw"), zoom=R("s8_haw")["zoom"], hl=[R("s8_haw")["hl"]], pad=0.04, dim=0.0, hl_delay=0.5))
-    # 9 — live status
-    add(147, 160, Still(img("s9_live"), zoom=R("s9_live")["zoom"], hl=[R("s9_live")["hl"]], pad=0.08))
-    # 10 — How it works (models), phone view (on "Everything you saw"), end card
-    t = anchor(caps[10], "Everything you saw", 168)
-    add(160, t, Still(img("s10_how"), zoom=R("s10_how")["zoom"], hl=[R("s10_how")["hl"]], pad=0.06))
+    s0, s1 = B[8]
+    t1 = anchor(caps[8], "Health guidance", s0 + 4)
+    t2 = anchor(caps[8], "The AI only", s0 + 9)
+    add(s0, t1, St("s8_en", pad=0.04, dim=0.0, hl_delay=0.8))
+    add(t1, t2, St("s8_vi", key="hl", pad=0.06))
+    add(t2, s1, St("s8_haw", pad=0.04, dim=0.0, hl_delay=0.5))
+    # 9 — History calendar, then accuracy table (on "The lesson"), then the no-plume finding (on "So no plume")
+    s0, s1 = B[9]
+    t1 = anchor(caps[9], "The lesson", s0 + 7)
+    t2 = anchor(caps[9], "So no plume", s0 + 13)
+    add(s0, t1, St("s9_history", pad=0.05, dim=0.2))
+    add(t1, t2, St("s9_accuracy", key="table", hl="table", pad=0.1, dim=0.25))
+    add(t2, s1, St("s9_accuracy", pad=0.05, dim=0.35))
+    # 10 — Ask: languages + mic, then the answer (on "Muse Voice Transcribe")
+    s0, s1 = B[10]
+    t = anchor(caps[10], "Muse Voice Transcribe", s0 + 7)
+    a = R("s10_ask")
+    add(s0, t, Still(img("s10_ask"), zoom=a["zoom"], hl=[a["langs"], a["mic"]], pad=0.06, dim=0.3))
+    add(t, s1, Still(img("s10_ask"), zoom=a["answer"], hl=[a["answer"]], pad=0.15, dim=0.3,
+                     start_win=Still(img("s10_ask")).window(a["zoom"], 0.06), zoom_in=0.3))
+    # 11 — How it works (models), phone view (on "Everything you saw"), end card
+    s0, s1 = B[11]
+    t = anchor(caps[11], "Everything you saw", s0 + 9)
+    add(s0, t, St("s10_how", pad=0.06))
     ph = S["s10_phone_full"]
     add(t, TOTAL - END_S, Phone(img("s10_phone_full"), int(ph["viewport"]["height"] * ph["dpr"])))
     add(TOTAL - END_S, TOTAL, Card(end_card()))

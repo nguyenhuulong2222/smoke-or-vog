@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import json
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "docs" / "VIDEO_SCRIPT.md"
-SHOTS = ROOT / "out" / "video" / "shots" / "shots.json"
 TOTAL = 180.0
 
 # TTS-only phonetic respellings (captions always keep the correct spelling).
@@ -22,6 +20,7 @@ PHONETIC = [
     ("Kula", "KOO-lah"),
     ("Kahu Ola", "KAH-hoo OH-lah"),
     ("SAM 3.1", "SAM three point one"),
+    ("GOES-West", "GOES West"),
 ]
 
 
@@ -41,19 +40,6 @@ def scenes() -> list[dict]:
     assert out[0]["start"] == 0 and out[-1]["end"] == TOTAL, "script must cover 0:00–3:00"
     for x, y in zip(out, out[1:]):
         assert x["end"] == y["start"], f"gap/overlap between scenes {x['n']} and {y['n']}"
-    # Scene 9 describes the live scan at capture time.
-    if SHOTS.exists():
-        live = json.loads(SHOTS.read_text()).get("live", {})
-        s9 = next(s for s in out if s["n"] == 9)
-        line = live.get("line") or ""
-        if live.get("card") and live.get("verdict"):
-            s9["vo"] = (f"And when there's nothing, it says so. The live scan runs every daylight "
-                        f"hour. Right now it reports: {live['verdict'].rstrip('.')}, with the scan time.")
-        else:
-            cloud = next((c for c in ("mostly cloudy", "partly cloudy", "overcast", "clear skies")
-                          if c in line), None)
-            s9["vo"] = ("And when there's nothing, it says so. The live scan runs every daylight hour. "
-                        f"Right now: no plume{', ' + cloud if cloud else ''}, with the scan time.")
     return out
 
 
