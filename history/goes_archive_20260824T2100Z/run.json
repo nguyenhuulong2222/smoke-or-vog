@@ -1,0 +1,151 @@
+{
+ "slug": "goes_archive_20260824T2100Z",
+ "case": "goes_archive",
+ "mode": "replay",
+ "run_id": "goes_archive_20260824T2100Z",
+ "title": {
+  "en": "Archive scan · Aug 24, 2026, 11:00 HST",
+  "vi": "Lượt quét lưu trữ · 24/8/2026, 11:00 HST"
+ },
+ "image_time": "2026-08-24T21:00:00Z",
+ "layer": "GOES-West_ABI_GeoColor",
+ "verdict": {
+  "class": "uncertain",
+  "confidence": 0.0,
+  "max_plume_confidence": 0.0,
+  "plume_id": null,
+  "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+  "confirmed": [],
+  "unconfirmed": []
+ },
+ "detection": "no_plume",
+ "cost_usd": 0.038962,
+ "models": [
+  {
+   "stage": "2 Localize",
+   "model": "muse-spark-1.3",
+   "what": "vision: find haze/plume boxes and points"
+  },
+  {
+   "stage": "3 Segment",
+   "model": "sam-3.1",
+   "what": "box + point prompts → pixel masks (two passes)"
+  },
+  {
+   "stage": "4 Agent",
+   "model": "muse-spark-1.3",
+   "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"
+  },
+  {
+   "stage": "5 Alerts",
+   "model": "muse-spark-1.3",
+   "what": "5-language alerts from official guidance only"
+  },
+  {
+   "stage": "5 Cards",
+   "model": "muse-image-1.0",
+   "what": "text-free background illustration"
+  }
+ ],
+ "steps": {
+  "image": {
+   "src": "image.jpg",
+   "full": "image.jpg",
+   "layer": "GOES-West_ABI_GeoColor",
+   "time": "2026-08-24T21:00:00Z",
+   "source": "NASA GIBS WMS"
+  },
+  "adp": {
+   "state": "unavailable",
+   "candidates": 0,
+   "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
+   "meaning_of_absence": null,
+   "src": null,
+   "full": null
+  },
+  "spark": {
+   "src": "spark_boxes.jpg",
+   "full": "spark_boxes.jpg",
+   "scene": "True-color satellite view of the main Hawaiian Islands with widespread white cumulus and cirrus clouds over and around the islands, especially east and south of the large island in the southeast and in bands to the west and south. Dark ocean is visible in gaps north-central and west-central. The southeastern part of the large island near the provided summit position is partly cloud-covered and no distinct gray, brown or hazy streak separable from ordinary white cloud is visible.",
+   "cloud_cover": "mostly",
+   "plumes": [],
+   "model": "muse-spark-1.3",
+   "cost_usd": 0.008239
+  },
+  "sam": {
+   "src": null,
+   "full": null,
+   "prompt_used": null,
+   "variants": {},
+   "two_pass": [],
+   "track": {
+    "available": false,
+    "reason": "no plume to track"
+   }
+  },
+  "classify": {
+   "overlay": "overlay.jpg",
+   "overlay_full": "overlay.jpg",
+   "per_plume": [],
+   "caveats": "No plume found; nothing to classify.",
+   "plumes": [],
+   "wind": {
+    "source": "Open-Meteo archive (ERA5-based reanalysis)",
+    "sites": {
+     "kilauea_summit": {
+      "time": "2026-08-24T21:00",
+      "speed_kmh": 12.9,
+      "from_deg": 72
+     },
+     "mauna_loa_summit": {
+      "time": "2026-08-24T21:00",
+      "speed_kmh": 1.6,
+      "from_deg": 174
+     }
+    }
+   },
+   "firms": {
+    "source": "NASA GIBS FIRMS thermal anomaly layers (2026-08-24), rasterised",
+    "fire_clusters": [],
+    "volcanic_thermal_excluded": {
+     "kilauea-summit": 32
+    }
+   },
+   "volcano_status": {
+    "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+    "valid_at": "2026-08-24T21:00:00+00:00",
+    "volcanoes": {
+     "kilauea": {
+      "alert_level": "ADVISORY",
+      "aviation_color": "YELLOW",
+      "erupting": "no",
+      "activity_summary": "Kīlauea volcano is not erupting; the summit eruption in Halemaʻumaʻu is paused. Models indicate the onset of the next fountaining episode is likely between August 25 and August 28 with Tuesday to Wednesday most likely if rapid inflation persists. Overview: The summit eruption of Kīlauea in Halemaʻumaʻu is paused.",
+      "notice_type": "DU",
+      "notice_sent_utc": "2026-08-24 20:00:46",
+      "notice_id": "DOI-USGS-HVO-2026-08-24T18:45:30+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-08-24T18:45:30+00:00"
+     },
+     "mauna_loa": {
+      "alert_level": "NORMAL",
+      "aviation_color": "GREEN",
+      "erupting": "no",
+      "activity_summary": "Mauna Loa earthquake counts decreased in July, while the summit region showed patterns of slight inflation. Mauna Loa had a decrease in seismic activity compared to the previous month; a total of 57 earthquakes were detected in Mauna Loa's summit region during the July reporting period, after 94 in June. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+      "notice_type": "MU",
+      "notice_sent_utc": "2026-08-07 01:06:55",
+      "notice_id": "DOI-USGS-HVO-2026-08-06T23:05:29+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-08-06T23:05:29+00:00"
+     }
+    }
+   },
+   "second_opinion": null
+  },
+  "agent": {
+   "used": false,
+   "calls": []
+  },
+  "alerts": {
+   "available": false
+  }
+ },
+ "plume_view": null
+}

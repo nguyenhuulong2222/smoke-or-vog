@@ -1,0 +1,527 @@
+{
+ "slug": "goes_archive_20260927T2100Z",
+ "case": "goes_archive",
+ "mode": "replay",
+ "run_id": "goes_archive_20260927T2100Z",
+ "title": {
+  "en": "Archive scan · Sep 27, 2026, 11:00 HST",
+  "vi": "Lượt quét lưu trữ · 27/9/2026, 11:00 HST"
+ },
+ "image_time": "2026-09-27T21:00:00Z",
+ "layer": "GOES-West_ABI_GeoColor",
+ "verdict": {
+  "class": "uncertain",
+  "confidence": 0.0,
+  "max_plume_confidence": 0.68,
+  "plume_id": null,
+  "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+  "confirmed": [],
+  "unconfirmed": [
+   {
+    "plume_id": 1,
+    "class": "wildfire_smoke",
+    "confidence": 0.68,
+    "source_hint": "Lahaina, Maui wildfire (~20.81N, -156.61E)",
+    "not_confirmed_because": "mask swallows Molokaʻi, Lānaʻi, Kahoʻolawe (segmentation unreliable)"
+   }
+  ]
+ },
+ "detection": null,
+ "cost_usd": 0.194088,
+ "models": [
+  {
+   "stage": "2 Localize",
+   "model": "muse-spark-1.3",
+   "what": "vision: find haze/plume boxes and points"
+  },
+  {
+   "stage": "3 Segment",
+   "model": "sam-3.1",
+   "what": "box + point prompts → pixel masks (two passes)"
+  },
+  {
+   "stage": "4 Agent",
+   "model": "muse-spark-1.3",
+   "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"
+  },
+  {
+   "stage": "5 Alerts",
+   "model": "muse-spark-1.3",
+   "what": "5-language alerts from official guidance only"
+  },
+  {
+   "stage": "5 Cards",
+   "model": "muse-image-1.0",
+   "what": "text-free background illustration"
+  }
+ ],
+ "steps": {
+  "image": {
+   "src": "image.jpg",
+   "full": "image.jpg",
+   "layer": "GOES-West_ABI_GeoColor",
+   "time": "2026-09-27T21:00:00Z",
+   "source": "NASA GIBS WMS"
+  },
+  "adp": {
+   "state": "unavailable",
+   "candidates": 0,
+   "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
+   "meaning_of_absence": null,
+   "src": null,
+   "full": null
+  },
+  "spark": {
+   "src": "spark_boxes.jpg",
+   "full": "spark_boxes.jpg",
+   "scene": "True-color view of the Hawaiian chain from Niihau and Kauai in the northwest to Hawaii in the southeast, with dark ocean in the central and northeast and extensive white cumulus and layered clouds especially in the south, southwest and around the islands.",
+   "cloud_cover": "mostly",
+   "plumes": [
+    {
+     "label": "diffuse gray veil southwest of the central islands",
+     "visual_description": "broad translucent gray veil over ocean extending southwest, distinct from bright white clouds",
+     "visibility": "faint"
+    }
+   ],
+   "model": "muse-spark-1.3",
+   "cost_usd": 0.016321
+  },
+  "sam": {
+   "src": "sam_two_pass.jpg",
+   "full": "sam_two_pass.jpg",
+   "prompt_used": "box+point",
+   "variants": {
+    "box": {
+     "objects": 1,
+     "score": {
+      "objects": 1,
+      "mask_px": 67859,
+      "mean_confidence": 0.648,
+      "frac_inside_spark_boxes": 0.989,
+      "spark_box_fill": 0.567
+     }
+    },
+    "box+point": {
+     "objects": 1,
+     "score": {
+      "objects": 1,
+      "mask_px": 65259,
+      "mean_confidence": 0.734,
+      "frac_inside_spark_boxes": 1.0,
+      "spark_box_fill": 0.551
+     }
+    }
+   },
+   "two_pass": [
+    {
+     "plume_id": 1,
+     "pass1_px": 65259,
+     "pass2_px": 98001,
+     "kept": "pass1",
+     "reason": "pass 2 swallows Maui"
+    }
+   ],
+   "track": {
+    "available": true,
+    "frames": [
+     {
+      "time": "2026-09-27T18:00Z",
+      "src": "track/t_00.jpg"
+     },
+     {
+      "time": "2026-09-27T18:10Z",
+      "src": "track/t_01.jpg"
+     },
+     {
+      "time": "2026-09-27T18:20Z",
+      "src": "track/t_02.jpg"
+     },
+     {
+      "time": "2026-09-27T18:30Z",
+      "src": "track/t_03.jpg"
+     },
+     {
+      "time": "2026-09-27T18:40Z",
+      "src": "track/t_04.jpg"
+     },
+     {
+      "time": "2026-09-27T18:50Z",
+      "src": "track/t_05.jpg"
+     },
+     {
+      "time": "2026-09-27T19:00Z",
+      "src": "track/t_06.jpg"
+     },
+     {
+      "time": "2026-09-27T19:10Z",
+      "src": "track/t_07.jpg"
+     },
+     {
+      "time": "2026-09-27T19:20Z",
+      "src": "track/t_08.jpg"
+     },
+     {
+      "time": "2026-09-27T19:30Z",
+      "src": "track/t_09.jpg"
+     },
+     {
+      "time": "2026-09-27T19:40Z",
+      "src": "track/t_10.jpg"
+     },
+     {
+      "time": "2026-09-27T19:50Z",
+      "src": "track/t_11.jpg"
+     },
+     {
+      "time": "2026-09-27T20:00Z",
+      "src": "track/t_12.jpg"
+     },
+     {
+      "time": "2026-09-27T20:10Z",
+      "src": "track/t_13.jpg"
+     },
+     {
+      "time": "2026-09-27T20:20Z",
+      "src": "track/t_14.jpg"
+     },
+     {
+      "time": "2026-09-27T20:30Z",
+      "src": "track/t_15.jpg"
+     },
+     {
+      "time": "2026-09-27T20:40Z",
+      "src": "track/t_16.jpg"
+     },
+     {
+      "time": "2026-09-27T20:50Z",
+      "src": "track/t_17.jpg"
+     },
+     {
+      "time": "2026-09-27T21:00Z",
+      "src": "track/t_18.jpg"
+     }
+    ],
+    "plumes": [
+     {
+      "plume_id": 1,
+      "frames": "19/19",
+      "motion": {
+       "speed_kmh": 10.7,
+       "toward_deg": 340.0,
+       "r2": 0.88,
+       "n": 19
+      },
+      "source_end": {
+       "lat": 19.84,
+       "lon": -156.84,
+       "distance_km": {
+        "kilauea_summit": 170.1,
+        "mauna_loa_summit": 135.2
+       }
+      },
+      "wind": {
+       "from_deg": 335,
+       "speed_kmh": 7.2,
+       "cite": "E5",
+       "wind_toward_deg": 155,
+       "diff_deg": 175,
+       "agrees": false,
+       "label": "disagrees"
+      }
+     }
+    ],
+    "note": "Centroid drift of a plume still attached to its source is slower than the air; direction is the main signal, speed is approximate.",
+    "window": "2026-09-27T18:00Z – 2026-09-27T21:00Z",
+    "cost_usd": 0.01
+   }
+  },
+  "classify": {
+   "overlay": "overlay.jpg",
+   "overlay_full": "overlay.jpg",
+   "per_plume": [
+    {
+     "plume_id": 1,
+     "class": "wildfire_smoke",
+     "confidence": 0.68,
+     "source_hint": "Lahaina, Maui wildfire (~20.81N, -156.61E)",
+     "evidence": [
+      "Large active fire cluster on image date: 53 pixels near Lahaina, Maui (20.81N, -156.61E), providing a wildfire smoke source NE of the veil, with concurrent Kilauea summit thermal (43 pixels) showing volcano was also active. [E6]",
+      "Easterly wind at the Lahaina fire from 83 deg at 10.2 kmh blows toward ~263 deg (west), consistent with smoke moving from west Maui southwest over ocean to the veil centroid; in contrast wind at Kilauea summit from 33 deg blows toward ~213 deg (SSW), away from the veil to the NW, inconsistent with vog transport. [E7, E9]",
+      "Geometry excludes vents: centroid 213-247 km from Mauna Loa/Kilauea summits, and upwind end using centroid wind (from 335 deg) is 344 km from Kilauea and 312 km from Mauna Loa; Mauna Loa is NORMAL/GREEN not erupting, so vog_mauna_loa is excluded and vog_kilauea is unlikely despite summit overflows. [E2, E10, E1]",
+      "Measured 3-h drift toward 340 deg at 10.7 kmh (R2 0.88, source end 19.84N, -156.84E) disagrees by ~175 deg with wind at centroid from 335 deg implying transport toward ~155 deg; disagreement must lower confidence and suggests tracking of diffuse edges in light 7.2 kmh winds; mask swallows Molokai/Lanai/Kahoolawe with land_frac 0.048, so mask is unreliable where over islands. [E3, E5, E4]",
+      "Appearance is broad translucent gray veil over mostly ocean distinct from bright white cumulus/layered clouds in scene, with faint visibility and 250-km length, more consistent with diluted smoke haze than opaque cloud. [E4]"
+     ],
+     "evidence_cited": [
+      {
+       "cites": [
+        "E6"
+       ],
+       "text": "Large active fire cluster on image date: 53 pixels near Lahaina, Maui (20.81N, -156.61E), providing a wildfire smoke source NE of the veil, with concurrent Kilauea summit thermal (43 pixels) showing volcano was also active."
+      },
+      {
+       "cites": [
+        "E7",
+        "E9"
+       ],
+       "text": "Easterly wind at the Lahaina fire from 83 deg at 10.2 kmh blows toward ~263 deg (west), consistent with smoke moving from west Maui southwest over ocean to the veil centroid; in contrast wind at Kilauea summit from 33 deg blows toward ~213 deg (SSW), away from the veil to the NW, inconsistent with vog transport."
+      },
+      {
+       "cites": [
+        "E2",
+        "E10",
+        "E1"
+       ],
+       "text": "Geometry excludes vents: centroid 213-247 km from Mauna Loa/Kilauea summits, and upwind end using centroid wind (from 335 deg) is 344 km from Kilauea and 312 km from Mauna Loa; Mauna Loa is NORMAL/GREEN not erupting, so vog_mauna_loa is excluded and vog_kilauea is unlikely despite summit overflows."
+      },
+      {
+       "cites": [
+        "E3",
+        "E5",
+        "E4"
+       ],
+       "text": "Measured 3-h drift toward 340 deg at 10.7 kmh (R2 0.88, source end 19.84N, -156.84E) disagrees by ~175 deg with wind at centroid from 335 deg implying transport toward ~155 deg; disagreement must lower confidence and suggests tracking of diffuse edges in light 7.2 kmh winds; mask swallows Molokai/Lanai/Kahoolawe with land_frac 0.048, so mask is unreliable where over islands."
+      },
+      {
+       "cites": [
+        "E4"
+       ],
+       "text": "Appearance is broad translucent gray veil over mostly ocean distinct from bright white cumulus/layered clouds in scene, with faint visibility and 250-km length, more consistent with diluted smoke haze than opaque cloud."
+      }
+     ]
+    }
+   ],
+   "caveats": "Single faint veil in mostly-cloudy scene; mask swallows Molokai/Lanai/Kahoolawe so shape over land is unreliable; 3-h tracked drift disagrees strongly with reanalysis wind, so transport is uncertain and confidence is reduced.",
+   "plumes": [
+    {
+     "plume_id": 1,
+     "label": "diffuse gray veil southwest of the central islands",
+     "area_km2": 18928,
+     "length_km": 250,
+     "upwind_end_distance_km": {
+      "kilauea_summit": 184.5,
+      "mauna_loa_summit": 157.7
+     },
+     "nearest_fire_clusters": [
+      {
+       "near": "Lahaina, Maui (10 km)",
+       "n": 53,
+       "nearest_summit_km": 181.5,
+       "distance_km": 24.2
+      }
+     ],
+     "land": {
+      "land_frac": 0.048,
+      "islands_covered": {
+       "Maui": 0.045,
+       "Molokaʻi": 0.542,
+       "Lānaʻi": 1.0,
+       "Kahoʻolawe": 0.481
+      },
+      "land_spill": true,
+      "islands_swallowed": [
+       "Molokaʻi",
+       "Lānaʻi",
+       "Kahoʻolawe"
+      ]
+     }
+    }
+   ],
+   "wind": {
+    "source": "Open-Meteo archive (ERA5-based reanalysis)",
+    "sites": {
+     "kilauea_summit": {
+      "time": "2026-09-27T21:00",
+      "speed_kmh": 20.7,
+      "from_deg": 33
+     },
+     "mauna_loa_summit": {
+      "time": "2026-09-27T21:00",
+      "speed_kmh": 6.7,
+      "from_deg": 224
+     },
+     "fire_cluster_1": {
+      "time": "2026-09-27T21:00",
+      "speed_kmh": 10.2,
+      "from_deg": 83
+     }
+    }
+   },
+   "firms": {
+    "source": "NASA GIBS FIRMS thermal anomaly layers (2026-09-27), rasterised",
+    "fire_clusters": [
+     {
+      "lat": 20.8116,
+      "lon": -156.6061,
+      "n": 53,
+      "near": "Lahaina, Maui (10 km)",
+      "nearest_summit_km": 181.5
+     }
+    ],
+    "volcanic_thermal_excluded": {
+     "kilauea-summit": 43
+    }
+   },
+   "volcano_status": {
+    "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+    "valid_at": "2026-09-27T21:00:00+00:00",
+    "volcanoes": {
+     "kilauea": {
+      "alert_level": "WATCH",
+      "aviation_color": "ORANGE",
+      "erupting": "unknown",
+      "activity_summary": "Small overflows from the north vent continue, along with tiny overflows from the south vent starting overnight. All vents have strong glow and intermittent spatter. There is no anomalous activity outside of the summit.",
+      "notice_type": "DU",
+      "notice_sent_utc": "2026-09-27 18:50:55",
+      "notice_id": "DOI-USGS-HVO-2026-09-27T17:29:16+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-09-27T17:29:16+00:00"
+     },
+     "mauna_loa": {
+      "alert_level": "NORMAL",
+      "aviation_color": "GREEN",
+      "erupting": "no",
+      "activity_summary": "Mauna Loa earthquake counts increased in August, while the summit region showed no other signs of deformation. Mauna Loa had an increase in seismic activity compared to the previous month; a total of 87 earthquakes were detected in Mauna Loa's summit region during the August reporting period, after 57 in July. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+      "notice_type": "MU",
+      "notice_sent_utc": "2026-09-03 18:41:34",
+      "notice_id": "DOI-USGS-HVO-2026-09-03T18:26:38+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-09-03T18:26:38+00:00"
+     }
+    }
+   },
+   "second_opinion": null
+  },
+  "agent": {
+   "used": true,
+   "valid": true,
+   "rejected": null,
+   "rounds": 3,
+   "cost_usd": 0.027325,
+   "calls": [
+    {
+     "cite": "E1",
+     "round": 1,
+     "name": "get_volcano_status",
+     "arguments": {
+      "time_utc": "2026-09-27T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "Kīlauea WATCH/ORANGE, status unclear; Mauna Loa NORMAL/GREEN, not erupting"
+    },
+    {
+     "cite": "E2",
+     "round": 1,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "upwind end 246.8 km from Kīlauea, 213.5 km from Mauna Loa; area 18928 km², length 250 km"
+    },
+    {
+     "cite": "E3",
+     "round": 1,
+     "name": "track_plume",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "{\"available\": true, \"window\": \"2026-09-27T18:00Z to 2026-09-27T21:00Z\", \"frames_tracked\": \"19/19\", \"drift_toward_deg\": 340.0, \"drift_speed_k"
+    },
+    {
+     "cite": "E4",
+     "round": 1,
+     "name": "land_fraction",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "5% of mask over land (Maui 4%, Molokaʻi 54%, Lānaʻi 100%, Kahoʻolawe 48%)"
+    },
+    {
+     "cite": "E5",
+     "round": 1,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 20.482,
+      "lon": -157.348,
+      "time_utc": "2026-09-27T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "7.2 km/h from 335° (2026-09-27T21:00)"
+    },
+    {
+     "cite": "E6",
+     "round": 1,
+     "name": "get_firms",
+     "arguments": {
+      "bbox": [
+       -161.0,
+       18.0,
+       -154.0,
+       23.0
+      ],
+      "date": "2026-09-27"
+     },
+     "ok": true,
+     "summary": "1 fire cluster(s): Lahaina, Maui (10 km) (53); summit glow excluded: kilauea-summit 43"
+    },
+    {
+     "cite": "E7",
+     "round": 2,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 20.8116,
+      "lon": -156.6061,
+      "time_utc": "2026-09-27T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "10.2 km/h from 83° (2026-09-27T21:00)"
+    },
+    {
+     "cite": "E8",
+     "round": 2,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 19.84,
+      "lon": -156.84,
+      "time_utc": "2026-09-27T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "56.1 km/h from 59° (2026-09-27T21:00)"
+    },
+    {
+     "cite": "E9",
+     "round": 2,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 19.4069,
+      "lon": -155.2834,
+      "time_utc": "2026-09-27T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "20.7 km/h from 33° (2026-09-27T21:00)"
+    },
+    {
+     "cite": "E10",
+     "round": 2,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 1,
+      "wind_from_deg": 335.0
+     },
+     "ok": true,
+     "summary": "upwind end 344.1 km from Kīlauea, 312.0 km from Mauna Loa; area 18928 km², length 250 km"
+    }
+   ],
+   "compare": {}
+  },
+  "alerts": {
+   "available": false
+  }
+ },
+ "plume_view": [
+  0.227,
+  0.2058,
+  0.8094,
+  0.7882
+ ]
+}

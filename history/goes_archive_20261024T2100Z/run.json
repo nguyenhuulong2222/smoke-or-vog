@@ -1,0 +1,634 @@
+{
+ "slug": "goes_archive_20261024T2100Z",
+ "case": "goes_archive",
+ "mode": "replay",
+ "run_id": "goes_archive_20261024T2100Z",
+ "title": {
+  "en": "Archive scan · Oct 24, 2026, 11:00 HST",
+  "vi": "Lượt quét lưu trữ · 24/10/2026, 11:00 HST"
+ },
+ "image_time": "2026-10-24T21:00:00Z",
+ "layer": "GOES-West_ABI_GeoColor",
+ "verdict": {
+  "class": "uncertain",
+  "confidence": 0.0,
+  "max_plume_confidence": 0.62,
+  "plume_id": null,
+  "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+  "confirmed": [],
+  "unconfirmed": [
+   {
+    "plume_id": 2,
+    "class": "wildfire_smoke",
+    "confidence": 0.52,
+    "source_hint": "Honolulu-area fire on Oahu (~21.38N, -158.07W)"
+   },
+   {
+    "plume_id": 1,
+    "class": "vog_kilauea",
+    "confidence": 0.62,
+    "source_hint": "Kilauea summit / south Big Island region"
+   }
+  ]
+ },
+ "detection": null,
+ "cost_usd": 0.24226,
+ "models": [
+  {
+   "stage": "2 Localize",
+   "model": "muse-spark-1.3",
+   "what": "vision: find haze/plume boxes and points"
+  },
+  {
+   "stage": "3 Segment",
+   "model": "sam-3.1",
+   "what": "box + point prompts → pixel masks (two passes)"
+  },
+  {
+   "stage": "4 Agent",
+   "model": "muse-spark-1.3",
+   "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"
+  },
+  {
+   "stage": "5 Alerts",
+   "model": "muse-spark-1.3",
+   "what": "5-language alerts from official guidance only"
+  },
+  {
+   "stage": "5 Cards",
+   "model": "muse-image-1.0",
+   "what": "text-free background illustration"
+  }
+ ],
+ "steps": {
+  "image": {
+   "src": "image.jpg",
+   "full": "image.jpg",
+   "layer": "GOES-West_ABI_GeoColor",
+   "time": "2026-10-24T21:00:00Z",
+   "source": "NASA GIBS WMS"
+  },
+  "adp": {
+   "state": "unavailable",
+   "candidates": 0,
+   "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
+   "meaning_of_absence": null,
+   "src": null,
+   "full": null
+  },
+  "spark": {
+   "src": "spark_boxes.jpg",
+   "full": "spark_boxes.jpg",
+   "scene": "True-color satellite view of the main Hawaiian Islands from northwest to southeast with scattered white cumulus and cirrus to the north and east, clearer dark ocean in the center, and extensive diffuse gray haze covering much of the southern ocean southwest of the large southeastern island and a smaller gray patch west of the central island.",
+   "cloud_cover": "mostly",
+   "plumes": [
+    {
+     "label": "diffuse gray veil southwest of large island",
+     "visual_description": "Extensive diffuse pale gray veil extending west and southwest from the southern part of the large southeastern island across the ocean, distinct in tone and texture from bright white cumulus to the north and east.",
+     "visibility": "faint"
+    },
+    {
+     "label": "gray patch west of central island",
+     "visual_description": "Faint diffuse gray patch extending west-southwest from the small central island over dark ocean, less bright and more translucent than surrounding white clouds.",
+     "visibility": "very_faint"
+    }
+   ],
+   "model": "muse-spark-1.3",
+   "cost_usd": 0.014329
+  },
+  "sam": {
+   "src": "sam_two_pass.jpg",
+   "full": "sam_two_pass.jpg",
+   "prompt_used": "box+point",
+   "variants": {
+    "box": {
+     "objects": 2,
+     "score": {
+      "objects": 2,
+      "mask_px": 436419,
+      "mean_confidence": 0.758,
+      "frac_inside_spark_boxes": 0.999,
+      "spark_box_fill": 0.784
+     }
+    },
+    "box+point": {
+     "objects": 2,
+     "score": {
+      "objects": 2,
+      "mask_px": 426273,
+      "mean_confidence": 0.781,
+      "frac_inside_spark_boxes": 0.999,
+      "spark_box_fill": 0.765
+     }
+    }
+   },
+   "two_pass": [
+    {
+     "plume_id": 1,
+     "pass1_px": 405123,
+     "pass2_px": 574540,
+     "kept": "pass1",
+     "reason": "pass 2 bbox covers 48% of frame (spill)"
+    },
+    {
+     "plume_id": 2,
+     "pass1_px": 21150,
+     "pass2_px": 23756,
+     "kept": "pass1",
+     "reason": "pass 2 adds land (3% -> 24%)"
+    }
+   ],
+   "track": {
+    "available": true,
+    "frames": [
+     {
+      "time": "2026-10-24T18:00Z",
+      "src": "track/t_00.jpg"
+     },
+     {
+      "time": "2026-10-24T18:10Z",
+      "src": "track/t_01.jpg"
+     },
+     {
+      "time": "2026-10-24T18:20Z",
+      "src": "track/t_02.jpg"
+     },
+     {
+      "time": "2026-10-24T18:30Z",
+      "src": "track/t_03.jpg"
+     },
+     {
+      "time": "2026-10-24T18:40Z",
+      "src": "track/t_04.jpg"
+     },
+     {
+      "time": "2026-10-24T18:50Z",
+      "src": "track/t_05.jpg"
+     },
+     {
+      "time": "2026-10-24T19:00Z",
+      "src": "track/t_06.jpg"
+     },
+     {
+      "time": "2026-10-24T19:10Z",
+      "src": "track/t_07.jpg"
+     },
+     {
+      "time": "2026-10-24T19:20Z",
+      "src": "track/t_08.jpg"
+     },
+     {
+      "time": "2026-10-24T19:30Z",
+      "src": "track/t_09.jpg"
+     },
+     {
+      "time": "2026-10-24T19:40Z",
+      "src": "track/t_10.jpg"
+     },
+     {
+      "time": "2026-10-24T19:50Z",
+      "src": "track/t_11.jpg"
+     },
+     {
+      "time": "2026-10-24T20:00Z",
+      "src": "track/t_12.jpg"
+     },
+     {
+      "time": "2026-10-24T20:10Z",
+      "src": "track/t_13.jpg"
+     },
+     {
+      "time": "2026-10-24T20:20Z",
+      "src": "track/t_14.jpg"
+     },
+     {
+      "time": "2026-10-24T20:30Z",
+      "src": "track/t_15.jpg"
+     },
+     {
+      "time": "2026-10-24T20:40Z",
+      "src": "track/t_16.jpg"
+     },
+     {
+      "time": "2026-10-24T20:50Z",
+      "src": "track/t_17.jpg"
+     },
+     {
+      "time": "2026-10-24T21:00Z",
+      "src": "track/t_18.jpg"
+     }
+    ],
+    "plumes": [
+     {
+      "plume_id": 1,
+      "frames": "19/19",
+      "motion": {
+       "speed_kmh": 10.0,
+       "toward_deg": 251.0,
+       "r2": 0.54,
+       "n": 19
+      },
+      "source_end": {
+       "lat": 19.64,
+       "lon": -155.01,
+       "distance_km": {
+        "kilauea_summit": 38.7,
+        "mauna_loa_summit": 65.3
+       }
+      },
+      "wind": {
+       "from_deg": 29,
+       "speed_kmh": 21.3,
+       "cite": "E2",
+       "wind_toward_deg": 209,
+       "diff_deg": 42,
+       "agrees": true,
+       "label": "agrees"
+      }
+     },
+     {
+      "plume_id": 2,
+      "frames": "19/19",
+      "motion": {
+       "speed_kmh": 21.2,
+       "toward_deg": 279.0,
+       "r2": 0.06,
+       "n": 19
+      },
+      "source_end": {
+       "lat": 21.68,
+       "lon": -158.035,
+       "distance_km": {
+        "kilauea_summit": 382.1,
+        "mauna_loa_summit": 352.0
+       }
+      },
+      "wind": {
+       "from_deg": 26,
+       "speed_kmh": 23.8,
+       "cite": "E3",
+       "wind_toward_deg": 206,
+       "diff_deg": 73,
+       "agrees": false,
+       "label": "partly"
+      }
+     }
+    ],
+    "note": "Centroid drift of a plume still attached to its source is slower than the air; direction is the main signal, speed is approximate.",
+    "window": "2026-10-24T18:00Z – 2026-10-24T21:00Z",
+    "cost_usd": 0.01
+   }
+  },
+  "classify": {
+   "overlay": "overlay.jpg",
+   "overlay_full": "overlay.jpg",
+   "per_plume": [
+    {
+     "plume_id": 1,
+     "class": "vog_kilauea",
+     "confidence": 0.62,
+     "source_hint": "Kilauea summit / south Big Island region",
+     "evidence": [
+      "Kilauea ADVISORY/YELLOW episodic_pause after Oct 17 fountaining with ongoing reinflation; Mauna Loa NORMAL/GREEN not erupting, so if volcanic then Kilauea is favored but active emission is not confirmed. [E1]",
+      "Plume trails from Big Island region: geometric upwind end 90.6 km from Kilauea and 65.0 km from Mauna Loa, and tracked 3-hr source end 38.7 km from Kilauea vs 65.3 km from Mauna Loa, favoring Kilauea over Mauna Loa. [E10, E8]",
+      "Wind at veil from 29 deg (toward ~209 SSW) matches SW extension; measured drift toward 251 deg differs by ~42 deg, within ~45 deg, supporting NE-to-SW transport. Speed 10 km/h vs wind 21.3 km/h is expected slower for source-attached centroid with moderate fit R2 0.54. [E2, E8]",
+      "No fire clusters near Big Island to explain veil; only Honolulu fire far to NW and 203-pixel Kilauea summit thermal glow. Mask is over ocean (land_frac 0.0) and does not swallow Hawaii island, so segmentation is reliable and distinct pale gray veil differs from bright white cumulus to N/E. [E12, E6]"
+     ],
+     "evidence_cited": [
+      {
+       "cites": [
+        "E1"
+       ],
+       "text": "Kilauea ADVISORY/YELLOW episodic_pause after Oct 17 fountaining with ongoing reinflation; Mauna Loa NORMAL/GREEN not erupting, so if volcanic then Kilauea is favored but active emission is not confirmed."
+      },
+      {
+       "cites": [
+        "E10",
+        "E8"
+       ],
+       "text": "Plume trails from Big Island region: geometric upwind end 90.6 km from Kilauea and 65.0 km from Mauna Loa, and tracked 3-hr source end 38.7 km from Kilauea vs 65.3 km from Mauna Loa, favoring Kilauea over Mauna Loa."
+      },
+      {
+       "cites": [
+        "E2",
+        "E8"
+       ],
+       "text": "Wind at veil from 29 deg (toward ~209 SSW) matches SW extension; measured drift toward 251 deg differs by ~42 deg, within ~45 deg, supporting NE-to-SW transport. Speed 10 km/h vs wind 21.3 km/h is expected slower for source-attached centroid with moderate fit R2 0.54."
+      },
+      {
+       "cites": [
+        "E12",
+        "E6"
+       ],
+       "text": "No fire clusters near Big Island to explain veil; only Honolulu fire far to NW and 203-pixel Kilauea summit thermal glow. Mask is over ocean (land_frac 0.0) and does not swallow Hawaii island, so segmentation is reliable and distinct pale gray veil differs from bright white cumulus to N/E."
+      }
+     ]
+    },
+    {
+     "plume_id": 2,
+     "class": "wildfire_smoke",
+     "confidence": 0.52,
+     "source_hint": "Honolulu-area fire on Oahu (~21.38N, -158.07W)",
+     "evidence": [
+      "Volcanic origin ruled out by distance: geometric upwind end 380.4 km from Kilauea and 350.7 km from Mauna Loa, tracked source end 382.1 km and 352.0 km from summits. [E11, E9]",
+      "25-pixel FIRMS fire cluster near Honolulu (23 km, 21.3763N -158.0665W) lies ~30 km south of tracked source end (21.68N -158.035W) and between upwind end and centroid, providing a local smoke source west of central island. [E12, E9]",
+      "Wind from 26 deg (toward ~206 SSW) is broadly consistent with WSW extension from Oahu, but measured drift toward 279 deg (west) disagrees by ~73 deg with very poor fit R2 0.06, so motion does not confirm transport and lowers confidence. [E3, E9]",
+      "Mask is mostly ocean (land_frac 0.027, Oahu cover 0.102, no island swallowed) and faint translucent gray patch distinct from surrounding white clouds, consistent with thin smoke haze rather than opaque cloud. [E7]"
+     ],
+     "evidence_cited": [
+      {
+       "cites": [
+        "E11",
+        "E9"
+       ],
+       "text": "Volcanic origin ruled out by distance: geometric upwind end 380.4 km from Kilauea and 350.7 km from Mauna Loa, tracked source end 382.1 km and 352.0 km from summits."
+      },
+      {
+       "cites": [
+        "E12",
+        "E9"
+       ],
+       "text": "25-pixel FIRMS fire cluster near Honolulu (23 km, 21.3763N -158.0665W) lies ~30 km south of tracked source end (21.68N -158.035W) and between upwind end and centroid, providing a local smoke source west of central island."
+      },
+      {
+       "cites": [
+        "E3",
+        "E9"
+       ],
+       "text": "Wind from 26 deg (toward ~206 SSW) is broadly consistent with WSW extension from Oahu, but measured drift toward 279 deg (west) disagrees by ~73 deg with very poor fit R2 0.06, so motion does not confirm transport and lowers confidence."
+      },
+      {
+       "cites": [
+        "E7"
+       ],
+       "text": "Mask is mostly ocean (land_frac 0.027, Oahu cover 0.102, no island swallowed) and faint translucent gray patch distinct from surrounding white clouds, consistent with thin smoke haze rather than opaque cloud."
+      }
+     ]
+    }
+   ],
+   "caveats": "Kilauea was in episodic_pause on 2026-10-24 (episode 55 ended Oct 17, episode 56 forecast Oct 30-Nov 5) so active fountaining had ceased; residual degassing is assumed but not confirmed. Plume 1 is very extensive and diffuse and thin cirrus mixing cannot be fully excluded. Plume 2 tracking fit is very poor (R2 0.06) and drift disagrees with wind, lowering confidence.",
+   "plumes": [
+    {
+     "plume_id": 1,
+     "label": "diffuse gray veil southwest of large island",
+     "area_km2": 118823,
+     "length_km": 673,
+     "upwind_end_distance_km": {
+      "kilauea_summit": 89.1,
+      "mauna_loa_summit": 63.6
+     },
+     "nearest_fire_clusters": [
+      {
+       "near": "Honolulu (23 km)",
+       "n": 25,
+       "nearest_summit_km": 332.1,
+       "distance_km": 276.2
+      }
+     ],
+     "land": {
+      "land_frac": 0.0,
+      "islands_covered": {
+       "Hawaiʻi": 0.005
+      },
+      "land_spill": false,
+      "islands_swallowed": []
+     }
+    },
+    {
+     "plume_id": 2,
+     "label": "gray patch west of central island",
+     "area_km2": 6093,
+     "length_km": 170,
+     "upwind_end_distance_km": {
+      "kilauea_summit": 375.9,
+      "mauna_loa_summit": 346.2
+     },
+     "nearest_fire_clusters": [
+      {
+       "near": "Honolulu (23 km)",
+       "n": 25,
+       "nearest_summit_km": 332.1,
+       "distance_km": 37.1
+      }
+     ],
+     "land": {
+      "land_frac": 0.027,
+      "islands_covered": {
+       "Oʻahu": 0.102
+      },
+      "land_spill": false,
+      "islands_swallowed": []
+     }
+    }
+   ],
+   "wind": {
+    "source": "Open-Meteo archive (ERA5-based reanalysis)",
+    "sites": {
+     "kilauea_summit": {
+      "time": "2026-10-24T21:00",
+      "speed_kmh": 1.9,
+      "from_deg": 202
+     },
+     "mauna_loa_summit": {
+      "time": "2026-10-24T21:00",
+      "speed_kmh": 14.9,
+      "from_deg": 249
+     },
+     "fire_cluster_1": {
+      "time": "2026-10-24T21:00",
+      "speed_kmh": 9.6,
+      "from_deg": 52
+     }
+    }
+   },
+   "firms": {
+    "source": "NASA GIBS FIRMS thermal anomaly layers (2026-10-24), rasterised",
+    "fire_clusters": [
+     {
+      "lat": 21.3763,
+      "lon": -158.0665,
+      "n": 25,
+      "near": "Honolulu (23 km)",
+      "nearest_summit_km": 332.1
+     }
+    ],
+    "volcanic_thermal_excluded": {
+     "kilauea-summit": 203
+    }
+   },
+   "volcano_status": {
+    "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+    "valid_at": "2026-10-24T21:00:00+00:00",
+    "volcanoes": {
+     "kilauea": {
+      "alert_level": "ADVISORY",
+      "aviation_color": "YELLOW",
+      "erupting": "episodic_pause",
+      "activity_summary": "The Halema'uma'u eruption of Kīlauea is currently paused after episode 55 fountaining ended on October 17. Summit reinflation continues today and the forecast for episode 56 fountaining is between October 30 and November 5, 2026. Overview: The summit eruption of Kīlauea in Halemaʻumaʻu is paused following lava fountaining in episode 55 on October 17, 2026.",
+      "notice_type": "DU",
+      "notice_sent_utc": "2026-10-24 18:37:53",
+      "notice_id": "DOI-USGS-HVO-2026-10-24T18:15:36+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-24T18:15:36+00:00"
+     },
+     "mauna_loa": {
+      "alert_level": "NORMAL",
+      "aviation_color": "GREEN",
+      "erupting": "no",
+      "activity_summary": "Mauna Loa earthquake counts decreased in September compared to August, and minor inflation continues. Mauna Loa had a decrease in seismic activity compared to the previous month; a total of 53 earthquakes were detected in Mauna Loa's summit region during the September reporting period, after 87 in August. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+      "notice_type": "MU",
+      "notice_sent_utc": "2026-10-01 21:30:20",
+      "notice_id": "DOI-USGS-HVO-2026-10-01T01:33:14+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-01T01:33:14+00:00"
+     }
+    }
+   },
+   "second_opinion": null
+  },
+  "agent": {
+   "used": true,
+   "valid": true,
+   "rejected": null,
+   "rounds": 4,
+   "cost_usd": 0.038368,
+   "calls": [
+    {
+     "cite": "E1",
+     "round": 1,
+     "name": "get_volcano_status",
+     "arguments": {
+      "time_utc": "2026-10-24T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "Kīlauea ADVISORY/YELLOW, paused between episodes; Mauna Loa NORMAL/GREEN, not erupting"
+    },
+    {
+     "cite": "E2",
+     "round": 2,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 18.996,
+      "lon": -158.502,
+      "time_utc": "2026-10-24T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "21.3 km/h from 29° (2026-10-24T21:00)"
+    },
+    {
+     "cite": "E3",
+     "round": 2,
+     "name": "get_wind",
+     "arguments": {
+      "lat": 21.561,
+      "lon": -158.684,
+      "time_utc": "2026-10-24T21:00:00Z"
+     },
+     "ok": true,
+     "summary": "23.8 km/h from 26° (2026-10-24T21:00)"
+    },
+    {
+     "cite": "E4",
+     "round": 2,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "upwind end 341.1 km from Kīlauea, 308.5 km from Mauna Loa; area 118823 km², length 673 km"
+    },
+    {
+     "cite": "E5",
+     "round": 2,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 2
+     },
+     "ok": true,
+     "summary": "upwind end 427.7 km from Kīlauea, 395.5 km from Mauna Loa; area 6093 km², length 170 km"
+    },
+    {
+     "cite": "E6",
+     "round": 2,
+     "name": "land_fraction",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "0% of mask over land (Hawaiʻi 0%)"
+    },
+    {
+     "cite": "E7",
+     "round": 2,
+     "name": "land_fraction",
+     "arguments": {
+      "plume_id": 2
+     },
+     "ok": true,
+     "summary": "3% of mask over land (Oʻahu 10%)"
+    },
+    {
+     "cite": "E8",
+     "round": 3,
+     "name": "track_plume",
+     "arguments": {
+      "plume_id": 1
+     },
+     "ok": true,
+     "summary": "{\"available\": true, \"window\": \"2026-10-24T18:00Z to 2026-10-24T21:00Z\", \"frames_tracked\": \"19/19\", \"drift_toward_deg\": 251.0, \"drift_speed_k"
+    },
+    {
+     "cite": "E9",
+     "round": 3,
+     "name": "track_plume",
+     "arguments": {
+      "plume_id": 2
+     },
+     "ok": true,
+     "summary": "{\"available\": true, \"window\": \"2026-10-24T18:00Z to 2026-10-24T21:00Z\", \"frames_tracked\": \"19/19\", \"drift_toward_deg\": 279.0, \"drift_speed_k"
+    },
+    {
+     "cite": "E10",
+     "round": 3,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 1,
+      "wind_from_deg": 29.0
+     },
+     "ok": true,
+     "summary": "upwind end 90.6 km from Kīlauea, 65.0 km from Mauna Loa; area 118823 km², length 673 km"
+    },
+    {
+     "cite": "E11",
+     "round": 3,
+     "name": "distance_to_vents",
+     "arguments": {
+      "plume_id": 2,
+      "wind_from_deg": 26.0
+     },
+     "ok": true,
+     "summary": "upwind end 380.4 km from Kīlauea, 350.7 km from Mauna Loa; area 6093 km², length 170 km"
+    },
+    {
+     "cite": "E12",
+     "round": 3,
+     "name": "get_firms",
+     "arguments": {
+      "bbox": [
+       -161.0,
+       18.0,
+       -154.0,
+       23.0
+      ],
+      "date": "2026-10-24"
+     },
+     "ok": true,
+     "summary": "1 fire cluster(s): Honolulu (23 km) (25); summit glow excluded: kilauea-summit 203"
+    }
+   ],
+   "compare": {}
+  },
+  "alerts": {
+   "available": false
+  }
+ },
+ "plume_view": null
+}

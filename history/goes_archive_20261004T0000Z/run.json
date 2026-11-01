@@ -1,0 +1,151 @@
+{
+ "slug": "goes_archive_20261004T0000Z",
+ "case": "goes_archive",
+ "mode": "replay",
+ "run_id": "goes_archive_20261004T0000Z",
+ "title": {
+  "en": "Archive scan · Oct 3, 2026, 14:00 HST",
+  "vi": "Lượt quét lưu trữ · 3/10/2026, 14:00 HST"
+ },
+ "image_time": "2026-10-04T00:00:00Z",
+ "layer": "GOES-West_ABI_GeoColor",
+ "verdict": {
+  "class": "uncertain",
+  "confidence": 0.0,
+  "max_plume_confidence": 0.0,
+  "plume_id": null,
+  "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+  "confirmed": [],
+  "unconfirmed": []
+ },
+ "detection": "no_plume",
+ "cost_usd": 0.025381,
+ "models": [
+  {
+   "stage": "2 Localize",
+   "model": "muse-spark-1.3",
+   "what": "vision: find haze/plume boxes and points"
+  },
+  {
+   "stage": "3 Segment",
+   "model": "sam-3.1",
+   "what": "box + point prompts → pixel masks (two passes)"
+  },
+  {
+   "stage": "4 Agent",
+   "model": "muse-spark-1.3",
+   "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"
+  },
+  {
+   "stage": "5 Alerts",
+   "model": "muse-spark-1.3",
+   "what": "5-language alerts from official guidance only"
+  },
+  {
+   "stage": "5 Cards",
+   "model": "muse-image-1.0",
+   "what": "text-free background illustration"
+  }
+ ],
+ "steps": {
+  "image": {
+   "src": "image.jpg",
+   "full": "image.jpg",
+   "layer": "GOES-West_ABI_GeoColor",
+   "time": "2026-10-04T00:00:00Z",
+   "source": "NASA GIBS WMS"
+  },
+  "adp": {
+   "state": "unavailable",
+   "candidates": 0,
+   "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
+   "meaning_of_absence": null,
+   "src": null,
+   "full": null
+  },
+  "spark": {
+   "src": "spark_boxes.jpg",
+   "full": "spark_boxes.jpg",
+   "scene": "True-color satellite view of the main Hawaiian Islands over dark ocean with scattered white cumulus and thin cirrus. Dense white meteorological cloud covers eastern Maui and the eastern and southern portions of the large southeastern island, obscuring the summit area. No distinct gray or brown haze, smoke or volcanic plume separable from ordinary cloud is visible.",
+   "cloud_cover": "partly",
+   "plumes": [],
+   "model": "muse-spark-1.3",
+   "cost_usd": 0.0071
+  },
+  "sam": {
+   "src": null,
+   "full": null,
+   "prompt_used": null,
+   "variants": {},
+   "two_pass": [],
+   "track": {
+    "available": false,
+    "reason": "no plume to track"
+   }
+  },
+  "classify": {
+   "overlay": "overlay.jpg",
+   "overlay_full": "overlay.jpg",
+   "per_plume": [],
+   "caveats": "No plume found; nothing to classify.",
+   "plumes": [],
+   "wind": {
+    "source": "Open-Meteo archive (ERA5-based reanalysis)",
+    "sites": {
+     "kilauea_summit": {
+      "time": "2026-10-04T00:00",
+      "speed_kmh": 16.3,
+      "from_deg": 43
+     },
+     "mauna_loa_summit": {
+      "time": "2026-10-04T00:00",
+      "speed_kmh": 5.6,
+      "from_deg": 333
+     }
+    }
+   },
+   "firms": {
+    "source": "NASA GIBS FIRMS thermal anomaly layers (2026-10-04), rasterised",
+    "fire_clusters": [],
+    "volcanic_thermal_excluded": {
+     "kilauea-summit": 71
+    }
+   },
+   "volcano_status": {
+    "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
+    "valid_at": "2026-10-04T00:00:00+00:00",
+    "volcanoes": {
+     "kilauea": {
+      "alert_level": "WATCH",
+      "aviation_color": "ORANGE",
+      "erupting": "unknown",
+      "activity_summary": "No overflows or spattering at north or south vents over the past day; strong glow and flames continue. No reactivation of Sept. 30–Oct.",
+      "notice_type": "DU",
+      "notice_sent_utc": "2026-10-03 18:50:21",
+      "notice_id": "DOI-USGS-HVO-2026-10-03T17:43:56+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-03T17:43:56+00:00"
+     },
+     "mauna_loa": {
+      "alert_level": "NORMAL",
+      "aviation_color": "GREEN",
+      "erupting": "no",
+      "activity_summary": "Mauna Loa earthquake counts decreased in September compared to August, and minor inflation continues. Mauna Loa had a decrease in seismic activity compared to the previous month; a total of 53 earthquakes were detected in Mauna Loa's summit region during the September reporting period, after 87 in August. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+      "notice_type": "MU",
+      "notice_sent_utc": "2026-10-01 21:30:20",
+      "notice_id": "DOI-USGS-HVO-2026-10-01T01:33:14+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-01T01:33:14+00:00"
+     }
+    }
+   },
+   "second_opinion": null
+  },
+  "agent": {
+   "used": false,
+   "calls": []
+  },
+  "alerts": {
+   "available": false
+  }
+ },
+ "plume_view": null
+}
