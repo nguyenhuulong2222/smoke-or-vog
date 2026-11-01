@@ -2,12 +2,12 @@
  "slug": "live",
  "case": "live",
  "mode": "live",
- "run_id": "live_20261101T010615Z",
+ "run_id": "live_20261101T013530Z",
  "title": {
   "en": "Live now",
   "vi": "Trực tiếp"
  },
- "image_time": "2026-11-01T00:10:00Z",
+ "image_time": "2026-11-01T00:50:00Z",
  "layer": "GOES-West_ABI_GeoColor",
  "verdict": {
   "class": "uncertain",
@@ -19,7 +19,7 @@
   "unconfirmed": []
  },
  "detection": "no_plume",
- "cost_usd": 0.005948,
+ "cost_usd": 0.010861,
  "models": [
   {
    "stage": "2 Localize",
@@ -32,9 +32,9 @@
    "what": "box + point prompts → pixel masks (two passes)"
   },
   {
-   "stage": "4 Classify",
+   "stage": "4 Agent",
    "model": "muse-spark-1.3",
-   "what": "reasoning over image + wind, vents, FIRMS, USGS status"
+   "what": "tool calling: gathers wind, FIRMS, USGS status, geometry; cites every result"
   },
   {
    "stage": "5 Alerts",
@@ -51,7 +51,7 @@
   "image": {
    "src": "image.jpg",
    "layer": "GOES-West_ABI_GeoColor",
-   "time": "2026-11-01T00:10:00Z",
+   "time": "2026-11-01T00:50:00Z",
    "source": "NASA GIBS WMS"
   },
   "adp": {
@@ -63,11 +63,11 @@
   },
   "spark": {
    "src": "spark_boxes.jpg",
-   "scene": "Mostly black frame with no discernible islands or ocean; only a narrow band of white and gray clouds visible along the top northern edge.",
+   "scene": "Frame is almost entirely black fill with only a narrow band of white to light-gray ordinary clouds visible along the northern top edge; no islands, ocean detail, or discolored haze streaks indicative of a plume are visible, including around the expected island locations in the southern portion.",
    "cloud_cover": "partly",
    "plumes": [],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.005948
+   "cost_usd": 0.010861
   },
   "sam": {
    "src": null,
@@ -84,14 +84,14 @@
     "source": "Open-Meteo forecast (current)",
     "sites": {
      "kilauea_summit": {
-      "time": "2026-11-01T01:00",
-      "speed_kmh": 5.4,
+      "time": "2026-11-01T01:30",
+      "speed_kmh": 4.9,
       "from_deg": 172
      },
      "mauna_loa_summit": {
-      "time": "2026-11-01T01:00",
-      "speed_kmh": 8.7,
-      "from_deg": 278
+      "time": "2026-11-01T01:30",
+      "speed_kmh": 7.9,
+      "from_deg": 282
      }
     }
    },
@@ -102,7 +102,7 @@
    },
    "volcano_status": {
     "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
-    "valid_at": "2026-11-01T01:06:19.376874+00:00",
+    "valid_at": "2026-11-01T01:35:34.095722+00:00",
     "volcanoes": {
      "kilauea": {
       "alert_level": "ADVISORY",
@@ -126,6 +126,10 @@
      }
     }
    }
+  },
+  "agent": {
+   "used": false,
+   "calls": []
   },
   "alerts": {
    "available": false
