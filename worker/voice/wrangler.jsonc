@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developers.cloudflare.com/schemas/config/blocks/wrangler.jsonc",
+  "name": "smoke-or-vog-voice",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "observability": {
+    "enabled": false
+  },
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 4,
+        "period": 60
+      }
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "VOICE_KV",
+      "id": "5ffb12d515a74bbc8e6e805342ae92bb"
+    }
+  ],
+  "vars": {
+    "SITE_ORIGIN": "https://smoke-or-vog.pages.dev",
+    "DAILY_CAP": "300"
+  }
+}

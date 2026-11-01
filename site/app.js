@@ -85,6 +85,21 @@ const T = {
     soInvalid: "Wonder's answer was rejected (no valid citations), so it cannot confirm anything.",
     notClean: "No plume seen from space does not mean the air is clean: ground-level vog in Kaʻū and Kona is common even then (see How accurate is it?).",
     groundLink: "Check ground monitors (AirNow)",
+    askTitle: "Ask about the latest scan",
+    askLede: "Ask by voice or by typing. Answers come only from the latest published scan, in your language, from Muse Spark.",
+    askLang: "Language",
+    askLangs: { en: "English", vi: "Tiếng Việt", tl: "Tagalog", ilo: "Ilocano", haw: "ʻŌlelo Hawaiʻi" },
+    askNoVoice: "Voice not yet supported for this language. Please type your question.",
+    askMic: "Hold to talk", askMicStart: "Start recording", askMicStop: (s) => `Stop and send (${s} s left)`,
+    askPlaceholder: "e.g. Is there vog near Kona right now?",
+    askSend: "Ask",
+    askBusy: "Thinking…",
+    askHeard: "We heard",
+    askPrivacy: "Your audio goes through our proxy to Meta's speech-to-text and is not stored. Up to 20 seconds. Questions are rate-limited.",
+    askMT: "Machine-translated",
+    askErr: { rate_limited: "Too many questions from here. Please wait a minute.", daily_cap: "Today's question limit is reached. Please try again tomorrow.",
+              audio_too_long: "That recording is longer than 20 seconds.", audio_invalid: "We couldn't read that recording.", no_speech: "We didn't hear any speech. Please try again.",
+              voice_unsupported: "Voice not yet supported for this language.", mic: "The microphone is not available. You can type instead.", _: "The question service is unavailable right now." },
     newWorkTitle: "Built during the hackathon", newWork: "Everything in this project (code, pipeline, site, prompts, tests) was built Oct 31–Nov 4, 2026. Pre-existing external input: the Kahu Ola public API (/api/hazards/smoke-sat, /api/firms/hotspots), built earlier by the same author and used read-only as a data source.",
     replayBanner: "Replay of a past event. Not a current alert.",
     daily: "daily satellite pass",
@@ -195,6 +210,21 @@ const T = {
     soInvalid: "Câu trả lời của Wonder bị loại (không dẫn nguồn hợp lệ), nên không thể xác nhận điều gì.",
     notClean: "Vệ tinh không thấy vệt mù không có nghĩa là không khí sạch: vog sát mặt đất ở Kaʻū và Kona vẫn thường xảy ra (xem Độ chính xác ra sao?).",
     groundLink: "Xem trạm đo mặt đất (AirNow)",
+    askTitle: "Hỏi về lượt quét mới nhất",
+    askLede: "Hỏi bằng giọng nói hoặc gõ chữ. Câu trả lời chỉ dựa trên lượt quét mới nhất đã công bố, bằng ngôn ngữ của bạn, do Muse Spark soạn.",
+    askLang: "Ngôn ngữ",
+    askLangs: { en: "English", vi: "Tiếng Việt", tl: "Tagalog", ilo: "Ilocano", haw: "ʻŌlelo Hawaiʻi" },
+    askNoVoice: "Chưa hỗ trợ giọng nói cho ngôn ngữ này. Vui lòng gõ câu hỏi.",
+    askMic: "Nhấn để nói", askMicStart: "Bắt đầu ghi âm", askMicStop: (s) => `Dừng và gửi (còn ${s} giây)`,
+    askPlaceholder: "Ví dụ: Gần Kona có vog không?",
+    askSend: "Hỏi",
+    askBusy: "Đang trả lời…",
+    askHeard: "Chúng tôi nghe được",
+    askPrivacy: "Âm thanh đi qua máy chủ trung gian của chúng tôi đến dịch vụ chuyển giọng nói của Meta và không được lưu. Tối đa 20 giây. Số câu hỏi có giới hạn.",
+    askMT: "Dịch máy",
+    askErr: { rate_limited: "Quá nhiều câu hỏi từ đây. Vui lòng đợi một phút.", daily_cap: "Đã hết lượt hỏi hôm nay. Vui lòng thử lại ngày mai.",
+              audio_too_long: "Bản ghi dài hơn 20 giây.", audio_invalid: "Không đọc được bản ghi.", no_speech: "Không nghe thấy tiếng nói. Vui lòng thử lại.",
+              voice_unsupported: "Chưa hỗ trợ giọng nói cho ngôn ngữ này.", mic: "Không dùng được micrô. Bạn có thể gõ câu hỏi.", _: "Dịch vụ hỏi đáp hiện không khả dụng." },
     newWorkTitle: "Xây dựng trong thời gian hackathon", newWork: "Toàn bộ dự án này (mã nguồn, quy trình, trang web, prompt, kiểm thử) được xây dựng từ 31/10 đến 4/11/2026. Đầu vào có sẵn từ trước: API công khai của Kahu Ola (/api/hazards/smoke-sat, /api/firms/hotspots), do cùng tác giả xây dựng trước đó, chỉ được đọc làm nguồn dữ liệu.",
     replayBanner: "Xem lại sự kiện đã qua. Không phải cảnh báo hiện tại.",
     daily: "lượt chụp vệ tinh hằng ngày",
@@ -726,6 +756,96 @@ function step6(run) {
   );
 }
 
+/* ---------------- ask (voice / typed) ---------------- */
+const VOICE_API = "https://smoke-or-vog-voice.3ranknguyen.workers.dev/ask";
+const ASK_LANGS = ["en", "vi", "tl", "ilo", "haw"], VOICE_LANGS = ["en", "vi", "tl"];
+const MAX_SEC = 20, RATE = 16000;
+const ask = { lang: null, rec: null, result: null, error: null, busy: false };
+
+function encodeWav(samples) {
+  const b = new ArrayBuffer(44 + samples.length * 2), v = new DataView(b);
+  const w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, "RIFF"); v.setUint32(4, 36 + samples.length * 2, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, RATE, true);
+  v.setUint32(28, RATE * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, "data");
+  v.setUint32(40, samples.length * 2, true);
+  for (let i = 0; i < samples.length; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, samples[i])) * 0x7fff, true);
+  return new Blob([b], { type: "audio/wav" });
+}
+function downsample(chunks, inRate) {
+  const n = chunks.reduce((a, c) => a + c.length, 0), all = new Float32Array(n);
+  let o = 0; for (const c of chunks) { all.set(c, o); o += c.length; }
+  const ratio = inRate / RATE, out = new Float32Array(Math.floor(n / ratio));
+  for (let i = 0; i < out.length; i++) {           // box-filter average per output sample
+    const a = Math.floor(i * ratio), z = Math.min(n, Math.floor((i + 1) * ratio));
+    let s = 0; for (let j = a; j < z; j++) s += all[j]; out[i] = s / Math.max(1, z - a);
+  }
+  return out.subarray(0, MAX_SEC * RATE);
+}
+async function startRec() {
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } }); }
+  catch (_) { ask.error = "mic"; renderAsk(); return; }
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const src = ctx.createMediaStreamSource(stream), proc = ctx.createScriptProcessor(4096, 1, 1), chunks = [];
+  proc.onaudioprocess = (e) => chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+  src.connect(proc); proc.connect(ctx.destination);
+  ask.rec = { stream, ctx, proc, chunks, t0: Date.now(), left: MAX_SEC };
+  ask.rec.timer = setInterval(() => {
+    ask.rec.left = Math.max(0, MAX_SEC - Math.floor((Date.now() - ask.rec.t0) / 1000));
+    if (ask.rec.left <= 0) stopRec(); else renderAsk();
+  }, 250);
+  ask.error = null; ask.result = null; renderAsk();
+}
+async function stopRec() {
+  const r = ask.rec; if (!r) return;
+  clearInterval(r.timer); r.proc.disconnect(); r.stream.getTracks().forEach((x) => x.stop());
+  const rate = r.ctx.sampleRate; await r.ctx.close(); ask.rec = null;
+  const pcm = downsample(r.chunks, rate);
+  const fd = new FormData(); fd.append("lang", ask.lang); fd.append("audio", encodeWav(pcm), "question.wav");
+  send(fd);
+}
+async function send(body) {
+  ask.busy = true; ask.error = null; ask.result = null; renderAsk();
+  try {
+    const init = body instanceof FormData ? { method: "POST", body }
+      : { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) };
+    const r = await fetch(VOICE_API, init);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) ask.error = j.error || "_"; else ask.result = j;
+  } catch (_) { ask.error = "_"; }
+  ask.busy = false; renderAsk();
+}
+function renderAsk() {
+  const box = $("#ask-body"); if (!box) return;
+  if (!ask.lang) ask.lang = state.lang === "vi" ? "vi" : "en";
+  const voiceOk = VOICE_LANGS.includes(ask.lang) && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  const input = el("input", { type: "text", id: "ask-text", maxlength: "300", placeholder: t().askPlaceholder, "aria-label": t().askPlaceholder });
+  const submit = (e) => { e.preventDefault(); const q = input.value.trim(); if (q && !ask.busy) send({ lang: ask.lang, text: q }); };
+  const res = ask.result;
+  box.replaceChildren(
+    el("p", { class: "lede", text: t().askLede }),
+    el("div", { class: "tabs ask__langs", role: "radiogroup", "aria-label": t().askLang }, ASK_LANGS.map((l) => el("button", {
+      type: "button", role: "radio", "aria-checked": String(ask.lang === l), "aria-selected": String(ask.lang === l), lang: l,
+      onclick: () => { if (!ask.rec) { ask.lang = l; ask.result = null; ask.error = null; renderAsk(); } }, text: t().askLangs[l] }))),
+    VOICE_LANGS.includes(ask.lang)
+      ? el("button", { type: "button", class: "btn ask__mic" + (ask.rec ? " is-rec" : ""), disabled: ask.busy || !voiceOk,
+          onclick: () => (ask.rec ? stopRec() : startRec()), text: ask.rec ? t().askMicStop(ask.rec.left) : t().askMicStart })
+      : el("p", { class: "status-note", text: t().askNoVoice }),
+    el("form", { class: "ask__form", onsubmit: submit }, input,
+      el("button", { type: "submit", class: "btn", disabled: ask.busy, text: t().askSend })),
+    el("p", { class: "small", text: t().askPrivacy }),
+    el("div", { class: "ask__out", "aria-live": "polite" },
+      ask.busy ? el("p", { class: "small", text: t().askBusy }) : "",
+      ask.error ? el("p", { class: "status-note", text: t().askErr[ask.error] || t().askErr._ }) : "",
+      res ? el("div", { class: "ask__answer", lang: res.lang },
+        res.transcript ? el("p", { class: "small" }, el("strong", { text: `${t().askHeard}: ` }), `“${res.transcript}”`) : "",
+        res.machine_translated ? el("span", { class: "flag", text: t().askMT }) : "",
+        ...res.answer.split(/\n+/).filter(Boolean).map((line) => el("p", { text: line })),
+        el("p", { class: "small" }, res.disclaimer),
+        res.disclaimer !== res.disclaimer_en ? el("p", { class: "small", lang: "en", text: res.disclaimer_en }) : "") : ""));
+}
+
 /* ---------------- history calendar ---------------- */
 const CAL_KEYS = ["wildfire_smoke", "vog", "uncertain", "no_plume", "none"];
 async function renderHistory() {
@@ -829,6 +949,7 @@ async function renderHow() {
 async function renderAll() {
   applyStatic();
   await renderLive();
+  renderAsk();
   renderReplays();
   await renderHistory();
   await renderAccuracy();

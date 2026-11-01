@@ -68,4 +68,9 @@ def test_no_secrets_or_api_calls_in_site():
             assert "LLM_" not in text and "MODEL_API_KEY" not in text, f
             assert "api.meta.ai" not in text, f
     js = (SITE / "app.js").read_text()
-    assert re.findall(r'fetch\(([^)]*)\)', js) == ["path, { cache: \"no-cache\" }"]
+    # Only two network calls: published JSON, and the voice proxy Worker (key stays server-side).
+    assert re.findall(r'fetch\(([^)]*)\)', js) == ["path, { cache: \"no-cache\" }", "VOICE_API, init"]
+    assert 'const VOICE_API = "https://smoke-or-vog-voice.3ranknguyen.workers.dev/ask";' in js
+    headers = (SITE / "_headers").read_text()
+    assert "connect-src 'self' https://smoke-or-vog-voice.3ranknguyen.workers.dev;" in headers
+    assert "microphone=(self)" in headers and "camera=()" in headers

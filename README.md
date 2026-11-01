@@ -210,16 +210,39 @@ and `alerts/alert_{en,vi,ilo,tl,haw}.png`:
   `MODEL_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
 - **Local preview:** `python -m src.live_publish --index-only && cd site && python3 -m http.server`.
 
+## Ask by voice
+
+The **Ask** panel takes a spoken question in English, Vietnamese or Tagalog (Muse Voice Transcribe
+covers those three). Ilocano and ʻŌlelo Hawaiʻi are typed and labelled "voice not yet supported
+for this language". The browser records up to 20 s, downsamples to 16 kHz mono and encodes a WAV,
+then posts it to the Cloudflare Worker in `worker/voice/` (built with Muse Code; see
+`worker/voice/SPEC.md`). The Worker:
+- allows only the site's origin;
+- rejects bodies over 700 kB and audio over 20 s, checked from the WAV header;
+- applies a per-IP rate limit (4 per minute, keyed by a hash of IP and date, never the raw IP) and a daily
+  cap of 300 in KV, both **before** any paid call, failing closed if a binding is missing;
+- transcribes, fetches the latest published `data/index.json` and `data/live/run.json`, and asks
+  Muse Spark to answer only from that scan, in the same language;
+- appends a fixed disclaimer.
+
+No audio is stored, and the Worker logs only error types and upstream status codes (no IP,
+question or answer). Observability logging is off. The key is a Worker secret.
+
+- **Deploy:** `cd worker/voice && npx wrangler deploy`, then set the key with
+  `wrangler secret put META_API_KEY` (from stdin).
+- **Tests:** `node --test test/*.test.js` (76 tests), also run by pytest.
+
 ## Validation and history
 
 `src/backfill.py` runs every archived GOES-West scan (11:00 and 14:00 HST, 160 scans from Aug 11
 to Oct 31, 2026) through the agent pipeline with tracking, on its own ledger
 (`out/costs_backfill.csv`, $3.94). `src/groundtruth.py` downloads the public AirNow hourly files
 for Hawaiʻi SO₂ and PM2.5. `src/validate.py` applies the rules pre-registered in
-`docs/VALIDATION.md` (committed before any result). Vog: SO₂ rose in 4 of 5 covered scans, against
+`docs/VALIDATION.md` (committed before any result). Vog: SO₂ rose in 4 of 5 covered scans (95% CI 38–96%), against
 a 67% base rate (not significant). Smoke: untested, since none occurred in the window. "No plume":
-clean air at every monitor in only 20 of 107 scans. Ground-level vog is common when no plume is
-visible, so the site never equates "no plume" with clean air. `src/history.py` exports lite site
+clean air at every monitor in only 20 of 107 scans (95% CI 12–27%). Validation taught us that
+satellites see haze aloft, not ground air. So "no plume" never claims clean air and links to
+AirNow monitors. `src/history.py` exports lite site
 data to the `live-data` branch, and the live workflow copies it into the site for the History
 calendar.
 

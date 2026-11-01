@@ -86,7 +86,10 @@ dropped.
 |---|---|---|---|---|
 | Vog → SO₂ rose | 6 | 5 | 4/5 (80%, 95% CI 38–96%) | 67% |
 | Smoke → PM2.5 rose | 0 | — | untested (no smoke in the window) | — |
-| No plume → clean air at every monitor | 107 | 107 | 20/107 (19%) | — |
+| No plume → clean air at every monitor | 107 | 107 | 20/107 (19%, 95% CI 12–27%) | — |
+
+**Validation taught us that satellites see haze aloft, not ground air. So "no plume" never
+claims clean air and links to AirNow monitors.**
 
 What we learned, stated plainly:
 - Five vog cases cannot show that the verdict beats chance. The nearby monitors also rose on 67%
@@ -108,6 +111,9 @@ What we learned, stated plainly:
 | **SAM 3.1 video** (`sam-3.1`, `input_video`) | Stage 4b | **Plume motion tracking**: a 3-hour, 10-minute GOES-West clip seeded with the plume box → per-frame masks → measured drift direction and speed and the trailing source end. The agent reads it with the `track_plume` tool and compares it with the wind. Kīlauea Oct 17: tracked 19/19 frames, drift toward 214° (fit R² 0.98), within 37° of the wind. $0.01 per clip |
 | **Muse Wonder** (`muse-wonder-1.0`) | Stage 5b | **Second-opinion adjudicator** on borderline calls only (top confidence 0.55–0.75, or plumes pointing to different hazards). Gets the same evidence bundle (every tool result and its cite key) but not Spark's verdict, and returns its own cited verdict. Both are shown. If they disagree the verdict stays "uncertain"; Wonder can never raise confidence or override the 0.70 bar. Mauna Loa 2022: Spark `vog_mauna_loa` 62%, Wonder "uncertain" 60% (both volcanoes erupting, upwind end far from either vent) → stays uncertain. About $0.03–0.04 per call |
 | **Muse Image** (`muse-image-1.0`) | Stage 7 | Text-free card backgrounds |
+| **Muse Voice Transcribe** (`muse-voice-transcribe-1.0`) | Ask | **Ask by voice** in English, Vietnamese or Tagalog. Ilocano and ʻŌlelo Hawaiʻi are typed and labelled "voice not yet supported for this language". The browser records ≤ 20 s and encodes 16 kHz WAV. A Cloudflare Worker holds the key server-side, with a per-IP rate limit (checked before any paid call) and a daily cap. It stores no audio and logs no IP, question or answer. |
+| **Muse Spark** | Ask | Answers **only from the latest published scan**, in the asker's language, with a fixed disclaimer and no medical advice. If no plume was seen, it says ground-level vog can still be present and points to AirNow. |
+| **Muse Code** (`muse` CLI) | Build | Built the voice Worker headless from a written spec, including its tests (`worker/voice/`). We reviewed it and fixed the order of the rate limits, as listed in `docs/NEW_WORK.md`. |
 
 **What we learned:** text prompts like "smoke", "haze" and "volcanic plume" returned no SAM
 masks on 1 km satellite imagery in any case. Muse Spark's boxes made SAM work. Combining

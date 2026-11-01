@@ -18,6 +18,8 @@ Everything in this repository is new work, created during the hackathon period:
 | Safety aggregation (per-plume verdicts, ≥ 0.70 rule, unreliable-mask gate) | `src/aggregate.py` |
 | Multilingual alerts and cards (fixed, quoted official guidance per verdict; text-free Muse Image backgrounds; PIL rendering) | `src/alerts.py`, `assets/health_sources.json`, `assets/translation_overrides.json` |
 | Live publishing and static-site data | `src/live_publish.py`, `src/sitedata.py`, `.github/workflows/live.yml`, `.github/dependabot.yml` |
+| Voice / typed questions proxy (Cloudflare Worker), **built with Muse Code** (`muse exec`, headless, from `worker/voice/SPEC.md`). Muse Code wrote `wrangler.jsonc`, `src/lib.js`, `src/index.js` and `test/lib.test.js` (68 tests). Our review then made these changes: moved the per-IP rate limit and daily cap **before** the paid transcription call, made missing bindings or a bad cap fail closed, stripped `<`/`>` from questions, raised the answer token budget (reasoning used up 600 tokens), renamed a misleading status field, and added `test/handler.test.js` (8 mocked-fetch tests) | `worker/voice/` |
+| Ask panel (mic recording → 16 kHz WAV in the browser, typed fallback) | `site/app.js` |
 | Demo website | `site/` |
 | Tests | `tests/` |
 | Smoke tests and tools | `scripts/` |
@@ -35,7 +37,9 @@ any earlier project, including Kahu Ola.
 
 ## Third-party data, libraries and assets (not authored by us)
 
-- **Meta Model API:** `muse-spark-1.3`, `sam-3.1`, `muse-image-1.0`; `meta-sam-parser` (pip).
+- **Meta Model API:** `muse-spark-1.3`, `sam-3.1`, `muse-image-1.0`, `muse-wonder-1.0`,
+  `muse-voice-transcribe-1.0`; `meta-sam-parser` (pip). **Muse Code** CLI (`muse` 1.4.14), installed
+  from the official `dev.meta.ai/install.sh` after inspecting it, and used to build `worker/voice/`.
 - **Data:**
   - NASA GIBS (GOES-West GeoColor, MODIS, FIRMS thermal-anomaly layers)
   - NOAA/NESDIS/STAR GOES-18 imagery

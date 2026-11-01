@@ -16,3 +16,7 @@ out/video/
 
 # archive history lives on the live-data branch (copied in by live.yml)
 site/data/history/
+
+# wrangler local state
+worker/voice/.wrangler/
+node_modules/

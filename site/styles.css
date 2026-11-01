@@ -264,3 +264,11 @@ button.cal-day:hover, .cal-day.is-sel { outline: 3px solid var(--pacific); outli
 .second-opinion ul { padding-left: 18px; }
 .acc-find, #accuracy .small { max-width: 72ch; }
 .acc-find li { margin-bottom: 6px; }
+
+/* Ask */
+.ask__langs { flex-wrap: wrap; }
+.ask__mic { margin: 10px 0; min-height: 48px; }
+.ask__mic.is-rec { background: var(--ember); color: #fff; }
+.ask__form { display: flex; gap: 8px; margin: 8px 0; }
+.ask__form input { flex: 1; min-width: 0; font: inherit; padding: 10px 12px; border: 1px solid var(--basalt-soft); border-radius: 8px; }
+.ask__answer { border-left: 4px solid var(--pacific); padding: 2px 0 2px 12px; margin-top: 10px; }

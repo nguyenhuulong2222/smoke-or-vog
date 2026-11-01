@@ -1,0 +1,112 @@
+{
+ "generated_at": "2026-11-01T03:25:57+00:00",
+ "live_status": "ok",
+ "live_status_detail": "index rebuilt",
+ "live": {
+  "path": "live",
+  "title": {
+   "en": "Live now",
+   "vi": "Trực tiếp"
+  },
+  "verdict": {
+   "class": "uncertain",
+   "confidence": 0.0,
+   "max_plume_confidence": 0.0,
+   "plume_id": null,
+   "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+   "confirmed": [],
+   "unconfirmed": []
+  },
+  "detection": "no_plume",
+  "image_time": "2026-11-01T00:50:00Z"
+ },
+ "replays": [
+  {
+   "slug": "kilauea_20261017",
+   "path": "replays/kilauea_20261017",
+   "title": {
+    "en": "Kīlauea vog plume · Oct 17, 2026",
+    "vi": "Vệt vog Kīlauea · 17/10/2026"
+   },
+   "verdict": {
+    "class": "vog_kilauea",
+    "confidence": 0.82,
+    "plume_id": 1,
+    "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+    "confirmed": [
+     {
+      "plume_id": 1,
+      "class": "vog_kilauea",
+      "confidence": 0.82,
+      "source_hint": "Kilauea summit, Hawaii island, drifting south-southwest"
+     }
+    ],
+    "unconfirmed": []
+   },
+   "image_time": "2026-10-17T21:00:00Z"
+  },
+  {
+   "slug": "maui_20230808",
+   "path": "replays/maui_20230808",
+   "title": {
+    "en": "Maui wildfire smoke · Aug 8, 2023",
+    "vi": "Khói cháy rừng Maui · 8/8/2023"
+   },
+   "verdict": {
+    "class": "wildfire_smoke",
+    "confidence": 0.9,
+    "plume_id": 2,
+    "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+    "confirmed": [
+     {
+      "plume_id": 2,
+      "class": "wildfire_smoke",
+      "confidence": 0.9,
+      "source_hint": "Kula / Lahaina Maui wildfires"
+     },
+     {
+      "plume_id": 1,
+      "class": "wildfire_smoke",
+      "confidence": 0.82,
+      "source_hint": "Hawai'i Island west-side / Kona wildfires"
+     }
+    ],
+    "unconfirmed": [
+     {
+      "plume_id": 3,
+      "class": "wildfire_smoke",
+      "confidence": 0.68,
+      "source_hint": "Oahu (Honolulu-area) wildfire"
+     }
+    ]
+   },
+   "image_time": "2023-08-08"
+  },
+  {
+   "slug": "mauna_loa_20221201",
+   "path": "replays/mauna_loa_20221201",
+   "title": {
+    "en": "Mauna Loa eruption · Dec 1, 2022 (honest uncertainty)",
+    "vi": "Phun trào Mauna Loa · 1/12/2022 (không chắc chắn, trung thực)"
+   },
+   "verdict": {
+    "class": "uncertain",
+    "confidence": 0.0,
+    "max_plume_confidence": 0.62,
+    "plume_id": null,
+    "rule": "most hazardous class with confidence >= 0.70 (wildfire_smoke > vog_* > dust > cloud)",
+    "confirmed": [],
+    "unconfirmed": [
+     {
+      "plume_id": 1,
+      "class": "vog_mauna_loa",
+      "confidence": 0.62,
+      "source_hint": "Mauna Loa Northeast Rift Zone eruption ~280 km SE"
+     }
+    ]
+   },
+   "image_time": "2022-12-01"
+  }
+ ],
+ "hackathon_spend_usd": 1.96
+}
