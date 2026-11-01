@@ -4,3 +4,7 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-11-01T01:35:46+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,1945,1860,,0.010861,run=live_20261101T013530Z
 2026-11-01T02:45:09+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,1578,1493,,0.009302,run=live_20261101T024455Z
 2026-11-01T03:29:04+00:00,pipeline:localize,muse-spark-1.3,ok,2076,0,1879,1792,,0.010581,run=live_20261101T032847Z
+2026-11-01T20:26:55+00:00,pipeline:localize,muse-spark-1.3,ok,2093,0,2343,2139,,0.012574,run=live_20261101T202633Z
+2026-11-01T20:26:57+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261101T202633Z; box; outcome=completed
+2026-11-01T20:26:59+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261101T202633Z; box+point; outcome=completed
+2026-11-01T20:27:00+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261101T202633Z; box+point:pass2; outcome=completed
