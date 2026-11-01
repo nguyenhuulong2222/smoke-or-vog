@@ -2,12 +2,12 @@
  "slug": "live",
  "case": "live",
  "mode": "live",
- "run_id": "live_20261101T013530Z",
+ "run_id": "live_20261101T024455Z",
  "title": {
   "en": "Live now",
   "vi": "Trực tiếp"
  },
- "image_time": "2026-11-01T00:50:00Z",
+ "image_time": "2026-11-01T01:50:00Z",
  "layer": "GOES-West_ABI_GeoColor",
  "verdict": {
   "class": "uncertain",
@@ -19,7 +19,7 @@
   "unconfirmed": []
  },
  "detection": "no_plume",
- "cost_usd": 0.010861,
+ "cost_usd": 0.009302,
  "models": [
   {
    "stage": "2 Localize",
@@ -50,8 +50,9 @@
  "steps": {
   "image": {
    "src": "image.jpg",
+   "full": "image_full.jpg",
    "layer": "GOES-West_ABI_GeoColor",
-   "time": "2026-11-01T00:50:00Z",
+   "time": "2026-11-01T01:50:00Z",
    "source": "NASA GIBS WMS"
   },
   "adp": {
@@ -59,24 +60,28 @@
    "candidates": 0,
    "reason": null,
    "meaning_of_absence": "No qualifying satellite detection. Does NOT mean there is no haze or smoke.",
-   "src": null
+   "src": null,
+   "full": null
   },
   "spark": {
    "src": "spark_boxes.jpg",
-   "scene": "Frame is almost entirely black fill with only a narrow band of white to light-gray ordinary clouds visible along the northern top edge; no islands, ocean detail, or discolored haze streaks indicative of a plume are visible, including around the expected island locations in the southern portion.",
-   "cloud_cover": "partly",
+   "full": "spark_boxes_full.jpg",
+   "scene": "True-color satellite view of the main Hawaiian Islands with extensive thick white cloud cover over the northern area and over the large island in the southeast, with areas of dark open ocean visible in the central and western parts; no distinct gray haze, smoke or plume separable from ordinary clouds is visible.",
+   "cloud_cover": "mostly",
    "plumes": [],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.010861
+   "cost_usd": 0.009302
   },
   "sam": {
    "src": null,
+   "full": null,
    "prompt_used": null,
    "variants": {},
    "two_pass": []
   },
   "classify": {
    "overlay": "overlay.jpg",
+   "overlay_full": "overlay_full.jpg",
    "per_plume": [],
    "caveats": "No plume found; nothing to classify.",
    "plumes": [],
@@ -84,14 +89,14 @@
     "source": "Open-Meteo forecast (current)",
     "sites": {
      "kilauea_summit": {
-      "time": "2026-11-01T01:30",
-      "speed_kmh": 4.9,
-      "from_deg": 172
+      "time": "2026-11-01T02:30",
+      "speed_kmh": 4.1,
+      "from_deg": 165
      },
      "mauna_loa_summit": {
-      "time": "2026-11-01T01:30",
-      "speed_kmh": 7.9,
-      "from_deg": 282
+      "time": "2026-11-01T02:30",
+      "speed_kmh": 6.2,
+      "from_deg": 285
      }
     }
    },
@@ -102,7 +107,7 @@
    },
    "volcano_status": {
     "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
-    "valid_at": "2026-11-01T01:35:34.095722+00:00",
+    "valid_at": "2026-11-01T02:44:59.965163+00:00",
     "volcanoes": {
      "kilauea": {
       "alert_level": "ADVISORY",
@@ -134,5 +139,6 @@
   "alerts": {
    "available": false
   }
- }
+ },
+ "plume_view": null
 }
