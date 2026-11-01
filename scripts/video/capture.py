@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "out" / "video" / "shots"
 SITE = "https://smoke-or-vog.pages.dev/"
 DPR = 2
+WANT: set[str] = set()  # empty = capture everything; else only these shot names (merged)
 VIEW = {"width": 1920, "height": 1080}
 
 WAIT_IMAGES = """async () => {
@@ -74,6 +75,8 @@ def scroll_to(page, selector: str, offset: int = 90) -> None:
 
 
 def snap(page, name: str, shots: dict, rects: dict, full: bool = False) -> None:
+    if WANT and name not in WANT:
+        return
     path = OUT / f"{name}.png"
     page.screenshot(path=str(path), full_page=full)
     shots[name] = {"file": path.name, "rects": rects, "full": full,
@@ -131,10 +134,11 @@ def main() -> None:
             return {steps_top: s.top + scrollY, trace_top: b.top + scrollY, trace_bottom: b.bottom + scrollY,
                     ok_top: o.top + scrollY, ok_bottom: o.bottom + scrollY,
                     x0: b.left, x1: b.right, page_h: document.documentElement.scrollHeight}; }""")
-        page.screenshot(path=str(OUT / "s5_trace_full.png"), full_page=True)
-        shots["s5_trace_full"] = {"file": "s5_trace_full.png", "full": True,
-                                  "geom": {k: v * DPR for k, v in trace.items()}, "rects": {}}
-        print("shot s5_trace_full", trace)
+        if not WANT or "s5_trace_full" in WANT:
+            page.screenshot(path=str(OUT / "s5_trace_full.png"), full_page=True)
+            shots["s5_trace_full"] = {"file": "s5_trace_full.png", "full": True,
+                                      "geom": {k: v * DPR for k, v in trace.items()}, "rects": {}}
+            print("shot s5_trace_full", trace)
         scroll_to(page, ".ok-note", 520)
         snap(page, "s5_ok", shots, {"hl": rect(page, ".ok-note"), "zoom": union(rect(page, ".trace"), rect(page, ".ok-note"))})
         # S6: Kīlauea verdict, then Maui verdict
@@ -179,6 +183,9 @@ def main() -> None:
         ctx.close()
 
         # S10b: phone view (iPhone emulation), full page for a scroll
+        if WANT and "s10_phone_full" not in WANT:
+            browser.close()
+            return finish(shots, live)
         iphone = p.devices["iPhone 13"]
         pctx = browser.new_context(**iphone, locale="en-US")
         pctx.add_init_script("try { localStorage.setItem('sov-lang', 'en'); } catch (e) {}")
@@ -192,10 +199,19 @@ def main() -> None:
         print("shot s10_phone_full", iphone["viewport"], iphone["device_scale_factor"])
         pctx.close()
         browser.close()
-    (OUT / "shots.json").write_text(json.dumps({"dpr": DPR, "live": live, "shots": shots}, indent=1,
-                                               ensure_ascii=False))
-    print("wrote", OUT / "shots.json")
+    return finish(shots, live)
+
+
+def finish(shots: dict, live: dict) -> None:
+    f = OUT / "shots.json"
+    if WANT and f.exists():  # merge: keep earlier shots and the live status the VO describes
+        old = json.loads(f.read_text())
+        old["shots"].update(shots)
+        shots, live = old["shots"], old["live"]
+    f.write_text(json.dumps({"dpr": DPR, "live": live, "shots": shots}, indent=1, ensure_ascii=False))
+    print("wrote", f, "(merged)" if WANT else "")
 
 
 if __name__ == "__main__":
+    WANT.update(a for a in sys.argv[1:] if not a.startswith("-"))
     sys.exit(main())
