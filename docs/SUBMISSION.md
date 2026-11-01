@@ -4,7 +4,7 @@
 it's volcanic vog or wildfire smoke, shows every step of its reasoning, and quotes official
 health guidance in five island languages, without inventing advice.
 
-**Live demo:** https://smoke-or-vog.pages.dev (mobile-first, English / Tiếng Việt)
+**Live demo:** https://smoke-or-vog.pages.dev (mobile-first, English / Tiếng Việt; History calendar; Ask by voice)
 **Code:** github.com/nguyenhuulong2222/smoke-or-vog (made public at submission)
 
 ---
@@ -50,10 +50,16 @@ that shows each step:
    Typically it calls 7–11 tools over 3 rounds. It often re-computes a plume's upwind end after
    it has fetched the wind. **Every evidence line must cite a tool result** (`E1`, `E2`, …), and
    a verdict that cites nothing is rejected. A fixed-context classifier remains the fallback.
+   **Plume motion (SAM 3.1 video).** The plume's box is tracked through 3 hours of 10-minute
+   GOES-West frames. On the Kīlauea replay, the tracked drift (toward 214°, about 18 km/h) roughly
+   agrees with the wind (toward 251°, 37° apart), and the agent cites it.
 6. **Decide safely.** Each plume gets its own verdict: `vog_kilauea`, `vog_mauna_loa`,
    `wildfire_smoke`, `dust`, `cloud` or `uncertain`. The headline is the *most hazardous* class
    confirmed at ≥ 70% confidence. Everything weaker is shown as "not confirmed". A mask that
    swallows an island can't confirm anything.
+   **Second opinion (Muse Wonder).** Borderline calls (top confidence 0.55–0.75, or plumes pointing
+   to different hazards) go to Muse Wonder with the same evidence but not Spark's verdict. Both are
+   shown. If they disagree the verdict stays uncertain, and Wonder can never raise it.
 7. **Alert in five languages (Muse Spark + Muse Image).** English, Vietnamese, Ilocano, Tagalog
    and ʻŌlelo Hawaiʻi.
    - **Health guidance is never chosen or written by AI.** Each verdict maps to fixed official
@@ -108,26 +114,39 @@ What we learned, stated plainly:
 | **Muse Spark** | Stage 5 | **Agent with native tool calling** (Responses API, `previous_response_id`): chooses tools, cites every result, classifies |
 | **Muse Spark** | Stage 7 | Five-language situation summaries and translations of fixed official guidance |
 | **SAM 3.1** (`sam-3.1`) | Stage 4 | Box and point prompts → pixel masks, streamed and parsed with `meta-sam-parser`, two-pass refinement |
-| **SAM 3.1 video** (`sam-3.1`, `input_video`) | Stage 4b | **Plume motion tracking**: a 3-hour, 10-minute GOES-West clip seeded with the plume box → per-frame masks → measured drift direction and speed and the trailing source end. The agent reads it with the `track_plume` tool and compares it with the wind. Kīlauea Oct 17: tracked 19/19 frames, drift toward 214° (fit R² 0.98), within 37° of the wind. $0.01 per clip |
+| **SAM 3.1 video** (`sam-3.1`, `input_video`) | Stage 4b | **Plume motion tracking**: a 3-hour, 10-minute GOES-West clip seeded with the plume box → per-frame masks → measured drift direction and speed and the trailing source end. The agent reads it with the `track_plume` tool and compares it with the wind. Kīlauea Oct 17: tracked 19/19 frames, drift toward 214° (fit R² 0.98), which roughly agrees with the wind (toward 251°, 37° apart). $0.01 per clip |
 | **Muse Wonder** (`muse-wonder-1.0`) | Stage 5b | **Second-opinion adjudicator** on borderline calls only (top confidence 0.55–0.75, or plumes pointing to different hazards). Gets the same evidence bundle (every tool result and its cite key) but not Spark's verdict, and returns its own cited verdict. Both are shown. If they disagree the verdict stays "uncertain"; Wonder can never raise confidence or override the 0.70 bar. Mauna Loa 2022: Spark `vog_mauna_loa` 62%, Wonder "uncertain" 60% (both volcanoes erupting, upwind end far from either vent) → stays uncertain. About $0.03–0.04 per call |
 | **Muse Image** (`muse-image-1.0`) | Stage 7 | Text-free card backgrounds |
 | **Muse Voice Transcribe** (`muse-voice-transcribe-1.0`) | Ask | **Ask by voice** in English, Vietnamese or Tagalog. Ilocano and ʻŌlelo Hawaiʻi are typed and labelled "voice not yet supported for this language". The browser records ≤ 20 s and encodes 16 kHz WAV. A Cloudflare Worker holds the key server-side, with a per-IP rate limit (checked before any paid call) and a daily cap. It stores no audio and logs no IP, question or answer. |
 | **Muse Spark** | Ask | Answers **only from the latest published scan**, in the asker's language, with a fixed disclaimer and no medical advice. If no plume was seen, it says ground-level vog can still be present and points to AirNow. |
 | **Muse Code** (`muse` CLI) | Build | Built the voice Worker headless from a written spec, including its tests (`worker/voice/`). We reviewed it and fixed the order of the rate limits, as listed in `docs/NEW_WORK.md`. |
 
+8. **History and validation.** All 160 archived GOES-West scans (Aug 11 – Oct 31, 2026) are on a
+   calendar, and each opens step by step. They were checked against ground monitors under rules
+   fixed in advance (see below).
+9. **Ask by voice (Muse Voice Transcribe + Muse Spark).** A spoken question in English,
+   Vietnamese or Tagalog (typed for Ilocano and ʻŌlelo Hawaiʻi, labelled "voice not yet supported
+   for this language") is answered only from the latest published scan, in the same language,
+   with the disclaimer. It goes through a rate-limited Cloudflare Worker built with Muse Code.
+   No audio is stored and no PII is logged.
+
 **What we learned:** text prompts like "smoke", "haze" and "volcanic plume" returned no SAM
 masks on 1 km satellite imagery in any case. Muse Spark's boxes made SAM work. Combining
 Spark's reasoning with SAM's pixels is the core of the project.
 
 **Cost:** about **$0.006** per scan with no plume, **$0.05–0.08** per plume scan (vision, SAM
-and the agent), and about **$0.03** more when alerts are issued. The whole hackathon, including
-development, cost under $2.
+and the agent), about **$0.03** more when alerts are issued, about **$0.04** for a Muse Wonder second
+opinion (borderline calls only), and under **$0.01** per spoken question. Meta API spend for the
+whole hackathon: development **$4.93** (including about $2.71 for the Muse Code session), the
+160-scan archive backfill **$3.94** and the live job **$0.04**, about **$8.9** in total. Separately,
+the AI voice-over cost about $0.17 (OpenAI TTS).
 
 ## Built during the hackathon (building period Oct 27 – Nov 4, 2026)
 
 Everything in the repository is new work created during the hackathon's building period
 (Oct 27 – Nov 4, 2026): the pipeline, the agentic classifier, safety rules, alerts, the live
-publisher, the website, tests (100 offline, with the Meta API mocked) and docs. The repository
+publisher, the website, the archive backfill and validation, the voice Worker, tests (134 Python
+tests with the Meta API mocked, plus 76 Worker tests) and docs. The repository
 was created within that period, on Oct 31, 2026 (first commit 12:16 HST). See
 `docs/NEW_WORK.md`.
 
@@ -146,6 +165,12 @@ read-only, as a data source. No Kahu Ola code is in this project.
 - **No secrets reach the browser:** the site reads published JSON only. The API key lives in
   GitHub Actions secrets, and actions are pinned to commit SHAs.
 - **Budget stop:** live scanning stops itself if total spend reaches $15.
+- **A second opinion can only lower a verdict:** Muse Wonder disagreeing keeps the result
+  uncertain, and agreeing never raises the confidence.
+- **"No plume" never means "clean air":** the validation showed ground-level vog often present
+  with no plume visible, so the site says so and links to AirNow monitors.
+- **Voice privacy:** the key is server-side only. The Worker has per-IP and daily limits checked
+  before any paid call, stores no audio, and logs no IP, question or answer.
 
 ## Limitations
 
@@ -155,6 +180,10 @@ read-only, as a data source. No Kahu Ola code is in this project.
 - **10 m wind:** upwind ends use 10 m wind, not plume-height transport.
 - **Translations need review:** they are machine-made, and Ilocano, Tagalog and ʻŌlelo
   Hawaiʻi need community speakers before any public use.
+- **Validation is small:** only 5 vog scans had a monitor nearby (4 agreed, 95% CI 38–96%,
+  against a 67% base rate), and no wildfire smoke occurred in the 81-day window, so smoke accuracy
+  is untested.
+- **Ask answers in Ilocano and ʻŌlelo Hawaiʻi** are machine-translated and labelled as such.
 - **Borderline verdicts can flip:** confidence near 70% can change between runs. The safety
   rule shows `uncertain` rather than guessing.
 
