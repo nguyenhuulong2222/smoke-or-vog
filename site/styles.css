@@ -111,7 +111,27 @@ section { padding-top: 2.2rem; }
 .frame img { width: 100%; height: auto; }
 .replay img, .card-img { height: auto; }
 .frame figcaption { color: #E9EDF0; font-size: 0.85rem; padding: 8px 12px; }
-.frame .empty { aspect-ratio: 1.4; display: grid; place-items: center; color: #CFD6DB; padding: 24px; text-align: center; }
+.dim { position: relative; aspect-ratio: 1.4; background: var(--basalt); }
+.dim img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.38) saturate(0.6); }
+.dim__msg {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center;
+  gap: 12px; padding: 20px; text-align: center; color: #fff;
+}
+.dim__msg p { margin: 0; max-width: 34ch; font-size: 1.05rem; line-height: 1.4; }
+.btn {
+  font: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; min-height: 44px;
+  padding: 8px 16px; border-radius: 999px; border: 2px solid var(--pacific);
+  background: var(--pacific); color: #fff;
+}
+.btn--light { background: #fff; color: var(--pacific); border-color: #fff; }
+.live__status {
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: center;
+  background: var(--paper); border-radius: var(--radius-lg); padding: 14px 16px;
+}
+.live__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lichen); box-shadow: 0 0 0 4px #D7E6DA; }
+.live__line { margin: 0; font-weight: 600; }
+.live__status .btn { grid-column: 1 / -1; justify-self: start; }
+.live__note { grid-column: 1 / -1; margin: 0; }
 .explain h3 { margin-top: 0; }
 .explain p { max-width: 62ch; }
 .explain dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0 0 1rem; }
@@ -146,6 +166,8 @@ section { padding-top: 2.2rem; }
 
 @media (min-width: 900px) {
   .live__card { display: grid; grid-template-columns: 3fr 2fr; }
+  .live__status { grid-template-columns: auto 1fr auto; }
+  .live__status .btn { grid-column: auto; }
   .live__img img { height: 100%; min-height: 100%; }
   .live__text { padding: 24px; align-self: center; }
   .replays__list { grid-template-columns: repeat(3, 1fr); }

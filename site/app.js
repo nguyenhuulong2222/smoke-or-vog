@@ -14,6 +14,11 @@ const T = {
     v: { wildfire_smoke: "Likely wildfire smoke", vog_kilauea: "Likely vog from Kīlauea", vog_mauna_loa: "Likely vog from Mauna Loa",
          dust: "Likely dust", cloud: "Cloud", uncertain: "Haze seen, source not confirmed", no_plume: "No haze plume detected" },
     tooCloudy: "Too cloudy to see haze clearly",
+    liveLabel: "Live", openLive: "Open live run", checkedAgo: (n) => n < 90 ? `last checked ${n} min ago` : `last checked ${Math.round(n / 60)} h ago`,
+    clouds: { clear: "clear skies", partly: "partly cloudy", mostly: "mostly cloudy", overcast: "overcast" },
+    seeSam: "See SAM in action → Kīlauea replay", seeAlerts: "See alerts in 5 languages → Kīlauea replay",
+    noSparkPlume: "Muse Spark found no haze plume in this image, so there is nothing to box.",
+    noSamLive: "No plume in this image, so SAM had nothing to segment.",
     confidence: "Confidence",
     scanned: "Satellite image",
     updated: "Checked",
@@ -67,6 +72,11 @@ const T = {
     v: { wildfire_smoke: "Có thể là khói cháy rừng", vog_kilauea: "Có thể là sương mù núi lửa (vog) từ Kīlauea", vog_mauna_loa: "Có thể là sương mù núi lửa (vog) từ Mauna Loa",
          dust: "Có thể là bụi", cloud: "Mây", uncertain: "Có mù, chưa xác định được nguồn", no_plume: "Không phát hiện vệt mù" },
     tooCloudy: "Nhiều mây, khó nhìn thấy mù",
+    liveLabel: "Trực tiếp", openLive: "Mở lượt quét trực tiếp", checkedAgo: (n) => n < 90 ? `kiểm tra ${n} phút trước` : `kiểm tra ${Math.round(n / 60)} giờ trước`,
+    clouds: { clear: "trời quang", partly: "mây rải rác", mostly: "nhiều mây", overcast: "u ám" },
+    seeSam: "Xem SAM hoạt động → bản xem lại Kīlauea", seeAlerts: "Xem cảnh báo 5 ngôn ngữ → bản xem lại Kīlauea",
+    noSparkPlume: "Muse Spark không thấy vệt mù nào trong ảnh này, nên không có gì để đóng khung.",
+    noSamLive: "Ảnh này không có vệt mù, nên SAM không có gì để tách.",
     confidence: "Độ tin cậy",
     scanned: "Ảnh vệ tinh",
     updated: "Kiểm tra lúc",
@@ -141,6 +151,15 @@ function fmtTime(iso) {
                                  hour: "2-digit", minute: "2-digit" }) + " HST";
 }
 function verdictKey(run) { return run.detection === "no_plume" ? "no_plume" : (run.verdict && run.verdict.class) || "uncertain"; }
+function hasVisiblePlume(run) {
+  return !!run && ((run.steps.spark.plumes || []).length > 0 || (run.steps.sam.two_pass || []).length > 0 ||
+                   ((run.verdict && run.verdict.confirmed) || []).length > 0);
+}
+function demoPath() {
+  const r = state.index.replays.find((x) => x.slug === "kilauea_20261017") || state.index.replays[0];
+  return r ? r.path : null;
+}
+function minutesAgo(iso) { return Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); }
 
 async function getJSON(path) {
   const r = await fetch(path, { cache: "no-cache" });
@@ -151,7 +170,9 @@ async function loadRun(path) {
   if (!state.runs[path]) state.runs[path] = await getJSON(`data/${path}/run.json`);
   return state.runs[path];
 }
-const img = (path, file, alt, eager = true) => el("img", { src: `data/${path}/${file}`, alt, loading: eager ? "eager" : "lazy", decoding: "async", width: 1000, height: 714 });
+/* Image names repeat between runs (live/image.jpg every hour), so version URLs by run id. */
+const ver = (path) => (state.runs[path] && state.runs[path].run_id ? `?v=${encodeURIComponent(state.runs[path].run_id)}` : "");
+const img = (path, file, alt, eager = true) => el("img", { src: `data/${path}/${file}${ver(path)}`, alt, loading: eager ? "eager" : "lazy", decoding: "async", width: 1000, height: 714 });
 
 /* ---------------- static text ---------------- */
 function applyStatic() {
@@ -169,10 +190,21 @@ async function renderLive() {
   if (!idx || !idx.live) { box.append(el("p", { class: "status-note", text: t().noLive })); return; }
   const run = await loadRun("live");
   const v = verdictKey(run);
+  const note = t().status[idx.live_status] || "";
+  if (!hasVisiblePlume(run)) {
+    // Compact status: nothing to show step by step, so the viewer opens on a replay.
+    const cloud = t().clouds[run.steps.spark.cloud_cover];
+    const parts = [t().liveLabel, fmtTime(run.image_time), t().v.no_plume, cloud, t().checkedAgo(minutesAgo(idx.generated_at))].filter(Boolean);
+    box.append(el("article", { class: "live__status" },
+      el("span", { class: "live__dot", "aria-hidden": "true" }),
+      el("p", { class: "live__line", text: parts.join(" · ") }),
+      el("button", { type: "button", class: "btn", onclick: () => select("live", 0, true), text: t().openLive }),
+      note && el("p", { class: "small live__note", text: note })));
+    return;
+  }
   const cloudy = v === "no_plume" && ["mostly", "overcast"].includes(run.steps.spark.cloud_cover);
   const line = cloudy ? `${t().v.no_plume}. ${t().tooCloudy}.` : t().v[v];
   const conf = run.verdict && run.verdict.confidence >= 0.7 && v !== "no_plume" ? `${t().confidence}: ${pct(run.verdict.confidence)}` : null;
-  const note = t().status[idx.live_status] || "";
   box.append(el("article", { class: "live__card" },
     el("div", { class: "live__img" }, img("live", v === "no_plume" ? run.steps.image.src : run.steps.classify.overlay,
                                           `${t().scanned}: ${fmtTime(run.image_time)}`)),
@@ -232,8 +264,20 @@ async function renderViewer() {
 }
 
 function frame(path, file, caption) {
-  const f = $("#frame");
-  f.replaceChildren(file ? img(path, file, caption) : el("div", { class: "empty", text: caption }), file ? el("figcaption", { text: caption }) : "");
+  if (!file) return emptyFrame(state.runs[path], caption, null);
+  $("#frame").replaceChildren(img(path, file, caption), el("figcaption", { text: caption }));
+}
+/* Never an empty black panel: the run's own true-color image, dimmed, with the message on top,
+   and (optionally) a way to see the step working on the Kīlauea replay. */
+function emptyFrame(run, message, cta) {
+  const demo = demoPath();
+  const showCta = cta && demo && state.current !== demo;
+  $("#frame").replaceChildren(el("div", { class: "dim" },
+    run ? img(state.current, run.steps.image.src, "") : "",
+    el("div", { class: "dim__msg" },
+      el("p", { text: message }),
+      showCta && el("button", { type: "button", class: "btn btn--light",
+        onclick: () => select(demo, cta.step, true), text: cta.label }))));
 }
 function explain(...nodes) { $("#explain").replaceChildren(...nodes); }
 const dl = (pairs) => el("dl", {}, pairs.filter(Boolean).flatMap(([k, v]) => [el("dt", { text: k }), el("dd", {}, v)]));
@@ -246,14 +290,16 @@ function step1(run) {
 }
 function step2(run) {
   const s = run.steps.adp;
-  frame(state.current, s.src || run.steps.image.src, s.src ? "NOAA ADP (Kahu Ola)" : t().noAdp);
+  if (s.src) frame(state.current, s.src, "NOAA ADP (Kahu Ola)");
+  else emptyFrame(run, t().noAdp, null);
   explain(el("h3", { text: t().steps[1] }), el("p", { text: t().s2 }),
     dl([["State", s.state || "—"], ["Regions", String(s.candidates)], s.reason && ["Note", s.reason],
         s.meaning_of_absence && ["Absence", s.meaning_of_absence]]));
 }
 function step3(run) {
   const s = run.steps.spark;
-  frame(state.current, s.src, "Muse Spark");
+  if (s.plumes.length) frame(state.current, s.src, "Muse Spark");
+  else emptyFrame(run, t().noSparkPlume, { step: 2, label: t().seeSam });
   explain(el("h3", { text: t().steps[2] }), el("p", { text: t().s3 }),
     dl([[t().scene, s.scene], [t().cloud, s.cloud_cover]]),
     el("h3", { text: t().plumes }),
@@ -262,7 +308,8 @@ function step3(run) {
 }
 function step4(run) {
   const s = run.steps.sam;
-  frame(state.current, s.src, s.src ? "SAM 3.1: red = pass 1, cyan = pass 2" : t().noSam);
+  if (s.src) frame(state.current, s.src, "SAM 3.1: red = pass 1, cyan = pass 2");
+  else emptyFrame(run, t().noSamLive, { step: 3, label: t().seeSam });
   explain(el("h3", { text: t().steps[3] }), el("p", { text: t().s4 }),
     s.prompt_used ? dl([[t().promptUsed, s.prompt_used]]) : "",
     s.two_pass.length ? el("table", { class: "table" },
@@ -311,14 +358,14 @@ function step5(run) {
 function step6(run) {
   const a = run.steps.alerts;
   if (!a.available) {
-    frame(state.current, run.steps.classify.overlay, t().noAlert);
+    emptyFrame(run, t().noAlert, { step: 5, label: t().seeAlerts });
     explain(el("h3", { text: t().steps[5] }), el("p", { text: t().s6 }), el("p", { class: "status-note", text: t().noAlert }));
     return;
   }
   const lang = a.items.some((x) => x.lang === state.alertLang) ? state.alertLang : (state.lang === "vi" ? "vi" : "en");
   const it = a.items.find((x) => x.lang === lang);
   const f = $("#frame");
-  f.replaceChildren(it.card ? el("img", { src: `data/${state.current}/${it.card}`, alt: `${it.headline}. ${it.summary}`, width: 900, height: 506 }) : "", el("figcaption", { text: it.language }));
+  f.replaceChildren(it.card ? el("img", { src: `data/${state.current}/${it.card}${ver(state.current)}`, alt: `${it.headline}. ${it.summary}`, width: 900, height: 506 }) : "", el("figcaption", { text: it.language }));
   explain(
     el("h3", { text: t().steps[5] }), el("p", { text: t().s6 }),
     el("div", { class: "tabs", role: "tablist", "aria-label": t().languages }, a.items.map((x) => el("button", {
@@ -368,7 +415,9 @@ document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("cli
 function routeFromHash() {
   const m = location.hash.match(/run=([\w/]+)(?:&step=(\d))?/);
   const known = [...(state.index.live ? ["live"] : []), ...state.index.replays.map((r) => r.path)];
-  return { path: m && known.includes(m[1]) ? m[1] : known[0],
+  const live = state.runs.live;
+  const fallback = live && hasVisiblePlume(live) ? "live" : (demoPath() || known[0]);
+  return { path: m && known.includes(m[1]) ? m[1] : fallback,
            step: m && m[2] ? Math.min(5, Math.max(0, Number(m[2]) - 1)) : 0 };
 }
 window.addEventListener("hashchange", () => {
@@ -385,6 +434,7 @@ window.addEventListener("hashchange", () => {
     $("#live").replaceChildren(el("p", { class: "status-note", text: `Could not load data/index.json (${e.message}).` }));
     return;
   }
+  if (state.index.live) { try { await loadRun("live"); } catch (_) {} }
   const r = routeFromHash();
   state.current = r.path;
   state.step = r.step;

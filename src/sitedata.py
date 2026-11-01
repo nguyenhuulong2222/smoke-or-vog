@@ -54,6 +54,25 @@ def _spark_boxes(image: Image.Image, loc: dict) -> Image.Image:
     return im
 
 
+def _zoom(im: Image.Image, boxes: list[list[float]], margin: float = 0.35,
+          aspect: float = 1.4, min_w: int = 420) -> Image.Image:
+    """Crop to the union of boxes (+margin), at the frame's aspect ratio, so small
+    plumes are legible on a phone. Returns the image unchanged if there are no boxes."""
+    if not boxes:
+        return im
+    x1 = min(b[0] for b in boxes); y1 = min(b[1] for b in boxes)
+    x2 = max(b[2] for b in boxes); y2 = max(b[3] for b in boxes)
+    w, h = (x2 - x1) * (1 + 2 * margin), (y2 - y1) * (1 + 2 * margin)
+    w = max(w, h * aspect, min_w)
+    h = w / aspect
+    if w >= im.width or h >= im.height:
+        return im
+    cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+    left = min(max(0, cx - w / 2), im.width - w)
+    top = min(max(0, cy - h / 2), im.height - h)
+    return im.crop((round(left), round(top), round(left + w), round(top + h)))
+
+
 def _adp_overlay(image: Image.Image, mask_path: Path) -> Image.Image:
     base = image.convert("RGBA")
     mask = Image.open(mask_path).convert("L")
@@ -89,7 +108,8 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
         "src": _jpg(_adp_overlay(image, adp_mask), out_dir / "adp.jpg") if adp_mask.exists() else None,
     }
     steps["spark"] = {
-        "src": _jpg(_spark_boxes(image, loc), out_dir / "spark_boxes.jpg"),
+        "src": _jpg(_zoom(_spark_boxes(image, loc), [p["box"] for p in loc.get("pixels", [])]),
+                    out_dir / "spark_boxes.jpg"),
         "scene": loc["result"]["scene_description"], "cloud_cover": loc["result"]["cloud_cover"],
         "plumes": [{"label": p["label"], "visual_description": p["visual_description"],
                     "visibility": p["visibility"]} for p in loc["result"]["plumes"]],
@@ -97,7 +117,9 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
     }
     tp = run_dir / "03_sam_two_pass.jpg"
     steps["sam"] = {
-        "src": _jpg(tp, out_dir / "sam_two_pass.jpg") if tp.exists() else None,
+        "src": _jpg(_zoom(Image.open(tp), [b for r in sam.get("two_pass", [])
+                                           for b in (r["spark_box"], r["pass2_box"])]),
+                    out_dir / "sam_two_pass.jpg") if tp.exists() else None,
         "prompt_used": sam.get("chosen_for_classification"),
         "variants": {k: {"objects": len(v.get("objects", [])), "score": v.get("score")}
                      for k, v in sam["variants"].items()},
