@@ -33,6 +33,9 @@ CASES = {
     "maui_20230808": {"layer": "MODIS_Terra_CorrectedReflectance_TrueColor",
                       "time": "2023-08-08", "approx_utc": "2023-08-08T21:00:00Z",
                       "historical": True},
+    # Archive scans (Step 2 backfill): GOES-West GeoColor at a given time, with that day's
+    # FIRMS, ERA5 wind and USGS HVO notice (historical=True), no live ADP.
+    "goes_archive": {"layer": "GOES-West_ABI_GeoColor", "time": None, "historical": True},
     "mauna_loa_20221201": {"layer": "MODIS_Aqua_CorrectedReflectance_TrueColor",
                            "time": "2022-12-01", "approx_utc": "2022-12-01T23:30:00Z",
                            "historical": True,
@@ -315,8 +318,12 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True
     check_budget(RUN_COST_CAP)
     spend_start = total_spend()
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    run_id = f"{case}_{stamp}"
-    rd = OUT / "runs" / run_id
+    if at_time:  # deterministic id per scan time (resumable backfill)
+        run_id = f"{case}_{at_time.replace('-', '').replace(':', '')[:13]}Z"
+        rd = OUT / "runs" / "backfill" / run_id
+    else:
+        run_id = f"{case}_{stamp}"
+        rd = OUT / "runs" / run_id
     rd.mkdir(parents=True, exist_ok=True)
     log = {"run_id": run_id, "case": case, "stages": {}}
     print(f"== {run_id}")

@@ -119,6 +119,12 @@ def _track_block(run_dir: Path, out_dir: Path, ctx0: dict, trace_f: Path) -> dic
 
 
 def _jpg(src: Path | Image.Image, dst: Path, width: int = 1000, q: int = 74) -> str:
+    if LITE["on"]:
+        if "_full" in dst.stem:          # no full-res duplicates in lite mode:
+            dst = dst.with_name(dst.name.replace("_full", ""))   # reuse the display image
+            if dst.exists():
+                return dst.name
+        width, q = (640, 58) if dst.parent.name == "track" else (900, 64)
     im = src if isinstance(src, Image.Image) else Image.open(src)
     im = im.convert("RGB")
     im.thumbnail((width, width))
@@ -212,7 +218,20 @@ def _adp_overlay(image: Image.Image, mask_path: Path) -> Image.Image:
     return base.convert("RGB")
 
 
-def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
+LITE = {"on": False}
+
+
+def build(run_dir: Path, out_dir: Path, mode: str | None = None, lite: bool = False) -> dict:
+    """lite=True (history archive): 900 px images, no full-resolution copies, small
+    time-lapse frames, so ~160 archive scans stay deployable."""
+    LITE["on"] = lite
+    try:
+        return _build(run_dir, out_dir, mode)
+    finally:
+        LITE["on"] = False
+
+
+def _build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
     run_dir, out_dir = Path(run_dir), Path(out_dir)
     if out_dir.exists():
         shutil.rmtree(out_dir)
@@ -324,9 +343,15 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
     else:
         steps["alerts"] = {"available": False}
 
+    title = TITLES.get(case)
+    if title is None:  # archive scans: title from the scan time (HST)
+        from datetime import datetime, timedelta
+        tt = datetime.fromisoformat(ctx0["image"]["time"].replace("Z", "+00:00")) - timedelta(hours=10)
+        title = {"en": f"Archive scan · {tt:%b} {tt.day}, {tt.year}, {tt:%H:%M} HST",
+                 "vi": f"Lượt quét lưu trữ · {tt.day}/{tt.month}/{tt.year}, {tt:%H:%M} HST"}
     doc = {
         "slug": out_dir.name, "case": case, "mode": mode, "run_id": run["run_id"],
-        "title": TITLES.get(case, {"en": case, "vi": case}),
+        "title": title,
         "image_time": ctx0["image"]["time"], "layer": ctx0["image"]["layer"],
         "verdict": res.get("overall"), "detection": res.get("detection"),
         "cost_usd": run.get("cost_usd"), "models": MODELS_USED, "steps": steps,

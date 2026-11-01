@@ -320,20 +320,35 @@ def fetch_wind(points: dict[str, tuple[float, float]], when: datetime | None) ->
                 "from_deg": d["current"]["wind_direction_10m"]} for n, d in zip(names, r)}}
     day = when.strftime("%Y-%m-%d")
     next_day = (when + timedelta(days=1)).strftime("%Y-%m-%d")  # rounding can cross midnight
-    r = requests.get("https://archive-api.open-meteo.com/v1/archive", params={
-        "latitude": lats, "longitude": lons, "timezone": "GMT", "start_date": day,
-        "end_date": next_day, "hourly": "wind_speed_10m,wind_direction_10m"},
-        headers=UA, timeout=30).json()
-    r = r if isinstance(r, list) else [r]
     hour = when.replace(minute=0, second=0, microsecond=0) + timedelta(
         hours=1 if when.minute >= 30 else 0)
     key = hour.strftime("%Y-%m-%dT%H:00")
-    sites = {}
-    for n, d in zip(names, r):
-        i = d["hourly"]["time"].index(key)
-        sites[n] = {"time": key, "speed_kmh": d["hourly"]["wind_speed_10m"][i],
-                    "from_deg": d["hourly"]["wind_direction_10m"][i]}
-    return {"source": "Open-Meteo archive (ERA5-based reanalysis)", "sites": sites}
+    params = {"latitude": lats, "longitude": lons, "timezone": "GMT", "start_date": day,
+              "end_date": next_day, "hourly": "wind_speed_10m,wind_direction_10m"}
+
+    def read(url):
+        r = requests.get(url, params=params, headers=UA, timeout=30).json()
+        r = r if isinstance(r, list) else [r]
+        sites = {}
+        for n, d in zip(names, r):
+            h = d.get("hourly") or {}
+            if key not in h.get("time", []):
+                return None
+            i = h["time"].index(key)
+            sp, dr = h["wind_speed_10m"][i], h["wind_direction_10m"][i]
+            if sp is None or dr is None:
+                return None
+            sites[n] = {"time": key, "speed_kmh": sp, "from_deg": dr}
+        return sites
+
+    sites = read("https://archive-api.open-meteo.com/v1/archive")
+    if sites is not None:
+        return {"source": "Open-Meteo archive (ERA5-based reanalysis)", "sites": sites}
+    # ERA5 lags ~5 days: recent past hours come from the forecast endpoint's history
+    sites = read("https://api.open-meteo.com/v1/forecast")
+    if sites is None:
+        raise RuntimeError(f"no Open-Meteo wind for {key}")
+    return {"source": "Open-Meteo forecast history (recent days; ERA5 not yet available)", "sites": sites}
 
 
 # ---------------------------------------------------------------- Volcano status (USGS HVO)

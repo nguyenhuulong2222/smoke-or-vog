@@ -13,3 +13,6 @@ site/data/live/
 site/data/index.json
 .wrangler/
 out/video/
+
+# archive history lives on the live-data branch (copied in by live.yml)
+site/data/history/

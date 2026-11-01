@@ -88,6 +88,14 @@ jobs:
           git diff --cached --quiet || git commit -q -m "live: ${STATUS:-unknown} $(date -u +%FT%TZ)"
           git push -q origin HEAD:live-data
 
+      - name: Add archive history (stored on the live-data branch)
+        if: steps.scan.outputs.status != ''
+        run: |
+          if [ -d live-data/history ]; then
+            mkdir -p site/data/history
+            cp -R live-data/history/. site/data/history/
+          fi
+
       - name: Hand the built site to the deploy job
         if: steps.scan.outputs.status != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

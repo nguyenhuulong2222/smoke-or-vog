@@ -60,6 +60,18 @@ const T = {
     trackNA: "Motion tracking",
     trackModis: "not available for archived MODIS days (one image per day, no 10-minute frames).",
     trackNotRun: "not run for this scan.", trackNoPlume: "no plume to track.",
+    historyTitle: "History",
+    historyLede: "Every archived GOES-West scan (11:00 and 14:00 HST each day, last ~80 days), run through the same pipeline. Pick a day to open its scan. Past scans, not current alerts.",
+    calLegend: { wildfire_smoke: "Wildfire smoke", vog_kilauea: "Vog (Kīlauea)", vog_mauna_loa: "Vog (Mauna Loa)", vog: "Vog", uncertain: "Haze seen, not confirmed", no_plume: "No plume", none: "No scan" },
+    weekdays: ["S", "M", "T", "W", "T", "F", "S"],
+    scansOn: (d) => `Scans on ${d}`,
+    accuracyTitle: "How accurate is it?",
+    accuracyLede: (n) => `We compared every archive verdict (${n} scans) with Hawaiʻi DOH and National Park Service ground monitors under or downwind of the plume (±3 h). The rules were fixed before the results were computed.`,
+    accCols: ["Verdict", "Scans", "With a monitor nearby", "Ground agrees", "Base rate"],
+    accRows: { vog: "Vog → SO₂ rose", smoke: "Smoke → PM2.5 rose", no_plume: "No plume → air was clean" },
+    accUncertain: (u) => `Uncertain (${u.scans} scans): SO₂ rose in ${u.so2_elevated}, PM2.5 in ${u.pm25_elevated}, neither in ${u.neither}.`,
+    accCaveat: "Small samples: read the counts, not just the percentages. Most vog plumes drift over the ocean where there are no monitors, and satellites see the whole air column while monitors measure ground level. Base rate = how often the same monitors rose on other scans; a verdict is useful only if it beats that.",
+    accNA: "no monitor nearby",
     newWorkTitle: "Built during the hackathon", newWork: "Everything in this project (code, pipeline, site, prompts, tests) was built Oct 31–Nov 4, 2026. Pre-existing external input: the Kahu Ola public API (/api/hazards/smoke-sat, /api/firms/hotspots), built earlier by the same author and used read-only as a data source.",
     replayBanner: "Replay of a past event. Not a current alert.",
     daily: "daily satellite pass",
@@ -145,6 +157,18 @@ const T = {
     trackNA: "Theo dõi chuyển động",
     trackModis: "không có cho các ngày MODIS lưu trữ (mỗi ngày một ảnh, không có ảnh 10 phút).",
     trackNotRun: "không chạy cho lượt quét này.", trackNoPlume: "không có vệt mù để theo dõi.",
+    historyTitle: "Lịch sử",
+    historyLede: "Mọi lượt quét GOES-West lưu trữ (11:00 và 14:00 HST mỗi ngày, khoảng 80 ngày gần nhất), chạy qua cùng quy trình. Chọn một ngày để mở lượt quét. Đây là lượt quét đã qua, không phải cảnh báo hiện tại.",
+    calLegend: { wildfire_smoke: "Khói cháy rừng", vog_kilauea: "Vog (Kīlauea)", vog_mauna_loa: "Vog (Mauna Loa)", vog: "Vog", uncertain: "Có mù, chưa xác nhận", no_plume: "Không có vệt mù", none: "Không có lượt quét" },
+    weekdays: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
+    scansOn: (d) => `Các lượt quét ngày ${d}`,
+    accuracyTitle: "Độ chính xác ra sao?",
+    accuracyLede: (n) => `Chúng tôi so sánh mọi kết luận lưu trữ (${n} lượt quét) với trạm đo mặt đất của Sở Y tế Hawaiʻi và Sở Công viên Quốc gia nằm dưới hoặc cuối hướng gió của vệt mù (±3 giờ). Quy tắc được cố định trước khi tính kết quả.`,
+    accCols: ["Kết luận", "Lượt quét", "Có trạm đo gần", "Mặt đất khớp", "Tỷ lệ nền"],
+    accRows: { vog: "Vog → SO₂ tăng", smoke: "Khói → PM2.5 tăng", no_plume: "Không có vệt mù → không khí sạch" },
+    accUncertain: (u) => `Chưa xác định (${u.scans} lượt): SO₂ tăng ${u.so2_elevated}, PM2.5 tăng ${u.pm25_elevated}, không tăng ${u.neither}.`,
+    accCaveat: "Mẫu nhỏ: hãy đọc số lượng, không chỉ phần trăm. Phần lớn vệt vog trôi ra biển, nơi không có trạm đo; vệ tinh nhìn cả cột không khí còn trạm đo chỉ đo ở mặt đất. Tỷ lệ nền = tần suất các trạm đó tăng trong những lượt quét khác; kết luận chỉ hữu ích khi vượt tỷ lệ này.",
+    accNA: "không có trạm gần",
     newWorkTitle: "Xây dựng trong thời gian hackathon", newWork: "Toàn bộ dự án này (mã nguồn, quy trình, trang web, prompt, kiểm thử) được xây dựng từ 31/10 đến 4/11/2026. Đầu vào có sẵn từ trước: API công khai của Kahu Ola (/api/hazards/smoke-sat, /api/firms/hotspots), do cùng tác giả xây dựng trước đó, chỉ được đọc làm nguồn dữ liệu.",
     replayBanner: "Xem lại sự kiện đã qua. Không phải cảnh báo hiện tại.",
     daily: "lượt chụp vệ tinh hằng ngày",
@@ -174,7 +198,8 @@ const T = {
   },
 };
 
-const state = { lang: "en", index: null, runs: {}, current: null, step: 0, alertLang: null, view: "plume", samMode: "lapse", lapseIdx: null, lapseTimer: null };
+const state = { lang: "en", index: null, runs: {}, current: null, step: 0, alertLang: null, view: "plume",
+                history: null, histDay: null, validation: null, samMode: "lapse", lapseIdx: null, lapseTimer: null };
 try { const s = localStorage.getItem("sov-lang"); if (s === "vi" || s === "en") state.lang = s; } catch (_) {}
 
 const $ = (sel) => document.querySelector(sel);
@@ -313,6 +338,10 @@ function renderReplays() {
 /* ---------------- viewer ---------------- */
 async function select(path, step = 0, scroll = false) {
   state.current = path; state.step = step;
+  if (path.startsWith("history/") && state.history) {
+    const d = state.history.days.find((x) => x.scans.some((sc) => sc.path === path));
+    if (d && state.histDay !== d.date) { state.histDay = d.date; renderHistory(); } else renderDayScans();
+  }
   try { history.replaceState(null, "", `#run=${path}&step=${step + 1}`); } catch (_) {}
   renderReplays();
   await renderViewer();
@@ -656,6 +685,82 @@ function step6(run) {
   );
 }
 
+/* ---------------- history calendar ---------------- */
+const CAL_KEYS = ["wildfire_smoke", "vog", "uncertain", "no_plume", "none"];
+async function renderHistory() {
+  const sec = $("#history");
+  if (!state.history) { try { state.history = await getJSON("data/history/index.json"); } catch (_) { sec.hidden = true; return; } }
+  const days = state.history.days || [];
+  if (!days.length) { sec.hidden = true; return; }
+  sec.hidden = false;
+  const byDate = Object.fromEntries(days.map((d) => [d.date, d]));
+  const first = new Date(days[0].date + "T12:00:00Z"), last = new Date(days[days.length - 1].date + "T12:00:00Z");
+  const loc = state.lang === "vi" ? "vi-VN" : "en-US";
+  const months = [];
+  for (let d = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth(), 1)); d <= last; d.setUTCMonth(d.getUTCMonth() + 1)) months.push(new Date(d));
+  const cal = $("#calendar");
+  cal.replaceChildren(...months.map((m) => {
+    const y = m.getUTCFullYear(), mo = m.getUTCMonth();
+    const grid = el("div", { class: "cal-grid", role: "grid" },
+      ...t().weekdays.map((w) => el("span", { class: "cal-wd", "aria-hidden": "true", text: w })));
+    const lead = new Date(Date.UTC(y, mo, 1)).getUTCDay();
+    for (let i = 0; i < lead; i++) grid.append(el("span", { class: "cal-pad" }));
+    const nd = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate();
+    for (let dd = 1; dd <= nd; dd++) {
+      const iso = `${y}-${String(mo + 1).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+      const rec = byDate[iso];
+      const key = rec ? rec.headline : "none";
+      const label = `${new Date(iso + "T12:00:00Z").toLocaleDateString(loc, { month: "short", day: "numeric", timeZone: "UTC" })}: ${t().calLegend[key] || key}`;
+      grid.append(rec ? el("button", { type: "button", class: `cal-day cal--${key}` + (state.histDay === iso ? " is-sel" : ""),
+                                       "aria-label": label, title: label, onclick: () => openDay(iso), text: String(dd) })
+                      : el("span", { class: "cal-day cal--none", "aria-label": label, title: label, text: String(dd) }));
+    }
+    return el("div", { class: "cal-month" },
+      el("h3", { text: m.toLocaleDateString(loc, { month: "long", year: "numeric", timeZone: "UTC" }) }), grid);
+  }));
+  $("#cal-legend").replaceChildren(...CAL_KEYS.map((k) => el("li", {}, el("span", { class: `cal-swatch cal--${k}` }), t().calLegend[k])));
+  renderDayScans();
+}
+function renderDayScans() {
+  const box = $("#day-scans");
+  const rec = state.history && state.histDay && state.history.days.find((d) => d.date === state.histDay);
+  if (!rec) { box.replaceChildren(); return; }
+  const loc = state.lang === "vi" ? "vi-VN" : "en-US";
+  box.replaceChildren(el("p", { class: "small", text: t().scansOn(new Date(rec.date + "T12:00:00Z").toLocaleDateString(loc, { dateStyle: "medium", timeZone: "UTC" })) }),
+    el("div", { class: "tabs" }, rec.scans.map((sc) => el("button", { type: "button", "aria-selected": String(state.current === sc.path),
+      onclick: () => select(sc.path, 0, true), text: `${sc.hst} HST · ${t().v[sc.class] || t().v.uncertain}` }))));
+}
+function openDay(iso) {
+  state.histDay = iso;
+  const rec = state.history.days.find((d) => d.date === iso);
+  const rank = { wildfire_smoke: 4, vog_kilauea: 3, vog_mauna_loa: 3, uncertain: 1, no_plume: 0 };
+  const pick = [...rec.scans].sort((a, b) => (rank[b.class] || 0) - (rank[a.class] || 0))[0];
+  renderHistory();
+  select(pick.path, 0, true);
+}
+
+/* ---------------- accuracy panel ---------------- */
+async function renderAccuracy() {
+  const sec = $("#accuracy");
+  if (!state.validation) { try { state.validation = await getJSON("data/validation.json"); } catch (_) { sec.hidden = true; return; } }
+  const v = state.validation, T = v.table;
+  sec.hidden = false;
+  const pct = (x) => (x == null ? "—" : `${Math.round(x * 100)}%`);
+  const row = (key) => {
+    const x = T[key];
+    const agree = x.rate == null ? t().accNA : `${x.agree}/${x.covered} (${pct(x.rate)}, 95% CI ${pct(x.ci95[0])}–${pct(x.ci95[1])})`;
+    return el("tr", {}, el("td", { text: t().accRows[key] }), el("td", { text: String(x.scans) }),
+      el("td", { text: String(x.covered) }), el("td", { text: agree }), el("td", { text: key === "no_plume" ? "—" : pct(x.base_rate) }));
+  };
+  $("#accuracy-body").replaceChildren(
+    el("p", { class: "lede", text: t().accuracyLede(v.scans) }),
+    el("div", { class: "table-wrap" }, el("table", { class: "table" },
+      el("thead", {}, el("tr", {}, t().accCols.map((c) => el("th", { text: c })))),
+      el("tbody", {}, ["vog", "smoke", "no_plume"].map(row)))),
+    el("p", { class: "small", text: t().accUncertain(T.uncertain) }),
+    el("p", { class: "small", text: t().accCaveat }));
+}
+
 /* ---------------- how it works ---------------- */
 async function renderHow() {
   const paths = [...(state.index.live ? ["live"] : []), ...state.index.replays.map((r) => r.path)];
@@ -680,6 +785,8 @@ async function renderAll() {
   applyStatic();
   await renderLive();
   renderReplays();
+  await renderHistory();
+  await renderAccuracy();
   await renderViewer();
   await renderHow();
 }
@@ -694,7 +801,8 @@ function routeFromHash() {
   const known = [...(state.index.live ? ["live"] : []), ...state.index.replays.map((r) => r.path)];
   const live = state.runs.live;
   const fallback = live && hasVisiblePlume(live) ? "live" : (demoPath() || known[0]);
-  return { path: m && known.includes(m[1]) ? m[1] : fallback,
+  const ok = m && (known.includes(m[1]) || /^history\/goes_archive_[0-9TZ]+$/.test(m[1]));
+  return { path: ok ? m[1] : fallback,
            step: m && m[2] ? Math.min(6, Math.max(0, Number(m[2]) - 1)) : 0 };
 }
 window.addEventListener("hashchange", () => {
