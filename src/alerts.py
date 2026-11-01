@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import base64
+import re
 import io
 import json
 import sys
@@ -65,6 +66,37 @@ def fix_place_names(text: str) -> str:
                                     and not any(c in v for c in "'‘’")):
                 text = re.sub(rf"(?<![\wʻ']){re.escape(v)}(?![\wʻ'])", name, text)
     return text
+
+
+_VI_VOG = re.compile(r"(?:vog \(sương mù núi lửa\)|sương mù núi lửa \(vog\)|khói mù núi lửa \(vog\)"
+                     r"|khói mù núi lửa|sương mù núi lửa|\bvog\b)", re.IGNORECASE)
+
+
+def normalize_vi_vog(texts: list[str]) -> list[str]:
+    """Vietnamese vog terminology: the first mention across `texts` (in order) becomes
+    'vog (sương mù núi lửa)', every later mention 'vog'. Sentence-initial capitals are kept."""
+    seen = False
+    out = []
+    for text in texts:
+        def sub(m):
+            nonlocal seen
+            rep_ = "vog" if seen else "vog (sương mù núi lửa)"
+            seen = True
+            return rep_[0].upper() + rep_[1:] if m.group(0)[0].isupper() else rep_
+        out.append(_VI_VOG.sub(sub, text))
+    return out
+
+
+def vi_terms(a: dict) -> None:
+    """Apply normalize_vi_vog to a Vietnamese alert in place (headline, summary, then
+    machine-translated guidance lines). Reviewed translations are never changed."""
+    parts = [a["headline"], a["summary"]] + [x["text"] for x in a["actions"] if not x.get("reviewed_override")]
+    fixed = normalize_vi_vog(parts)
+    a["headline"], a["summary"] = fixed[0], fixed[1]
+    it = iter(fixed[2:])
+    for x in a["actions"]:
+        if not x.get("reviewed_override"):
+            x["text"] = next(it)
 
 
 def replay_banner_en(date_label: str) -> str:
@@ -227,8 +259,9 @@ def build_prompt(verdict: str, confidence: float, places: dict, when_hst: str,
         "confidence x 100, rounded).\n"
         "6. Vietnamese must use full diacritics. Ilocano, Tagalog and ʻŌlelo Hawaiʻi: write "
         "natural, simple sentences; they will be reviewed by community speakers.\n"
-        "7. Glossary for Vietnamese: vog = 'sương mù núi lửa (vog)'; wildfire smoke = 'khói "
-        "cháy rừng'. Other languages may keep the word 'vog', which is widely used in Hawaiʻi.\n"
+        "7. Glossary for Vietnamese: the first mention of vog is 'vog (sương mù núi lửa)', later "
+        "mentions just 'vog'; wildfire smoke = 'khói cháy rừng'. Other languages may keep the "
+        "word 'vog', which is widely used in Hawaiʻi.\n"
         "8. Mention only the areas listed in the facts; do not name other towns or regions.\n"
         "9. If mode is 'replay', this is a PAST event shown for demonstration: write the summary "
         "in the past tense, and set replay_banner = 'REPLAY · <replay_date> · not a current "
@@ -329,6 +362,8 @@ def assemble(run_id: str, verdict: str, confidence: float, places: dict, when_ut
             "needs_community_review": code in NEEDS_REVIEW,
             "card": f"alert_{code}.png",
         })
+        if code == "vi":
+            vi_terms(alerts[-1])
     return {"run_id": run_id, "mode": mode, "replay_banner_en": banner_en,
             "verdict": verdict, "confidence": round(confidence, 2),
             "image_time_utc": when_utc, "places": places,
@@ -471,7 +506,7 @@ def render_card(bg: Image.Image, alert: dict, verdict: str) -> Image.Image:
     srcs = sorted({a["url"] for a in alert["actions"]}) or [alert["official_source_url"]]
     d.text((pad, CARD_H - 38), ("Guidance quoted from: " if alert["actions"] else "Official info: ")
            + ", ".join(srcs), font=font(17), fill=(190, 210, 255, 255))
-    tag = "Smoke or Vog? · satellite estimate"
+    tag = "Khói hay vog? · ước tính vệ tinh" if alert["lang"] == "vi" else "Smoke or Vog? · satellite estimate"
     tf = font(16)
     d.text((CARD_W - pad - d.textlength(tag, font=tf), CARD_H - 36), tag, font=tf,
            fill=(170, 175, 185, 255))
@@ -544,6 +579,8 @@ def rerender(run_dir: Path) -> Path:
     doc = json.loads((out / "alerts.json").read_text())
     for a in doc["alerts"]:
         a["headline"], a["summary"] = fix_place_names(a["headline"]), fix_place_names(a["summary"])
+        if a["lang"] == "vi":
+            vi_terms(a)
     verify_guidance(doc)
     bg = Image.open(out / "background.png").convert("RGB")
     for a in doc["alerts"]:

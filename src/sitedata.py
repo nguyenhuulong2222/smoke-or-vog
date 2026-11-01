@@ -78,15 +78,63 @@ def _jpg(src: Path | Image.Image, dst: Path, width: int = 1000, q: int = 74) -> 
     return dst.name
 
 
+_BOLD = Path(__file__).resolve().parent.parent / "assets" / "fonts" / "NotoSans-Bold.ttf"
+
+
 def _spark_boxes(image: Image.Image, loc: dict) -> Image.Image:
+    from PIL import ImageFont
+
     im = image.convert("RGB").copy()
+    k = im.width / 1400
     d = ImageDraw.Draw(im)
+    f = ImageFont.truetype(str(_BOLD), max(18, round(30 * k)))
     for i, p in enumerate(loc.get("pixels", []), start=1):
-        d.rectangle(p["box"], outline=(255, 255, 255), width=3)
+        d.rectangle(p["box"], outline=(255, 255, 255), width=max(3, round(3 * k)))
         x, y = p["inside"]
-        d.ellipse([x - 7, y - 7, x + 7, y + 7], outline=(0, 255, 200), width=3)
-        d.text((p["box"][0] + 6, p["box"][1] + 4), f"#{i}", fill=(255, 255, 255))
+        r = 9 * k
+        d.ellipse([x - r, y - r, x + r, y + r], outline=(0, 255, 200), width=max(3, round(4 * k)))
+        tx, ty = p["box"][0] + 8 * k, p["box"][1] + 6 * k
+        d.text((tx, ty), f"#{i}", font=f, fill=(255, 255, 255),
+               stroke_width=max(2, round(3 * k)), stroke_fill=(0, 0, 0))
     return im
+
+
+def plume_view(run_dir: Path, loc: dict, sam: dict, size=(1400, 1000), margin=0.3,
+               min_frac=0.32, plume_id: int | None = None) -> list[float] | None:
+    """Normalised [x0, y0, x1, y1] crop, padded and at the image's aspect ratio, around the
+    headline plume (overall verdict's plume_id) or, if there is none, all plume evidence
+    (Spark boxes, SAM pass boxes, saved masks). None if there is no plume."""
+    pix = loc.get("pixels", [])
+    two = sam.get("two_pass", [])
+    masks = sorted(Path(run_dir).glob("plume_*_mask.png"))
+    if plume_id is not None:
+        pix = pix[plume_id - 1:plume_id] if 0 < plume_id <= len(pix) else []
+        two = [r for r in two if r.get("plume_id") == plume_id]
+        masks = [m for m in masks if m.name == f"plume_{plume_id}_mask.png"]
+    boxes = [p["box"] for p in pix]
+    for r in two:
+        boxes += [r.get("spark_box"), r.get("pass2_box")]
+    for mf in masks:
+        bb = Image.open(mf).getbbox()
+        if bb:
+            boxes.append(list(bb))
+    boxes = [b for b in boxes if b]
+    if not boxes:
+        return None
+    W, H = size
+    x0 = min(b[0] for b in boxes); y0 = min(b[1] for b in boxes)
+    x1 = max(b[2] for b in boxes); y1 = max(b[3] for b in boxes)
+    w, h = (x1 - x0) * (1 + 2 * margin), (y1 - y0) * (1 + 2 * margin)
+    aspect = W / H
+    w = max(w, h * aspect, W * min_frac)
+    w = min(w, W)
+    h = w / aspect
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    left = min(max(0, cx - w / 2), W - w)
+    top = min(max(0, cy - h / 2), H - h)
+    if w >= W * 0.97:
+        return None  # plume evidence spans the frame: plume view = full view
+    return [round(left / W, 4), round(top / H, 4), round((left + w) / W, 4), round((top + h) / H, 4)]
 
 
 def _zoom(im: Image.Image, boxes: list[list[float]], margin: float = 0.35,
@@ -134,6 +182,7 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
 
     steps: dict = {}
     steps["image"] = {"src": _jpg(image, out_dir / "image.jpg"),
+                      "full": _jpg(image, out_dir / "image_full.jpg", width=1400, q=85),
                       "layer": ctx0["image"]["layer"], "time": ctx0["image"]["time"],
                       "source": ctx0["image"]["source"]}
     adp_mask = run_dir / "01_adp_mask.png"
@@ -141,10 +190,12 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
         "state": adp.get("state"), "candidates": len(adp.get("candidates", [])),
         "reason": adp.get("reason"), "meaning_of_absence": adp.get("meaning_of_absence"),
         "src": _jpg(_adp_overlay(image, adp_mask), out_dir / "adp.jpg") if adp_mask.exists() else None,
+        "full": _jpg(_adp_overlay(image, adp_mask), out_dir / "adp_full.jpg", width=1400, q=85)
+        if adp_mask.exists() else None,
     }
     steps["spark"] = {
-        "src": _jpg(_zoom(_spark_boxes(image, loc), [p["box"] for p in loc.get("pixels", [])]),
-                    out_dir / "spark_boxes.jpg"),
+        "src": _jpg(_spark_boxes(image, loc), out_dir / "spark_boxes.jpg"),
+        "full": _jpg(_spark_boxes(image, loc), out_dir / "spark_boxes_full.jpg", width=1400, q=85),
         "scene": loc["result"]["scene_description"], "cloud_cover": loc["result"]["cloud_cover"],
         "plumes": [{"label": p["label"], "visual_description": p["visual_description"],
                     "visibility": p["visibility"]} for p in loc["result"]["plumes"]],
@@ -152,9 +203,8 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
     }
     tp = run_dir / "03_sam_two_pass.jpg"
     steps["sam"] = {
-        "src": _jpg(_zoom(Image.open(tp), [b for r in sam.get("two_pass", [])
-                                           for b in (r["spark_box"], r["pass2_box"])]),
-                    out_dir / "sam_two_pass.jpg") if tp.exists() else None,
+        "src": _jpg(tp, out_dir / "sam_two_pass.jpg") if tp.exists() else None,
+        "full": _jpg(tp, out_dir / "sam_two_pass_full.jpg", width=1400, q=85) if tp.exists() else None,
         "prompt_used": sam.get("chosen_for_classification"),
         "variants": {k: {"objects": len(v.get("objects", [])), "score": v.get("score")}
                      for k, v in sam["variants"].items()},
@@ -164,7 +214,8 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
     }
     c = cls["context"]
     steps["classify"] = {
-        "overlay": _jpg(run_dir / "overlay.png", out_dir / "overlay.jpg", width=1200),
+        "overlay": _jpg(run_dir / "overlay.png", out_dir / "overlay.jpg", width=1000),
+        "overlay_full": _jpg(run_dir / "overlay.png", out_dir / "overlay_full.jpg", width=1400, q=85),
         "per_plume": res.get("per_plume", []), "caveats": res.get("caveats"),
         "plumes": [{"plume_id": p["plume_id"], "label": p.get("spark_label"),
                     "area_km2": p["geometry"].get("area_km2"),
@@ -216,7 +267,9 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
                                          "reviewed": bool(x.get("reviewed_override"))}
                                         for x in a["actions"]],
                             "card": "cards/" + _jpg(card, out_dir / "cards" / (card.stem + ".jpg"),
-                                                    width=900, q=80) if card.exists() else None})
+                                                    width=900, q=80) if card.exists() else None,
+                            "card_full": "cards/" + _jpg(card, out_dir / "cards" / (card.stem + "_full.jpg"),
+                                                         width=1200, q=88) if card.exists() else None})
         steps["alerts"] = {"available": True, "mode": al["mode"], "places": al.get("places"),
                            "health_sources": al.get("health_sources"), "items": items}
     else:
@@ -228,6 +281,8 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
         "image_time": ctx0["image"]["time"], "layer": ctx0["image"]["layer"],
         "verdict": res.get("overall"), "detection": res.get("detection"),
         "cost_usd": run.get("cost_usd"), "models": MODELS_USED, "steps": steps,
+        "plume_view": plume_view(run_dir, loc, sam, image.size,
+                                 plume_id=(res.get("overall") or {}).get("plume_id")),
     }
     (out_dir / "run.json").write_text(json.dumps(doc, indent=1, ensure_ascii=False))
     return doc

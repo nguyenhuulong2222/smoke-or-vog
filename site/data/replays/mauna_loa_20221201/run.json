@@ -57,6 +57,7 @@
  "steps": {
   "image": {
    "src": "image.jpg",
+   "full": "image_full.jpg",
    "layer": "MODIS_Aqua_CorrectedReflectance_TrueColor",
    "time": "2022-12-01",
    "source": "NASA GIBS WMS"
@@ -66,10 +67,12 @@
    "candidates": 0,
    "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
    "meaning_of_absence": null,
-   "src": null
+   "src": null,
+   "full": null
   },
   "spark": {
    "src": "spark_boxes.jpg",
+   "full": "spark_boxes_full.jpg",
    "scene": "True-color satellite view of the main Hawaiian Islands from Niihau and Kauai in the northwest to Hawaii in the southeast, with scattered bright white cumulus over ocean and islands, large clear dark-ocean gaps in the center, and a diffuse gray translucent veil in the central area southwest of Oahu and Molokai.",
    "cloud_cover": "partly",
    "plumes": [
@@ -84,6 +87,7 @@
   },
   "sam": {
    "src": "sam_two_pass.jpg",
+   "full": "sam_two_pass_full.jpg",
    "prompt_used": "box+point",
    "variants": {
     "box": {
@@ -119,6 +123,7 @@
   },
   "classify": {
    "overlay": "overlay.jpg",
+   "overlay_full": "overlay_full.jpg",
    "per_plume": [
     {
      "plume_id": 1,
@@ -469,7 +474,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_en.jpg"
+     "card": "cards/alert_en.jpg",
+     "card_full": "cards/alert_en_full.jpg"
     },
     {
      "lang": "vi",
@@ -495,7 +501,8 @@
        "reviewed": true
       }
      ],
-     "card": "cards/alert_vi.jpg"
+     "card": "cards/alert_vi.jpg",
+     "card_full": "cards/alert_vi_full.jpg"
     },
     {
      "lang": "ilo",
@@ -521,7 +528,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_ilo.jpg"
+     "card": "cards/alert_ilo.jpg",
+     "card_full": "cards/alert_ilo_full.jpg"
     },
     {
      "lang": "tl",
@@ -547,7 +555,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_tl.jpg"
+     "card": "cards/alert_tl.jpg",
+     "card_full": "cards/alert_tl_full.jpg"
     },
     {
      "lang": "haw",
@@ -573,9 +582,16 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_haw.jpg"
+     "card": "cards/alert_haw.jpg",
+     "card_full": "cards/alert_haw_full.jpg"
     }
    ]
   }
- }
+ },
+ "plume_view": [
+  0.2251,
+  0.2306,
+  0.632,
+  0.6374
+ ]
 }

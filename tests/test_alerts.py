@@ -398,3 +398,25 @@ def test_no_plume_card_renders_without_guidance():
 ])
 def test_fix_place_names(bad, good):
     assert alerts.fix_place_names(bad) == good
+
+
+@pytest.mark.parametrize("texts,expected", [
+    (["Vệ tinh thấy sương mù núi lửa (vog) gần Kaʻū", "sương mù núi lửa (vog) trong 15 km"],
+     ["Vệ tinh thấy vog (sương mù núi lửa) gần Kaʻū", "vog trong 15 km"]),
+    (["Vệ tinh gợi ý vog gần Kaʻū", "vệt khói mù núi lửa (vog) đã thấy", "Khi vog tăng"],
+     ["Vệ tinh gợi ý vog (sương mù núi lửa) gần Kaʻū", "vệt vog đã thấy", "Khi vog tăng"]),
+    (["Sương mù núi lửa từ Kīlauea"], ["Vog (sương mù núi lửa) từ Kīlauea"]),
+    (["Khói cháy rừng gần Lahaina"], ["Khói cháy rừng gần Lahaina"]),   # no vog: untouched
+])
+def test_normalize_vi_vog(texts, expected):
+    assert alerts.normalize_vi_vog(texts) == expected
+
+
+def test_vi_terms_skip_reviewed_lines():
+    a = {"headline": "vog gần Kaʻū", "summary": "sương mù núi lửa (vog)",
+         "actions": [{"text": "Khi sương mù núi lửa (vog) tăng", "reviewed_override": True},
+                     {"text": "Khi sương mù núi lửa (vog) tăng"}]}
+    alerts.vi_terms(a)
+    assert a["headline"] == "vog (sương mù núi lửa) gần Kaʻū" and a["summary"] == "vog"
+    assert a["actions"][0]["text"] == "Khi sương mù núi lửa (vog) tăng"   # reviewed: unchanged
+    assert a["actions"][1]["text"] == "Khi vog tăng"

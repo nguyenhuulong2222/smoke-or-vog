@@ -20,7 +20,7 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont  # noqa: F401
 
 from . import agent, geo, land, models, sources
 from .aggregate import aggregate
@@ -196,70 +196,110 @@ def choose_pass(q1: dict, q2: dict, max_growth: float = 3.0, max_bbox_frac: floa
 
 # ------------------------------------------------------------------ overlay
 
+CLASS_LABELS = {"vog_kilauea": "Vog (Kīlauea)", "vog_mauna_loa": "Vog (Mauna Loa)",
+                "wildfire_smoke": "Wildfire smoke", "dust": "Dust", "cloud": "Cloud",
+                "uncertain": "Uncertain"}
+_NOTO_BOLD = Path(__file__).resolve().parent.parent / "assets" / "fonts" / "NotoSans-Bold.ttf"
+
+
+def _label(d: ImageDraw.ImageDraw, xy, text, f, color, pad):
+    """High-contrast label: dark rounded box + coloured text with a black outline."""
+    x, y = xy
+    tw, th = d.textlength(text, font=f), f.size
+    d.rounded_rectangle([x - pad, y - pad * 0.6, x + tw + pad, y + th + pad * 0.9],
+                        radius=pad, fill=(0, 0, 0, 175))
+    d.text((x, y - th * 0.12), text, font=f, fill=color + (255,),
+           stroke_width=max(1, round(f.size / 14)), stroke_fill=(0, 0, 0, 255))
+
+
 def render_overlay(im: Image.Image, title: str, plumes: list[dict], spark_boxes, adp_mask,
                    firms_clusters, wind: dict, classification: dict | None) -> Image.Image:
+    """Annotated overlay. Marks scale with the image so labels stay readable when the site
+    or the lightbox zooms in. No header/legend strips: the legend is HTML on the site."""
+    k = im.width / 1400
     base = im.convert("RGBA")
     layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
-    f, fs = _font(18), _font(14)
+    f = ImageFont.truetype(str(_NOTO_BOLD), max(18, round(30 * k)))
+    fs = ImageFont.truetype(str(_NOTO_BOLD), max(14, round(22 * k)))
     per = {p["plume_id"]: p for p in (classification or {}).get("per_plume", [])}
     if adp_mask is not None:
-        tint = Image.new("RGBA", base.size, (255, 255, 0, 90))
-        layer.paste(tint, (0, 0), adp_mask)
+        layer.paste(Image.new("RGBA", base.size, (255, 230, 0, 95)), (0, 0), adp_mask)
     for p in plumes:
-        cls = per.get(p["plume_id"], {}).get("class", "uncertain")
-        color = CLASS_COLORS.get(cls, (190, 190, 190))
-        if (per.get(p["plume_id"], {}).get("confidence") or 0) < 0.70:
-            cls = cls + "?"
-        fill = Image.new("RGBA", base.size, color + (110,))
-        layer.paste(fill, (0, 0), p["mask"])
-        bb = p["mask"].getbbox()
-        if bb:
-            conf = per.get(p["plume_id"], {}).get("confidence")
-            label = f"#{p['plume_id']} {cls}" + (f" {conf:.2f}" if conf is not None else "")
-            if p.get("geometry", {}).get("land", {}).get("land_spill"):
-                label += " [LAND SPILL]"
-            d.text((bb[0] + 4, max(0, bb[1] - 20)), label, fill=color + (255,), font=f,
-                   stroke_width=2, stroke_fill=(0, 0, 0, 255))
-        ue = p.get("geometry", {}).get("upwind_end_px")
-        if ue:
-            d.ellipse([ue[0] - 5, ue[1] - 5, ue[0] + 5, ue[1] + 5], outline=(255, 255, 255, 255), width=2)
+        info = per.get(p["plume_id"], {})
+        color = CLASS_COLORS.get(info.get("class", "uncertain"), (190, 190, 190))
+        layer.paste(Image.new("RGBA", base.size, color + (115,)), (0, 0), p["mask"])
     for b in spark_boxes:
-        d.rectangle(b, outline=(255, 255, 255, 200), width=1)
-    for name, (lat, lon) in geo.SOURCES.items():
-        x, y = geo.lonlat_to_px(lon, lat)
-        d.polygon([(x, y - 9), (x - 8, y + 6), (x + 8, y + 6)], outline=(255, 255, 255, 255),
-                  fill=(120, 0, 0, 255))
-        w = wind.get("sites", {}).get(name)
-        if w and w.get("from_deg") is not None:
-            # Arrow points downwind (where air is going).
-            ang = math.radians(w["from_deg"] + 180)
-            L = 18 + w["speed_kmh"] * 1.5
-            x2, y2 = x + L * math.sin(ang), y - L * math.cos(ang)
-            d.line([(x, y), (x2, y2)], fill=(0, 255, 200, 255), width=3)
-            d.text((x2 + 4, y2), f"{w['speed_kmh']:.0f} km/h", fill=(0, 255, 200, 255), font=fs,
-                   stroke_width=2, stroke_fill=(0, 0, 0, 255))
+        d.rectangle(b, outline=(255, 255, 255, 230), width=max(2, round(2 * k)))
     for c in firms_clusters[:15]:
         x, y = geo.lonlat_to_px(c["lon"], c["lat"])
-        r = 4 + min(8, math.log2(1 + c["n"]))
-        d.ellipse([x - r, y - r, x + r, y + r], outline=(255, 30, 30, 255), width=3)
-    out = Image.alpha_composite(base, layer)
-    d = ImageDraw.Draw(out)
-    head = title
-    if classification:
-        ov = classification.get("overall") or classification
-        head += f"  |  verdict: {ov['class']} ({ov['confidence']:.2f})"
-        unc = [u for u in classification.get("overall", {}).get("unconfirmed", [])]
-        if unc:
-            head += "  |  unconfirmed: " + ", ".join(
-                f"#{u['plume_id']} {u['class']} {u['confidence']:.2f}" for u in unc)
-    d.rectangle([0, 0, out.width, 30], fill=(0, 0, 0, 180))
-    d.text((10, 5), head, fill=(255, 255, 255, 255), font=f)
-    legend = ("triangle=summit  red ring=FIRMS fire  cyan=wind (downwind)  white box=Spark  "
-              "yellow=ADP  white dot=plume upwind end")
-    d.rectangle([0, out.height - 24, out.width, out.height], fill=(0, 0, 0, 180))
-    d.text((10, out.height - 21), legend, fill=(230, 230, 230, 255), font=fs)
-    return out.convert("RGB")
+        r = (6 + min(8, math.log2(1 + c["n"]))) * k
+        d.ellipse([x - r, y - r, x + r, y + r], outline=(255, 40, 40, 255), width=max(2, round(3 * k)))
+    for name, (lat, lon) in geo.SOURCES.items():
+        x, y = geo.lonlat_to_px(lon, lat)
+        t = 12 * k
+        d.polygon([(x, y - t), (x - t * 0.9, y + t * 0.7), (x + t * 0.9, y + t * 0.7)],
+                  outline=(255, 255, 255, 255), fill=(130, 0, 0, 255), width=max(1, round(2 * k)))
+        w = wind.get("sites", {}).get(name)
+        if w and w.get("from_deg") is not None:  # arrow points downwind
+            ang = math.radians(w["from_deg"] + 180)
+            L = (26 + w["speed_kmh"] * 1.6) * k
+            x2, y2 = x + L * math.sin(ang), y - L * math.cos(ang)
+            d.line([(x, y), (x2, y2)], fill=(0, 255, 210, 255), width=max(3, round(4 * k)))
+            hx, hy = math.sin(ang), -math.cos(ang)
+            h = 9 * k
+            d.polygon([(x2 + hx * h, y2 + hy * h), (x2 - hy * h * 0.7, y2 + hx * h * 0.7),
+                       (x2 + hy * h * 0.7, y2 - hx * h * 0.7)], fill=(0, 255, 210, 255))
+            _label(d, (x2 + 8 * k, y2 - fs.size / 2), f"{w['speed_kmh']:.0f} km/h", fs,
+                   (0, 255, 210), 4 * k)
+    for p in plumes:
+        info = per.get(p["plume_id"], {})
+        cls, conf = info.get("class", "uncertain"), info.get("confidence")
+        color = CLASS_COLORS.get(cls, (190, 190, 190))
+        ue = p.get("geometry", {}).get("upwind_end_px")
+        if ue:
+            r = 8 * k
+            d.ellipse([ue[0] - r, ue[1] - r, ue[0] + r, ue[1] + r], outline=(255, 255, 255, 255),
+                      width=max(2, round(3 * k)))
+        bb = p["mask"].getbbox()
+        if bb:
+            text = f"#{p['plume_id']} {CLASS_LABELS.get(cls, cls)}"
+            if conf is not None:
+                text += f" {conf:.0%}" + ("" if conf >= 0.70 else " (not confirmed)")
+            if p.get("geometry", {}).get("land", {}).get("land_spill"):
+                text += " [land spill]"
+            tw = d.textlength(text, font=f)
+            x = min(max(6 * k, bb[0]), im.width - tw - 10 * k)
+            y = bb[1] - f.size - 14 * k
+            if y < 6 * k:
+                y = bb[3] + 10 * k
+            _label(d, (x, y), text, f, color, 6 * k)
+    return Image.alpha_composite(base, layer).convert("RGB")
+
+
+def rerender_overlay(run_dir: Path) -> Path:
+    """Re-draw overlay.png for a saved run (no API calls): needs plume_<id>_mask.png files."""
+    run_dir = Path(run_dir)
+    im = Image.open(run_dir / "00_image.jpg").convert("RGB")
+    ctx0 = json.loads((run_dir / "00_context.json").read_text())
+    loc = json.loads((run_dir / "02_spark_localize.json").read_text())
+    cls = json.loads((run_dir / "04_classify.json").read_text())
+    plumes = []
+    for p in cls["context"].get("plumes", []):
+        mf = run_dir / f"plume_{p['plume_id']}_mask.png"
+        if not mf.exists():
+            raise FileNotFoundError(f"{mf} missing; cannot re-render this run")
+        g = dict(p["geometry"])
+        ue = g.get("upwind_end")
+        if ue:
+            g["upwind_end_px"] = list(geo.lonlat_to_px(ue["lon"], ue["lat"]))
+        plumes.append({**p, "geometry": g, "mask": Image.open(mf).convert("L")})
+    adp_f = run_dir / "01_adp_mask.png"
+    ov = render_overlay(im, "", plumes, [p["box"] for p in loc.get("pixels", [])],
+                        Image.open(adp_f).convert("L") if adp_f.exists() else None,
+                        ctx0["firms"]["clusters"], ctx0["wind"], cls["result"])
+    ov.save(run_dir / "overlay.png")
+    return run_dir / "overlay.png"
 
 
 # ------------------------------------------------------------------ run

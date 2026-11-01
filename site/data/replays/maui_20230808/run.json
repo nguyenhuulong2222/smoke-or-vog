@@ -69,6 +69,7 @@
  "steps": {
   "image": {
    "src": "image.jpg",
+   "full": "image_full.jpg",
    "layer": "MODIS_Terra_CorrectedReflectance_TrueColor",
    "time": "2023-08-08",
    "source": "NASA GIBS WMS"
@@ -78,10 +79,12 @@
    "candidates": 0,
    "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
    "meaning_of_absence": null,
-   "src": null
+   "src": null,
+   "full": null
   },
   "spark": {
    "src": "spark_boxes.jpg",
+   "full": "spark_boxes_full.jpg",
    "scene": "True-color satellite view of the main Hawaiian Islands from the northwestern islands to the large southeastern island, showing dark ocean with scattered white cumulus clouds and translucent gray haze extending west and southwest of the islands.",
    "cloud_cover": "partly",
    "plumes": [
@@ -106,6 +109,7 @@
   },
   "sam": {
    "src": "sam_two_pass.jpg",
+   "full": "sam_two_pass_full.jpg",
    "prompt_used": "box+point",
    "variants": {
     "box": {
@@ -155,6 +159,7 @@
   },
   "classify": {
    "overlay": "overlay.jpg",
+   "overlay_full": "overlay_full.jpg",
    "per_plume": [
     {
      "plume_id": 1,
@@ -691,7 +696,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_en.jpg"
+     "card": "cards/alert_en.jpg",
+     "card_full": "cards/alert_en_full.jpg"
     },
     {
      "lang": "vi",
@@ -726,7 +732,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_vi.jpg"
+     "card": "cards/alert_vi.jpg",
+     "card_full": "cards/alert_vi_full.jpg"
     },
     {
      "lang": "ilo",
@@ -761,7 +768,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_ilo.jpg"
+     "card": "cards/alert_ilo.jpg",
+     "card_full": "cards/alert_ilo_full.jpg"
     },
     {
      "lang": "tl",
@@ -796,7 +804,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_tl.jpg"
+     "card": "cards/alert_tl.jpg",
+     "card_full": "cards/alert_tl_full.jpg"
     },
     {
      "lang": "haw",
@@ -831,9 +840,16 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_haw.jpg"
+     "card": "cards/alert_haw.jpg",
+     "card_full": "cards/alert_haw_full.jpg"
     }
    ]
   }
- }
+ },
+ "plume_view": [
+  0.1044,
+  0.1455,
+  0.8084,
+  0.8495
+ ]
 }

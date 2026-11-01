@@ -56,6 +56,7 @@
  "steps": {
   "image": {
    "src": "image.jpg",
+   "full": "image_full.jpg",
    "layer": "GOES-West_ABI_GeoColor",
    "time": "2026-10-17T21:00:00Z",
    "source": "NASA GIBS WMS"
@@ -65,10 +66,12 @@
    "candidates": 0,
    "reason": "Kahu Ola ADP frames are live-only (historical keys 404)",
    "meaning_of_absence": null,
-   "src": null
+   "src": null,
+   "full": null
   },
   "spark": {
    "src": "spark_boxes.jpg",
+   "full": "spark_boxes_full.jpg",
    "scene": "True-color satellite view of the Hawaiian Islands chain from the northwest islands to the large island in the southeast, with scattered bright white cumulus and cirrus clouds over ocean and islands and dark open ocean between.",
    "cloud_cover": "partly",
    "plumes": [
@@ -83,6 +86,7 @@
   },
   "sam": {
    "src": "sam_two_pass.jpg",
+   "full": "sam_two_pass_full.jpg",
    "prompt_used": "box+point",
    "variants": {
     "box": {
@@ -118,6 +122,7 @@
   },
   "classify": {
    "overlay": "overlay.jpg",
+   "overlay_full": "overlay_full.jpg",
    "per_plume": [
     {
      "plume_id": 1,
@@ -453,13 +458,14 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_en.jpg"
+     "card": "cards/alert_en.jpg",
+     "card_full": "cards/alert_en_full.jpg"
     },
     {
      "lang": "vi",
      "language": "Vietnamese (Tiếng Việt)",
-     "headline": "Vệ tinh gợi ý vog gần Nāʻālehu, Ocean View",
-     "summary": "Ảnh vệ tinh lúc 11:00 HST ngày 17/10 đã gợi ý vệt sương mù núi lửa (vog) trong vòng 15 km quanh Nāʻālehu (Kaʻū) và Ocean View (Kaʻū).",
+     "headline": "Vệ tinh gợi ý vog (sương mù núi lửa) gần Nāʻālehu, Ocean View",
+     "summary": "Ảnh vệ tinh lúc 11:00 HST ngày 17/10 đã gợi ý vệt vog trong vòng 15 km quanh Nāʻālehu (Kaʻū) và Ocean View (Kaʻū).",
      "confidence_label": "Độ tin cậy: 82%",
      "disclaimer": "Ước tính từ vệ tinh, không phải cảnh báo chính thức.",
      "disclaimer_en": "Satellite estimate, not an official warning.",
@@ -470,7 +476,7 @@
      "replay_banner_en": "REPLAY · Oct 17, 2026 · not a current alert",
      "actions": [
       {
-       "text": "Hạn chế các hoạt động gắng sức: Tập thể dục hoặc gắng sức ngoài trời làm tăng khả năng bạn bị ảnh hưởng bởi khí SO2 và/hoặc PM2.5. Khi nồng độ sương mù núi lửa (vog) tăng cao, hãy giảm hoạt động gắng sức, nếu có thể.",
+       "text": "Hạn chế các hoạt động gắng sức: Tập thể dục hoặc gắng sức ngoài trời làm tăng khả năng bạn bị ảnh hưởng bởi khí SO2 và/hoặc PM2.5. Khi nồng độ vog tăng cao, hãy giảm hoạt động gắng sức, nếu có thể.",
        "source_url": "https://vog.ivhhn.org/vog-protection",
        "excerpt_en": "Limit strenuous activities: Outdoor exercise or exertion increases your chances of being affected by SO2 gas and/or PM2.5. When vog levels are elevated, reduce strenuous activity, if possible.",
        "verbatim": false,
@@ -479,7 +485,7 @@
        "reviewed": false
       },
       {
-       "text": "Ở trong nhà: Khi nồng độ sương mù núi lửa (vog) tăng, hãy vào trong nhà và đóng tất cả các cửa ra vào và cửa sổ ra bên ngoài và, nếu có thể, hãy bịt kín các khe hở rõ ràng dưới cửa ra vào hoặc quanh cửa sổ.",
+       "text": "Ở trong nhà: Khi nồng độ vog tăng, hãy vào trong nhà và đóng tất cả các cửa ra vào và cửa sổ ra bên ngoài và, nếu có thể, hãy bịt kín các khe hở rõ ràng dưới cửa ra vào hoặc quanh cửa sổ.",
        "source_url": "https://vog.ivhhn.org/vog-protection",
        "excerpt_en": "Stay indoors: When vog levels rise, go indoors and close all doors and windows to the outside and, if possible, seal obvious gaps under doors or around windows.",
        "verbatim": false,
@@ -497,7 +503,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_vi.jpg"
+     "card": "cards/alert_vi.jpg",
+     "card_full": "cards/alert_vi_full.jpg"
     },
     {
      "lang": "ilo",
@@ -541,7 +548,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_ilo.jpg"
+     "card": "cards/alert_ilo.jpg",
+     "card_full": "cards/alert_ilo_full.jpg"
     },
     {
      "lang": "tl",
@@ -585,7 +593,8 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_tl.jpg"
+     "card": "cards/alert_tl.jpg",
+     "card_full": "cards/alert_tl_full.jpg"
     },
     {
      "lang": "haw",
@@ -629,9 +638,16 @@
        "reviewed": false
       }
      ],
-     "card": "cards/alert_haw.jpg"
+     "card": "cards/alert_haw.jpg",
+     "card_full": "cards/alert_haw_full.jpg"
     }
    ]
   }
- }
+ },
+ "plume_view": [
+  0.6161,
+  0.68,
+  0.9361,
+  1.0
+ ]
 }

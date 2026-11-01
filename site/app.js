@@ -39,6 +39,15 @@ const T = {
     noAgent: "No plume in this image, so the agent had nothing to investigate.", agentFixed: "This run used the fixed classifier.", seeAgent: "See the agent at work → Kīlauea replay",
     guidance: "Official guidance (quoted)", guidanceNote: "Health guidance is never chosen or written by AI: each result type maps to fixed lines quoted from official sources.", noGuidance: "No health guidance applies to this result.",
     verbatim: "verbatim", translationLabel: "translation of official guidance, machine-translated", reviewedLabel: "translation of official guidance, reviewed",
+    brand: "Smoke or Vog?", brandSub: "", docTitle: "Smoke or Vog?",
+    metaDesc: "Satellite haze explainer for Hawaiʻi: is it volcanic vog or wildfire smoke? Built with Meta Muse Spark, SAM 3.1 and Muse Image.",
+    enlarge: "⤢ Enlarge", plumeView: "Plume view", fullView: "Full view", viewLabel: "Image view",
+    zoomIn: "Zoom in", zoomOut: "Zoom out", resetZoom: "Fit to screen", close: "Close", enlarged: "Enlarged image",
+    lbHint: "Scroll or pinch to zoom · drag to pan · double-tap to zoom · Esc to close",
+    legend2: "Yellow tint: NOAA aerosol detection (cannot tell vog from smoke).",
+    legend3: "White box: Muse Spark's plume box · teal circle: a point inside the plume.",
+    legend4: "White box: Muse Spark's box · cyan box: widened box for pass 2 · red outline: SAM pass-1 mask · cyan outline: SAM pass-2 mask.",
+    legendOverlay: "Coloured fill: plume mask (orange = vog, red = smoke, grey = uncertain) · white box: Muse Spark box · white ring: plume's upwind end · triangle: volcano summit · teal arrow: wind, pointing downwind · red ring: satellite fire detection · yellow tint: aerosol detection.",
     newWorkTitle: "Built during the hackathon", newWork: "Everything in this project (code, pipeline, site, prompts, tests) was built Oct 31–Nov 4, 2026. Pre-existing external input: the Kahu Ola public API (/api/hazards/smoke-sat, /api/firms/hotspots), built earlier by the same author and used read-only as a data source.",
     replayBanner: "Replay of a past event. Not a current alert.",
     daily: "daily satellite pass",
@@ -75,7 +84,7 @@ const T = {
     footWarn: "Ước tính từ vệ tinh, không phải cảnh báo chính thức. Thông tin chính thức về vog: vog.ivhhn.org; về khói: fire.airnow.gov.",
     credits: 'Dữ liệu: <a href="https://earthdata.nasa.gov/gibs">NASA GIBS</a> (GOES-West GeoColor, MODIS), NOAA GOES-18 / NESDIS, NASA FIRMS, <a href="https://www.usgs.gov/observatories/hvo">Đài quan sát núi lửa Hawaiʻi (USGS)</a>, <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0), <a href="https://www.naturalearthdata.com/">Natural Earth</a> và API công khai của <a href="https://kahuola.org">Kahu Ola</a>. Hướng dẫn sức khỏe trích từ Hawaiʻi Interagency Vog Dashboard (IVHHN / Sở Y tế Hawaiʻi) và U.S. EPA AirNow.',
     kahuola: 'Thực hiện tại Hawaiʻi cho Meta Global AI Developer Hackathon. Toàn bộ mã được xây dựng từ 31/10 đến 4/11/2026; đầu vào có sẵn duy nhất là API công khai của <a href="https://kahuola.org">Kahu Ola</a> (cùng tác giả), chỉ đọc làm nguồn dữ liệu. Bản đồ hiểm họa: <a href="https://kahuola.org">kahuola.org</a>.',
-    v: { wildfire_smoke: "Có thể là khói cháy rừng", vog_kilauea: "Có thể là sương mù núi lửa (vog) từ Kīlauea", vog_mauna_loa: "Có thể là sương mù núi lửa (vog) từ Mauna Loa",
+    v: { wildfire_smoke: "Có thể là khói cháy rừng", vog_kilauea: "Có thể là vog từ Kīlauea", vog_mauna_loa: "Có thể là vog từ Mauna Loa",
          dust: "Có thể là bụi", cloud: "Mây", uncertain: "Có mù, chưa xác định được nguồn", no_plume: "Không phát hiện vệt mù" },
     tooCloudy: "Nhiều mây, khó nhìn thấy mù",
     liveLabel: "Trực tiếp", openLive: "Mở lượt quét trực tiếp", checkedAgo: (n) => n < 90 ? `kiểm tra ${n} phút trước` : `kiểm tra ${Math.round(n / 60)} giờ trước`,
@@ -103,6 +112,15 @@ const T = {
     noAgent: "Ảnh này không có vệt mù, nên tác tử không có gì để điều tra.", agentFixed: "Lượt chạy này dùng bộ phân loại cố định.", seeAgent: "Xem tác tử hoạt động → bản xem lại Kīlauea",
     guidance: "Hướng dẫn chính thức (trích dẫn)", guidanceNote: "Hướng dẫn sức khỏe không bao giờ do AI chọn hay viết: mỗi loại kết quả gắn với các dòng cố định trích từ nguồn chính thức.", noGuidance: "Không có hướng dẫn sức khỏe nào áp dụng cho kết quả này.",
     verbatim: "nguyên văn", translationLabel: "bản dịch hướng dẫn chính thức, dịch máy", reviewedLabel: "bản dịch hướng dẫn chính thức, đã duyệt",
+    brand: "Khói hay vog?", brandSub: "(sương mù núi lửa)", docTitle: "Khói hay vog? (sương mù núi lửa)",
+    metaDesc: "Giải thích mù từ vệ tinh cho Hawaiʻi: đó là vog (sương mù núi lửa) hay khói cháy rừng? Xây dựng với Meta Muse Spark, SAM 3.1 và Muse Image.",
+    enlarge: "⤢ Phóng to", plumeView: "Cận cảnh vệt mù", fullView: "Toàn cảnh", viewLabel: "Chế độ xem ảnh",
+    zoomIn: "Phóng to", zoomOut: "Thu nhỏ", resetZoom: "Vừa màn hình", close: "Đóng", enlarged: "Ảnh phóng to",
+    lbHint: "Cuộn hoặc chụm hai ngón để phóng to · kéo để di chuyển · chạm hai lần để phóng to · Esc để đóng",
+    legend2: "Màu vàng: vùng NOAA phát hiện sol khí (không phân biệt được vog với khói).",
+    legend3: "Khung trắng: khung vệt mù của Muse Spark · vòng tròn xanh: một điểm bên trong vệt mù.",
+    legend4: "Khung trắng: khung của Muse Spark · khung xanh: khung nới rộng cho lượt 2 · viền đỏ: mặt nạ SAM lượt 1 · viền xanh: mặt nạ SAM lượt 2.",
+    legendOverlay: "Vùng tô màu: mặt nạ vệt mù (cam = vog, đỏ = khói, xám = chưa xác định) · khung trắng: khung của Muse Spark · vòng trắng: đầu vệt phía gió thổi tới · tam giác: đỉnh núi lửa · mũi tên xanh: hướng gió thổi đi · vòng đỏ: điểm cháy từ vệ tinh · màu vàng: vùng phát hiện sol khí.",
     newWorkTitle: "Xây dựng trong thời gian hackathon", newWork: "Toàn bộ dự án này (mã nguồn, quy trình, trang web, prompt, kiểm thử) được xây dựng từ 31/10 đến 4/11/2026. Đầu vào có sẵn từ trước: API công khai của Kahu Ola (/api/hazards/smoke-sat, /api/firms/hotspots), do cùng tác giả xây dựng trước đó, chỉ được đọc làm nguồn dữ liệu.",
     replayBanner: "Xem lại sự kiện đã qua. Không phải cảnh báo hiện tại.",
     daily: "lượt chụp vệ tinh hằng ngày",
@@ -132,7 +150,7 @@ const T = {
   },
 };
 
-const state = { lang: "en", index: null, runs: {}, current: null, step: 0, alertLang: null };
+const state = { lang: "en", index: null, runs: {}, current: null, step: 0, alertLang: null, view: "plume" };
 try { const s = localStorage.getItem("sov-lang"); if (s === "vi" || s === "en") state.lang = s; } catch (_) {}
 
 const $ = (sel) => document.querySelector(sel);
@@ -189,6 +207,17 @@ const img = (path, file, alt, eager = true) => el("img", { src: `data/${path}/${
 /* ---------------- static text ---------------- */
 function applyStatic() {
   document.documentElement.lang = state.lang;
+  document.title = t().docTitle;
+  const md = document.querySelector('meta[name="description"]');
+  if (md) md.setAttribute("content", t().metaDesc);
+  const og = document.querySelector('meta[property="og:description"]');
+  if (og) og.setAttribute("content", t().metaDesc);
+  const ogt = document.querySelector('meta[property="og:title"]');
+  if (ogt) ogt.setAttribute("content", t().docTitle);
+  $("#brand-name").textContent = t().brand;
+  $("#brand-sub").textContent = t().brandSub;
+  $("#brand-sub").hidden = !t().brandSub;
+  $(".brand").setAttribute("title", t().docTitle);
   document.querySelectorAll("[data-i18n]").forEach((n) => { n.textContent = t()[n.dataset.i18n]; });
   document.querySelectorAll("[data-i18n-html]").forEach((n) => { n.innerHTML = t()[n.dataset.i18nHtml]; }); // trusted strings above
   document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === state.lang)));
@@ -275,9 +304,33 @@ async function renderViewer() {
   [step1, step2, step3, step4, stepAgent, step5, step6][state.step](run);
 }
 
-function frame(path, file, caption) {
+/* Step image with Plume view / Full view, an Enlarge button (lightbox) and an HTML legend.
+   opt: { full: full-res file, crop: true if this step supports Plume view, legend: i18n key } */
+function frame(path, file, caption, opt = {}) {
   if (!file) return emptyFrame(state.runs[path], caption, null);
-  $("#frame").replaceChildren(img(path, file, caption), el("figcaption", { text: caption }));
+  const run = state.runs[path];
+  const pv = opt.crop && run && run.plume_view;
+  const usePlume = pv && state.view === "plume";
+  const fullFile = opt.full || file;
+  const pic = el("img", { src: `data/${path}/${usePlume ? fullFile : file}${ver(path)}`, alt: caption,
+                          decoding: "async", width: 1400, height: 1000, class: usePlume ? "crop" : null });
+  if (usePlume) {
+    const [x0, y0, x1, y1] = pv, cw = x1 - x0, ch = y1 - y0;
+    pic.style.width = `${100 / cw}%`;
+    pic.style.left = `${-x0 / cw * 100}%`;
+    pic.style.top = `${-y0 / ch * 100}%`;
+  }
+  const open = () => openLightbox(`data/${path}/${fullFile}${ver(path)}`, caption);
+  pic.addEventListener("click", open);
+  const bar = el("div", { class: "frame__bar" },
+    pv ? el("div", { class: "seg", role: "group", "aria-label": t().viewLabel },
+      ["plume", "full"].map((v) => el("button", { type: "button", "aria-pressed": String(state.view === v),
+        onclick: () => { state.view = v; renderViewer(); }, text: v === "plume" ? t().plumeView : t().fullView }))) : el("span"),
+    el("button", { type: "button", class: "enlarge", onclick: open, text: t().enlarge }));
+  $("#frame").replaceChildren(
+    el("div", { class: "view" + (usePlume ? " view--crop" : "") }, pic, bar),
+    el("figcaption", {}, el("span", { text: caption }),
+      opt.legend ? el("span", { class: "legend", text: t()[opt.legend] }) : ""));
 }
 /* Never an empty black panel: the run's own true-color image, dimmed, with the message on top,
    and (optionally) a way to see the step working on the Kīlauea replay. */
@@ -292,17 +345,113 @@ function emptyFrame(run, message, cta) {
         onclick: () => select(demo, cta.step, true), text: cta.label }))));
 }
 function explain(...nodes) { $("#explain").replaceChildren(...nodes); }
+
+/* ---------------- lightbox: zoom + pan, pinch, double-tap, Esc, focus trap ---------------- */
+const LB = { s: 1, x: 0, y: 0, fit: 1, opener: null, ptrs: new Map(), last: null, tap: 0,
+             pinched: false, down: null };
+function lbEnsure() {
+  if (LB.root) return;
+  const imgEl = el("img", { class: "lb__img", alt: "" });
+  const stage = el("div", { class: "lb__stage" }, imgEl);
+  const btn = (cls, label, fn, text) => el("button", { type: "button", class: cls, "aria-label": label, onclick: fn, text });
+  const bar = el("div", { class: "lb__bar" },
+    btn("lb__btn", t().zoomOut, () => lbZoom(1 / 1.5)), btn("lb__btn", t().zoomIn, () => lbZoom(1.5)),
+    btn("lb__btn", t().resetZoom, lbFit), btn("lb__btn lb__close", t().close, lbClose, "✕"));
+  bar.children[0].textContent = "−"; bar.children[1].textContent = "+"; bar.children[2].textContent = "⤢";
+  const hint = el("p", { class: "lb__hint" });
+  const root = el("div", { class: "lb", role: "dialog", "aria-modal": "true", "aria-label": t().enlarged, hidden: true }, stage, bar, hint);
+  document.body.append(root);
+  Object.assign(LB, { root, stage, imgEl, bar, hint });
+  stage.addEventListener("wheel", (e) => { e.preventDefault(); lbZoom(e.deltaY < 0 ? 1.18 : 1 / 1.18, e.clientX, e.clientY); }, { passive: false });
+  stage.addEventListener("pointerdown", (e) => {
+    try { stage.setPointerCapture(e.pointerId); } catch (_) { /* synthetic or lost pointer */ }
+    if (LB.ptrs.size === 0) { LB.pinched = false; LB.down = { x: e.clientX, y: e.clientY, t: Date.now() }; }
+    LB.ptrs.set(e.pointerId, [e.clientX, e.clientY]); LB.last = null;
+    if (LB.ptrs.size > 1) LB.pinched = true;
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!LB.ptrs.has(e.pointerId)) return;
+    const prev = LB.ptrs.get(e.pointerId);
+    LB.ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+    if (LB.ptrs.size === 1) { LB.x += e.clientX - prev[0]; LB.y += e.clientY - prev[1]; lbApply(); }
+    else if (LB.ptrs.size === 2) {
+      const [a, b] = [...LB.ptrs.values()];
+      const d = Math.hypot(a[0] - b[0], a[1] - b[1]), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      if (LB.last) lbZoom(d / LB.last, mx, my);
+      LB.last = d;
+    }
+  });
+  const up = (e) => {
+    LB.ptrs.delete(e.pointerId); LB.last = null;
+    // Double-tap: only single-finger, short, nearly stationary taps count (never the end of a pinch).
+    if (e.type === "pointerup" && e.pointerType !== "mouse" && LB.ptrs.size === 0 && !LB.pinched && LB.down) {
+      const now = Date.now();
+      const still = Math.hypot(e.clientX - LB.down.x, e.clientY - LB.down.y) < 12 && now - LB.down.t < 250;
+      if (still && now - LB.tap < 300) { lbToggle(e.clientX, e.clientY); LB.tap = 0; }
+      else LB.tap = still ? now : 0;
+    }
+    if (LB.ptrs.size === 0) LB.pinched = false;
+  };
+  stage.addEventListener("pointerup", up); stage.addEventListener("pointercancel", up);
+  stage.addEventListener("dblclick", (e) => lbToggle(e.clientX, e.clientY));
+  root.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { e.preventDefault(); lbClose(); }
+    else if (e.key === "+" || e.key === "=") lbZoom(1.5);
+    else if (e.key === "-") lbZoom(1 / 1.5);
+    else if (e.key.startsWith("Arrow")) { const d = 60; LB.x += e.key === "ArrowLeft" ? d : e.key === "ArrowRight" ? -d : 0; LB.y += e.key === "ArrowUp" ? d : e.key === "ArrowDown" ? -d : 0; lbApply(); }
+    else if (e.key === "Tab") {                                            // focus trap
+      const f = [...bar.querySelectorAll("button")];
+      const i = f.indexOf(document.activeElement);
+      e.preventDefault();
+      f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+    }
+  });
+  window.addEventListener("resize", () => { if (!LB.root.hidden) lbFit(); });
+}
+function lbApply() { LB.imgEl.style.transform = `translate(${LB.x}px, ${LB.y}px) scale(${LB.s})`; }
+function lbFit() {
+  const r = LB.stage.getBoundingClientRect(), w = LB.imgEl.naturalWidth || 1400, h = LB.imgEl.naturalHeight || 1000;
+  LB.fit = Math.min(r.width / w, r.height / h);
+  LB.s = LB.fit; LB.x = (r.width - w * LB.s) / 2; LB.y = (r.height - h * LB.s) / 2; lbApply();
+}
+function lbZoom(k, cx, cy) {
+  const r = LB.stage.getBoundingClientRect();
+  const px = (cx ?? r.left + r.width / 2) - r.left, py = (cy ?? r.top + r.height / 2) - r.top;
+  const ns = Math.min(LB.fit * 8, Math.max(LB.fit, LB.s * k));
+  LB.x = px - (px - LB.x) * (ns / LB.s); LB.y = py - (py - LB.y) * (ns / LB.s); LB.s = ns; lbApply();
+}
+function lbToggle(cx, cy) { if (LB.s > LB.fit * 1.05) lbFit(); else lbZoom(2.5, cx, cy); }
+function openLightbox(src, alt) {
+  lbEnsure();
+  LB.opener = document.activeElement;
+  LB.root.setAttribute("aria-label", t().enlarged);
+  LB.bar.children[0].setAttribute("aria-label", t().zoomOut); LB.bar.children[1].setAttribute("aria-label", t().zoomIn);
+  LB.bar.children[2].setAttribute("aria-label", t().resetZoom); LB.bar.children[3].setAttribute("aria-label", t().close);
+  LB.hint.textContent = t().lbHint;
+  LB.imgEl.alt = alt || "";
+  LB.imgEl.onload = lbFit;
+  LB.imgEl.src = src;
+  LB.root.hidden = false;
+  document.documentElement.classList.add("lb-open");
+  if (LB.imgEl.complete) lbFit();
+  LB.bar.querySelector(".lb__close").focus();
+}
+function lbClose() {
+  LB.root.hidden = true;
+  document.documentElement.classList.remove("lb-open");
+  if (LB.opener && LB.opener.focus) LB.opener.focus();
+}
 const dl = (pairs) => el("dl", {}, pairs.filter(Boolean).flatMap(([k, v]) => [el("dt", { text: k }), el("dd", {}, v)]));
 
 function step1(run) {
   const s = run.steps.image;
-  frame(state.current, s.src, `${s.layer} · ${fmtTime(s.time)}`);
+  frame(state.current, s.src, `${s.layer} · ${fmtTime(s.time)}`, { full: s.full });
   explain(el("h3", { text: t().steps[0] }), el("p", { text: t().s1 }),
     dl([["Layer", s.layer], [t().scanned, fmtTime(s.time)], [t().source, s.source]]));
 }
 function step2(run) {
   const s = run.steps.adp;
-  if (s.src) frame(state.current, s.src, "NOAA ADP (Kahu Ola)");
+  if (s.src) frame(state.current, s.src, "NOAA ADP (Kahu Ola)", { full: s.full, legend: "legend2" });
   else emptyFrame(run, t().noAdp, null);
   explain(el("h3", { text: t().steps[1] }), el("p", { text: t().s2 }),
     dl([["State", s.state || "—"], ["Regions", String(s.candidates)], s.reason && ["Note", s.reason],
@@ -310,7 +459,7 @@ function step2(run) {
 }
 function step3(run) {
   const s = run.steps.spark;
-  if (s.plumes.length) frame(state.current, s.src, "Muse Spark");
+  if (s.plumes.length) frame(state.current, s.src, "Muse Spark", { full: s.full, crop: true, legend: "legend3" });
   else emptyFrame(run, t().noSparkPlume, { step: 2, label: t().seeSam });
   explain(el("h3", { text: t().steps[2] }), el("p", { text: t().s3 }),
     dl([[t().scene, s.scene], [t().cloud, s.cloud_cover]]),
@@ -320,7 +469,7 @@ function step3(run) {
 }
 function step4(run) {
   const s = run.steps.sam;
-  if (s.src) frame(state.current, s.src, "SAM 3.1: red = pass 1, cyan = pass 2");
+  if (s.src) frame(state.current, s.src, "SAM 3.1", { full: s.full, crop: true, legend: "legend4" });
   else emptyFrame(run, t().noSamLive, { step: 3, label: t().seeSam });
   explain(el("h3", { text: t().steps[3] }), el("p", { text: t().s4 }),
     s.prompt_used ? dl([[t().promptUsed, s.prompt_used]]) : "",
@@ -339,7 +488,8 @@ function stepAgent(run) {
     explain(el("h3", { text: t().steps[4] }), el("p", { text: t().sAgent }));
     return;
   }
-  frame(state.current, run.steps.classify.overlay, t().agentCalls(a.calls.length, a.rounds));
+  frame(state.current, run.steps.classify.overlay, t().agentCalls(a.calls.length, a.rounds),
+        { full: run.steps.classify.overlay_full, crop: true, legend: "legendOverlay" });
   explain(
     el("h3", { text: t().steps[4] }), el("p", { text: t().sAgent }),
     el("p", { class: "small", text: `${t().agentCalls(a.calls.length, a.rounds)} · $${(a.cost_usd || 0).toFixed(3)}` }),
@@ -356,7 +506,7 @@ function stepAgent(run) {
 function step5(run) {
   const s = run.steps.classify;
   const v = verdictKey(run);
-  frame(state.current, s.overlay, t().v[v]);
+  frame(state.current, s.overlay, t().v[v], { full: s.overlay_full, crop: true, legend: "legendOverlay" });
   const ov = run.verdict || {};
   const plumeInfo = Object.fromEntries((s.plumes || []).map((p) => [p.plume_id, p]));
   const vol = (s.volcano_status && s.volcano_status.volcanoes) || {};
@@ -398,7 +548,13 @@ function step6(run) {
   const lang = a.items.some((x) => x.lang === state.alertLang) ? state.alertLang : (state.lang === "vi" ? "vi" : "en");
   const it = a.items.find((x) => x.lang === lang);
   const f = $("#frame");
-  f.replaceChildren(it.card ? el("img", { src: `data/${state.current}/${it.card}${ver(state.current)}`, alt: `${it.headline}. ${it.summary}`, width: 900, height: 506 }) : "", el("figcaption", { text: it.language }));
+  const cardFull = `data/${state.current}/${it.card_full || it.card}${ver(state.current)}`;
+  const cardAlt = `${it.headline}. ${it.summary}`;
+  const openCard = () => openLightbox(cardFull, cardAlt);
+  const cardImg = it.card ? el("img", { src: `data/${state.current}/${it.card}${ver(state.current)}`, alt: cardAlt, width: 900, height: 506, onclick: openCard }) : "";
+  f.replaceChildren(el("div", { class: "view view--card" }, cardImg,
+    el("div", { class: "frame__bar" }, el("span"), el("button", { type: "button", class: "enlarge", onclick: openCard, text: t().enlarge }))),
+    el("figcaption", { text: it.language }));
   explain(
     el("h3", { text: t().steps[6] }), el("p", { text: t().s6 }),
     el("div", { class: "tabs", role: "tablist", "aria-label": t().languages }, a.items.map((x) => el("button", {
