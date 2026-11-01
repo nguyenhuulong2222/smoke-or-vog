@@ -60,6 +60,14 @@ TOOLS = [
                                    "wind_from_deg": {"type": "number",
                                                      "description": "optional; direction wind blows from"}},
                     "required": ["plume_id"]}},
+    {"type": "function", "name": "track_plume",
+     "description": "How the plume actually moved over the last ~3 hours, measured by tracking "
+                    "its SAM 3.1 mask through 10-minute GOES-West frames: drift direction "
+                    "(toward, degrees), approximate speed, fit quality, and the inferred source "
+                    "end with its distance to the summits. Compare the drift with get_wind. "
+                    "Unavailable for daily (MODIS) imagery.",
+     "parameters": {"type": "object", "additionalProperties": False,
+                    "properties": {"plume_id": {"type": "integer"}}, "required": ["plume_id"]}},
     {"type": "function", "name": "land_fraction",
      "description": "How much of a plume's mask lies over land, and which islands it covers "
                     "(Natural Earth 10m). A mask that swallows an island is unreliable.",
@@ -166,6 +174,22 @@ class Toolbox:
         g["wind_from_deg_used"] = wf
         return g
 
+    def track_plume(self, plume_id):
+        self._plume(plume_id)
+        f = self.run_dir / "05_track.json"
+        if not f.exists():
+            return {"available": False, "reason": "tracking was not run for this scan"}
+        tr = json.loads(f.read_text())
+        if not tr.get("available"):
+            return {"available": False, "reason": tr.get("reason")}
+        p = next((x for x in tr["plumes"] if x["plume_id"] == plume_id), None)
+        if not p or not p.get("motion"):
+            return {"available": False, "reason": "the plume could not be tracked through enough frames"}
+        return {"available": True, "window": f"{tr['frames'][0]} to {tr['frames'][-1]}",
+                "frames_tracked": f"{p['frames_tracked']}/{p['frames_total']}",
+                "drift_toward_deg": p["motion"]["toward_deg"], "drift_speed_kmh": p["motion"]["speed_kmh"],
+                "fit_r2": p["motion"]["r2"], "source_end": p.get("source_end"), "note": tr["note"]}
+
     def land_fraction(self, plume_id):
         p = self._plume(plume_id)
         m = self._mask(plume_id)
@@ -179,6 +203,7 @@ class Toolbox:
             fn = {"get_wind": self.get_wind, "get_firms": self.get_firms,
                   "get_volcano_status": self.get_volcano_status,
                   "distance_to_vents": self.distance_to_vents,
+                  "track_plume": self.track_plume,
                   "land_fraction": self.land_fraction}.get(name)
             if fn is None:
                 raise ValueError(f"unknown tool {name}")
@@ -226,8 +251,14 @@ def classify_agentic(run_id: str, run_dir: Path, im: Image.Image, plumes: list[d
         "Segmented plumes are listed below. Use the tools to gather the evidence YOU judge "
         "necessary (wind at the right places and time, fire detections near the plume's upwind "
         "end, the official volcano status at the image time, plume geometry and distance to the "
-        "vents, land coverage of the mask), then classify each plume as one of: "
+        "vents, land coverage of the mask, and the plume's measured motion), then classify "
+        "each plume as one of: "
         + ", ".join(CLASSES) + ". Never force a class; 'uncertain' is valid. Confidence is 0 to 1.\n"
+        "MOTION: if track_plume is available, compare the measured drift direction with the wind "
+        "(wind blows toward from+180). Agreement within about 45 degrees supports the transport "
+        "story and may raise confidence; disagreement must be stated as evidence and should "
+        "lower confidence. The inferred source end tells you which vent or fire the plume "
+        "trails from.\n"
         "CITATION RULE: every tool result carries a 'cite_as' key such as \"E1\". Every "
         "evidence item must list in 'cites' the cite_as key(s) of the tool result(s) it relies "
         "on (a visual observation must still cite the tool output that supports the "

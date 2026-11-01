@@ -137,6 +137,14 @@ the four cases, the agent's overall verdicts matched the fixed classifier's. It 
 confidence on Kīlauea (0.82 vs 0.70) and named the right class on Mauna Loa (`vog_mauna_loa`
 0.62, still unconfirmed), for about $0.01 more per plume run. Live scans use agent mode.
 
+**Plume motion (`--track`, on in the live job):** a trailing 3-hour window of 10-minute GOES-West
+frames is encoded as an MP4 and tracked with **SAM 3.1 video**, seeded with each plume's box on
+the scan frame (`src/track.py`, `05_track.json`). A least-squares fit of the per-frame mask
+centroids gives the drift direction and speed, and the far end against the drift is the inferred
+source end. The agent's `track_plume` tool returns this, and the agent compares it with
+`get_wind`. The site shows a time-lapse player in step 4. Daily MODIS replays can't be tracked
+and say so. Cost: $0.01 per clip (50-frame minimum).
+
 **Summit glow is not fire:** FIRMS detections inside the Kīlauea and Mauna Loa summit calderas
 (Kahu Ola `volcanic_zone` flag, or the same caldera boxes for historical data) are reported as
 `volcanic_thermal` and kept out of the fire clusters. Glow alone is not treated as proof of

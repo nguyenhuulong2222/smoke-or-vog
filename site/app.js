@@ -48,6 +48,18 @@ const T = {
     legend3: "White box: Muse Spark's plume box · teal circle: a point inside the plume.",
     legend4: "White box: Muse Spark's box · cyan box: widened box for pass 2 · red outline: SAM pass-1 mask · cyan outline: SAM pass-2 mask.",
     legendOverlay: "Coloured fill: plume mask (orange = vog, red = smoke, grey = uncertain) · white box: Muse Spark box · white ring: plume's upwind end · triangle: volcano summit · teal arrow: wind, pointing downwind · red ring: satellite fire detection · yellow tint: aerosol detection.",
+    timelapse: "Time-lapse", stillMasks: "Still masks", samView: "SAM view", play: "▶ Play", pause: "❚❚ Pause", scrub: "Frame",
+    trackCaption: "SAM 3.1 video: the plume tracked through 3 hours of 10-minute frames",
+    legendTrack: "Coloured outline: the plume's SAM 3.1 video mask in each frame · white line: path of the plume's centre · time in UTC.",
+    trackTitle: "Plume motion (SAM 3.1 video)",
+    trackSummary: (fr, win, deg, kmh, r2) => `tracked ${fr} frames (${win}); drifting toward ${deg}° at about ${kmh} km/h (fit R² ${r2}).`,
+    windCmp: (wt, d, lab) => `Wind blows toward ${wt}°: ${lab} (${d}° apart).`,
+    agreeLabel: { agrees: "agrees", partly: "partly agrees", disagrees: "disagrees" },
+    sourceEnd: (k, m) => `Trailing (source) end: ${k} km from Kīlauea, ${m} km from Mauna Loa.`,
+    trackNote: "The centre of a plume that is still attached to its source moves slower than the air, so the direction matters more than the speed.",
+    trackNA: "Motion tracking",
+    trackModis: "not available for archived MODIS days (one image per day, no 10-minute frames).",
+    trackNotRun: "not run for this scan.", trackNoPlume: "no plume to track.",
     newWorkTitle: "Built during the hackathon", newWork: "Everything in this project (code, pipeline, site, prompts, tests) was built Oct 31–Nov 4, 2026. Pre-existing external input: the Kahu Ola public API (/api/hazards/smoke-sat, /api/firms/hotspots), built earlier by the same author and used read-only as a data source.",
     replayBanner: "Replay of a past event. Not a current alert.",
     daily: "daily satellite pass",
@@ -121,6 +133,18 @@ const T = {
     legend3: "Khung trắng: khung vệt mù của Muse Spark · vòng tròn xanh: một điểm bên trong vệt mù.",
     legend4: "Khung trắng: khung của Muse Spark · khung xanh: khung nới rộng cho lượt 2 · viền đỏ: mặt nạ SAM lượt 1 · viền xanh: mặt nạ SAM lượt 2.",
     legendOverlay: "Vùng tô màu: mặt nạ vệt mù (cam = vog, đỏ = khói, xám = chưa xác định) · khung trắng: khung của Muse Spark · vòng trắng: đầu vệt phía gió thổi tới · tam giác: đỉnh núi lửa · mũi tên xanh: hướng gió thổi đi · vòng đỏ: điểm cháy từ vệ tinh · màu vàng: vùng phát hiện sol khí.",
+    timelapse: "Tua nhanh", stillMasks: "Mặt nạ tĩnh", samView: "Chế độ SAM", play: "▶ Phát", pause: "❚❚ Tạm dừng", scrub: "Khung hình",
+    trackCaption: "SAM 3.1 video: theo dõi vệt mù qua 3 giờ ảnh, mỗi ảnh cách nhau 10 phút",
+    legendTrack: "Viền màu: mặt nạ video SAM 3.1 của vệt mù ở từng khung · đường trắng: đường đi của tâm vệt mù · giờ UTC.",
+    trackTitle: "Chuyển động của vệt mù (SAM 3.1 video)",
+    trackSummary: (fr, win, deg, kmh, r2) => `theo dõi được ${fr} khung (${win}); trôi về hướng ${deg}° với tốc độ khoảng ${kmh} km/h (độ khớp R² ${r2}).`,
+    windCmp: (wt, d, lab) => `Gió thổi về hướng ${wt}°: ${lab} (lệch ${d}°).`,
+    agreeLabel: { agrees: "khớp", partly: "khớp một phần", disagrees: "không khớp" },
+    sourceEnd: (k, m) => `Đầu vệt (phía nguồn): cách Kīlauea ${k} km, cách Mauna Loa ${m} km.`,
+    trackNote: "Tâm của một vệt mù còn gắn với nguồn di chuyển chậm hơn không khí, nên hướng trôi quan trọng hơn tốc độ.",
+    trackNA: "Theo dõi chuyển động",
+    trackModis: "không có cho các ngày MODIS lưu trữ (mỗi ngày một ảnh, không có ảnh 10 phút).",
+    trackNotRun: "không chạy cho lượt quét này.", trackNoPlume: "không có vệt mù để theo dõi.",
     newWorkTitle: "Xây dựng trong thời gian hackathon", newWork: "Toàn bộ dự án này (mã nguồn, quy trình, trang web, prompt, kiểm thử) được xây dựng từ 31/10 đến 4/11/2026. Đầu vào có sẵn từ trước: API công khai của Kahu Ola (/api/hazards/smoke-sat, /api/firms/hotspots), do cùng tác giả xây dựng trước đó, chỉ được đọc làm nguồn dữ liệu.",
     replayBanner: "Xem lại sự kiện đã qua. Không phải cảnh báo hiện tại.",
     daily: "lượt chụp vệ tinh hằng ngày",
@@ -150,7 +174,7 @@ const T = {
   },
 };
 
-const state = { lang: "en", index: null, runs: {}, current: null, step: 0, alertLang: null, view: "plume" };
+const state = { lang: "en", index: null, runs: {}, current: null, step: 0, alertLang: null, view: "plume", samMode: "lapse", lapseIdx: null, lapseTimer: null };
 try { const s = localStorage.getItem("sov-lang"); if (s === "vi" || s === "en") state.lang = s; } catch (_) {}
 
 const $ = (sel) => document.querySelector(sel);
@@ -179,6 +203,18 @@ function fmtTime(iso) {
   const d = new Date(iso);
   return d.toLocaleString(loc, { timeZone: "Pacific/Honolulu", year: "numeric", month: "short", day: "numeric",
                                  hour: "2-digit", minute: "2-digit" }) + " HST";
+}
+function hstClock(iso) {
+  const d = new Date(iso.replace(/Z$/, ":00Z").replace(/:00:00Z$/, ":00Z"));
+  return d.toLocaleTimeString(state.lang === "vi" ? "vi-VN" : "en-US",
+    { timeZone: "Pacific/Honolulu", hour: "2-digit", minute: "2-digit", hour12: false }) + " HST";
+}
+function trackReason(r) {
+  if (!r) return "—";
+  if (r.includes("MODIS")) return t().trackModis;
+  if (r.includes("not run")) return t().trackNotRun;
+  if (r.includes("no plume")) return t().trackNoPlume;
+  return r;
 }
 function verdictKey(run) { return run.detection === "no_plume" ? "no_plume" : (run.verdict && run.verdict.class) || "uncertain"; }
 function hasVisiblePlume(run) {
@@ -284,6 +320,7 @@ async function select(path, step = 0, scroll = false) {
 }
 
 async function renderViewer() {
+  if (state.lapseTimer) { clearInterval(state.lapseTimer); state.lapseTimer = null; }
   const run = await loadRun(state.current);
   $("#viewer-h").textContent = run.mode === "live" ? `${t().v[verdictKey(run)]}` : (run.title[state.lang] || run.title.en);
   $("#viewer-meta").textContent = `${t().scanned}: ${fmtTime(run.image_time)} (${run.layer})`;
@@ -320,7 +357,7 @@ function frame(path, file, caption, opt = {}) {
     pic.style.left = `${-x0 / cw * 100}%`;
     pic.style.top = `${-y0 / ch * 100}%`;
   }
-  const open = () => openLightbox(`data/${path}/${fullFile}${ver(path)}`, caption);
+  const open = () => openLightbox(opt.getFull ? opt.getFull() : `data/${path}/${fullFile}${ver(path)}`, caption);
   pic.addEventListener("click", open);
   const bar = el("div", { class: "frame__bar" },
     pv ? el("div", { class: "seg", role: "group", "aria-label": t().viewLabel },
@@ -469,9 +506,51 @@ function step3(run) {
 }
 function step4(run) {
   const s = run.steps.sam;
-  if (s.src) frame(state.current, s.src, "SAM 3.1", { full: s.full, crop: true, legend: "legend4" });
+  const tk = s.track || { available: false };
+  const lapse = tk.available && tk.frames && tk.frames.length && state.samMode === "lapse";
+  if (lapse) {
+    const n = tk.frames.length;
+    if (state.lapseIdx === null || state.lapseIdx >= n) state.lapseIdx = n - 1;
+    const src = (i) => `data/${state.current}/${tk.frames[i].src}${ver(state.current)}`;
+    tk.frames.forEach((f, i) => { const im = new Image(); im.src = src(i); });   // preload
+    frame(state.current, tk.frames[state.lapseIdx].src, t().trackCaption, {
+      full: tk.frames[state.lapseIdx].src, crop: true, legend: "legendTrack",
+      getFull: () => src(state.lapseIdx) });
+    const pic = $("#frame .view img");
+    const label = el("span", { class: "player__time", text: hstClock(tk.frames[state.lapseIdx].time) });
+    const range = el("input", { type: "range", min: 0, max: n - 1, value: state.lapseIdx, "aria-label": t().scrub });
+    const show = (i) => { state.lapseIdx = i; pic.src = src(i); range.value = i;
+                          label.textContent = hstClock(tk.frames[i].time); };
+    const btn = el("button", { type: "button", class: "btn player__play", text: t().play });
+    btn.addEventListener("click", () => {
+      if (state.lapseTimer) { clearInterval(state.lapseTimer); state.lapseTimer = null; btn.textContent = t().play; return; }
+      btn.textContent = t().pause;
+      if (state.lapseIdx >= n - 1) show(0);
+      state.lapseTimer = setInterval(() => {
+        if (state.lapseIdx >= n - 1) { clearInterval(state.lapseTimer); state.lapseTimer = null; btn.textContent = t().play; return; }
+        show(state.lapseIdx + 1);
+      }, 450);
+    });
+    range.addEventListener("input", () => show(Number(range.value)));
+    $("#frame").insertBefore(el("div", { class: "player" }, btn, range, label), $("#frame figcaption"));
+  } else if (s.src) frame(state.current, s.src, "SAM 3.1", { full: s.full, crop: true, legend: "legend4" });
   else emptyFrame(run, t().noSamLive, { step: 3, label: t().seeSam });
-  explain(el("h3", { text: t().steps[3] }), el("p", { text: t().s4 }),
+  const modes = tk.available ? el("div", { class: "tabs", role: "group", "aria-label": t().samView },
+    [["lapse", t().timelapse], ["still", t().stillMasks]].map(([m, lab]) => el("button", {
+      type: "button", "aria-selected": String(state.samMode === m),
+      onclick: () => { state.samMode = m; renderViewer(); }, text: lab }))) : "";
+  const motion = tk.available ? el("div", { class: "motion" },
+    el("h3", { text: t().trackTitle }),
+    ...tk.plumes.filter((p) => p.motion).map((p) => el("p", {},
+      el("strong", { text: `${t().plume} #${p.plume_id}: ` }),
+      t().trackSummary(p.frames, `${hstClock(tk.frames[0].time).replace(" HST", "")}–${hstClock(tk.frames[tk.frames.length - 1].time)}`,
+                       p.motion.toward_deg, p.motion.speed_kmh, p.motion.r2),
+      p.wind ? el("span", { class: `agree agree--${p.wind.label}`,
+        text: ` ${t().windCmp(p.wind.wind_toward_deg, p.wind.diff_deg, t().agreeLabel[p.wind.label])}` }) : "",
+      p.source_end ? el("span", { class: "small", text: ` ${t().sourceEnd(p.source_end.distance_km.kilauea_summit, p.source_end.distance_km.mauna_loa_summit)}` }) : "")),
+    el("p", { class: "small", text: t().trackNote })) :
+    el("p", { class: "small", text: `${t().trackNA}: ${trackReason(tk.reason)}` });
+  explain(el("h3", { text: t().steps[3] }), el("p", { text: t().s4 }), modes,
     s.prompt_used ? dl([[t().promptUsed, s.prompt_used]]) : "",
     s.two_pass.length ? el("table", { class: "table" },
       el("thead", {}, el("tr", {}, el("th", { text: t().plume }), el("th", { text: t().pass }), el("th", { text: t().kept }))),
@@ -479,6 +558,7 @@ function step4(run) {
         el("td", { text: `#${r.plume_id}` }),
         el("td", { text: `${r.pass1_px.toLocaleString()} → ${r.pass2_px.toLocaleString()} px` }),
         el("td", { text: `${r.kept}: ${r.reason}` }))))) : el("p", { text: t().noSam }),
+    motion,
     el("p", { class: "small", text: t().concepts }));
 }
 function stepAgent(run) {

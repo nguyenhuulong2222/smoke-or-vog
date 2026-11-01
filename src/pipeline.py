@@ -305,7 +305,7 @@ def rerender_overlay(run_dir: Path) -> Path:
 # ------------------------------------------------------------------ run
 
 def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True,
-        classifier: str = "standard") -> Path:
+        classifier: str = "standard", track: bool = False, at_time: str | None = None) -> Path:
     """classifier: 'standard' (fixed context, default), 'agent' (Muse Spark tool calling,
     falls back to standard if its verdict is not verifiable), or 'both' (run both on the
     same plumes, record the comparison, use the agent verdict when it is valid)."""
@@ -322,7 +322,7 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True
     print(f"== {run_id}")
 
     # ---- stage 0: imagery + context
-    t = cfg["time"] or sources.gibs_latest_time(cfg["layer"])
+    t = at_time or cfg["time"] or sources.gibs_latest_time(cfg["layer"])
     im, img_meta = sources.fetch_imagery(cfg["layer"], t)
     im.save(rd / "00_image.jpg", quality=92)
     when = datetime.fromisoformat((cfg.get("approx_utc") or t).replace("Z", "+00:00"))
@@ -508,6 +508,21 @@ def run(case: str, classify_effort: str = CLASSIFY_EFFORT, concepts: bool = True
         plumes.append({"plume_id": i, "spark_label": label, "sam_confidence": o["confidence"],
                        "geometry": g, "mask": o["mask"]})
 
+    # ---- stage 3c: motion tracking (SAM 3.1 video), behind the --track flag
+    if track:
+        from . import track as tracker
+        tp = [{"plume_id": p["plume_id"],
+               "box": [bb[0], bb[1], bb[2] - 1, bb[3] - 1]}
+              for p in plumes if (bb := p["mask"].getbbox())]
+        tr = tracker.track_run(rd, t, cfg["layer"], tp, run_id)
+        log["stages"]["3c_track"] = {"available": tr["available"], "reason": tr.get("reason"),
+                                     "cost_usd": tr.get("cost_usd"),
+                                     "motion": [p.get("motion") for p in tr.get("plumes", [])]}
+        print(f"  3c track: " + (", ".join(
+            f"#{p['plume_id']} {p['frames_tracked']}/{p['frames_total']} frames "
+            f"{(p.get('motion') or {}).get('speed_kmh')} km/h toward {(p.get('motion') or {}).get('toward_deg')}°"
+            for p in tr["plumes"]) if tr["available"] else tr["reason"]))
+
     # ---- stage 4: classify
     cls_ctx = {
         "image": {"layer": cfg["layer"], "time": t},
@@ -615,10 +630,11 @@ def main() -> None:
                     help="skip SAM concept prompts (they return nothing on satellite imagery)")
     ap.add_argument("--classifier", default="standard", choices=["standard", "agent", "both"],
                     help="stage 4: fixed context (default), agentic tool calling, or both")
+    ap.add_argument("--track", action="store_true", help="track plume motion with SAM 3.1 video")
     ap.add_argument("--classify-effort", default=CLASSIFY_EFFORT,
                     choices=["minimal", "low", "medium", "high"])
     a = ap.parse_args()
-    run(a.case, a.classify_effort, concepts=not a.no_concepts, classifier=a.classifier)
+    run(a.case, a.classify_effort, concepts=not a.no_concepts, classifier=a.classifier, track=a.track)
 
 
 if __name__ == "__main__":

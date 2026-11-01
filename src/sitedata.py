@@ -70,6 +70,54 @@ def _summarize_tool(name: str, out: dict) -> str:
     return json.dumps(r, ensure_ascii=False)[:140]
 
 
+def _track_block(run_dir: Path, out_dir: Path, ctx0: dict, trace_f: Path) -> dict:
+    """Time-lapse frames + motion summary for the site, or why tracking is unavailable."""
+    from . import geo
+    from .track import TRACKABLE_LAYERS, UNAVAILABLE, wind_agreement
+
+    f = run_dir / "05_track.json"
+    if not f.exists():
+        if ctx0["image"]["layer"] not in TRACKABLE_LAYERS:
+            return {"available": False, "reason": UNAVAILABLE}
+        return {"available": False, "reason": "tracking was not run for this scan"}
+    tr = json.loads(f.read_text())
+    if not tr.get("available"):
+        return {"available": False, "reason": tr.get("reason")}
+    (out_dir / "track").mkdir(exist_ok=True)
+    frames = []
+    for i, t in enumerate(tr["frames"]):
+        src = run_dir / "track" / f"t_{i:02d}.jpg"
+        if src.exists():
+            frames.append({"time": t, "src": "track/" + _jpg(src, out_dir / "track" / f"t_{i:02d}.jpg",
+                                                             width=1400, q=78)})
+    # wind samples the agent fetched (get_wind), else the run's context wind
+    winds = []
+    if trace_f.exists():
+        for t in json.loads(trace_f.read_text()).get("trace", []):
+            if t["name"] == "get_wind" and t["output"].get("ok"):
+                a = json.loads(t["arguments"] or "{}")
+                r = t["output"]["result"]
+                winds.append((a.get("lat"), a.get("lon"), r.get("from_deg"), r.get("speed_kmh"), t.get("cite")))
+    if not winds:
+        for name, w in ctx0["wind"]["sites"].items():
+            ll = geo.SOURCES.get(name)
+            if ll:
+                winds.append((ll[0], ll[1], w["from_deg"], w["speed_kmh"], None))
+    plumes = []
+    for p in tr["plumes"]:
+        m = p.get("motion")
+        entry = {"plume_id": p["plume_id"], "frames": f"{p['frames_tracked']}/{p['frames_total']}",
+                 "motion": m, "source_end": p.get("source_end")}
+        if m and p["track"] and winds:
+            c = p["track"][-1]
+            w = min(winds, key=lambda w: geo.haversine_km(c["lat"], c["lon"], w[0], w[1]))
+            entry["wind"] = {"from_deg": w[2], "speed_kmh": w[3], "cite": w[4],
+                             **wind_agreement(m["toward_deg"], w[2])}
+        plumes.append(entry)
+    return {"available": True, "frames": frames, "plumes": plumes, "note": tr.get("note"),
+            "window": f"{tr['frames'][0]} – {tr['frames'][-1]}", "cost_usd": tr.get("cost_usd")}
+
+
 def _jpg(src: Path | Image.Image, dst: Path, width: int = 1000, q: int = 74) -> str:
     im = src if isinstance(src, Image.Image) else Image.open(src)
     im = im.convert("RGB")
@@ -212,6 +260,7 @@ def build(run_dir: Path, out_dir: Path, mode: str | None = None) -> dict:
                       "pass2_px": r["pass2"].get("area_px", 0), "kept": r["kept"],
                       "reason": r["reason"]} for r in sam.get("two_pass", [])],
     }
+    steps["sam"]["track"] = _track_block(run_dir, out_dir, ctx0, run_dir / "04_agent_trace.json")
     c = cls["context"]
     steps["classify"] = {
         "overlay": _jpg(run_dir / "overlay.png", out_dir / "overlay.jpg", width=1000),

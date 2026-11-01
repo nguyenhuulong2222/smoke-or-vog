@@ -119,7 +119,11 @@
      "kept": "pass2",
      "reason": "pass 2 larger (1.37x) and coherent"
     }
-   ]
+   ],
+   "track": {
+    "available": false,
+    "reason": "tracking not available for archived MODIS days (daily imagery, no 10-minute frames)"
+   }
   },
   "classify": {
    "overlay": "overlay.jpg",

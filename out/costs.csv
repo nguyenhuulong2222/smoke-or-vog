@@ -182,3 +182,24 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-11-01T01:42:00+00:00,pipeline:alerts,muse-spark-1.3,ok,797,97,7073,4227,,0.030950,run=kilauea_20261017_20261101T012112Z
 2026-11-01T01:42:32+00:00,pipeline:alerts,muse-spark-1.3,ok,733,481,5678,4027,,0.024519,run=maui_20230808_20261101T012222Z
 2026-11-01T01:43:08+00:00,pipeline:alerts,muse-spark-1.3,ok,692,481,6760,5316,,0.029066,run=mauna_loa_20221201_20261101T012354Z
+2026-11-01T02:57:58+00:00,feasibility:sam_video,sam-3.1,ok,,,,,50 frames,0.010000,Oct 17 19 frames
+2026-11-01T03:19:28+00:00,pipeline:localize,muse-spark-1.3,ok,2183,0,2141,1929,,0.011828,run=kilauea_20261017_20261101T031909Z
+2026-11-01T03:19:29+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T031909Z; box; outcome=completed
+2026-11-01T03:19:31+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T031909Z; box+point; outcome=completed
+2026-11-01T03:19:32+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T031909Z; box+point:pass2; outcome=completed
+2026-11-01T03:20:01+00:00,pipeline:track,sam-3.1,ok,,,,,50 frames,0.010000,run=kilauea_20261017_20261101T031909Z; video 19 frames
+2026-11-01T03:20:26+00:00,pipeline:localize,muse-spark-1.3,ok,2183,2156,2227,2038,,0.009822,run=kilauea_20261017_20261101T032009Z
+2026-11-01T03:20:28+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T032009Z; box; outcome=completed
+2026-11-01T03:20:29+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T032009Z; box+point; outcome=completed
+2026-11-01T03:20:30+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T032009Z; box+point:pass2; outcome=completed
+2026-11-01T03:21:01+00:00,pipeline:track,sam-3.1,ok,,,,,50 frames,0.010000,run=kilauea_20261017_20261101T032009Z; video 19 frames
+2026-11-01T03:21:34+00:00,pipeline:localize,muse-spark-1.3,ok,2183,2156,2036,1837,,0.009010,run=kilauea_20261017_20261101T032117Z
+2026-11-01T03:21:36+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T032117Z; box; outcome=completed
+2026-11-01T03:21:37+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T032117Z; box+point; outcome=completed
+2026-11-01T03:21:38+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=kilauea_20261017_20261101T032117Z; box+point:pass2; outcome=completed
+2026-11-01T03:22:13+00:00,pipeline:track,sam-3.1,ok,,,,,50 frames,0.010000,run=kilauea_20261017_20261101T032117Z; video 19 frames
+2026-11-01T03:22:20+00:00,pipeline:agent,muse-spark-1.3,ok,3806,0,772,394,,0.008039,run=kilauea_20261017_20261101T032117Z; round=0
+2026-11-01T03:22:35+00:00,pipeline:agent,muse-spark-1.3,ok,5195,3697,336,229,,0.003855,run=kilauea_20261017_20261101T032117Z; round=1
+2026-11-01T03:22:53+00:00,pipeline:agent,muse-spark-1.3,ok,5462,5105,1725,1126,,0.008543,run=kilauea_20261017_20261101T032117Z; round=2
+2026-11-01T03:25:25+00:00,pipeline:alerts,muse-spark-1.3,ok,817,0,9226,6404,,0.040232,run=kilauea_20261017_20261101T032117Z
+2026-11-01T03:25:34+00:00,alerts:background,muse-image-1.0,ok,,,,,1 image,0.010000,run=kilauea_20261017_20261101T032117Z; verdict=vog_kilauea

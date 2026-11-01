@@ -229,3 +229,13 @@ html.lb-open, html.lb-open body { overflow: hidden; }
 .guidance-h { margin: 12px 0 2px; font-size: 1rem; }
 .guidance li { margin-bottom: 8px; }
 .guidance .src { font-size: 0.82rem; color: var(--basalt-soft); }
+
+.player { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--basalt); }
+.player input[type=range] { flex: 1; accent-color: var(--sulfur); min-height: 36px; }
+.player__time { color: #E9EDF0; font-size: 0.85rem; white-space: nowrap; }
+.player__play { min-height: 40px; padding: 6px 14px; font-size: 0.9rem; white-space: nowrap; flex: none; }
+.motion { border-top: 1px solid var(--haze-deep); margin-top: 10px; padding-top: 6px; }
+.agree { font-weight: 700; }
+.agree--agrees { color: var(--lichen); }
+.agree--partly { color: var(--sulfur-ink); }
+.agree--disagrees { color: var(--ember); }

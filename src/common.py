@@ -32,7 +32,7 @@ SPARK_PER_M = {"input": 1.25, "cached_input": 0.15, "output": 4.25}
 SAM_PER_IMAGE = 2.50 / 1000
 MUSE_IMAGE_PER_IMAGE = 0.01
 
-HACKATHON_BUDGET_USD = 20.00
+HACKATHON_BUDGET_USD = 60.00  # total dev cap (raised from $20 on Nov 1); live job keeps its own $15 stop
 
 load_dotenv(ROOT / ".env.local")
 

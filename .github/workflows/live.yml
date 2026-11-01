@@ -65,6 +65,7 @@ jobs:
           SMOKEVOG_COSTS_CSV: live-data/costs_live.csv     # CI ledger
           SMOKEVOG_EXTRA_LEDGERS: out/costs.csv            # development spend (committed)
           SMOKEVOG_STOP_AT_USD: "15"
+          SMOKEVOG_TRACK: "1"                              # SAM 3.1 video motion tracking
         run: |
           python -m src.live_publish --site-data site/data --persist live-data \
             ${{ inputs.force && '--force' || '' }}

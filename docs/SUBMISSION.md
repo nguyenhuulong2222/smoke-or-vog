@@ -45,6 +45,7 @@ that shows each step:
    - `get_volcano_status` (the official USGS HVO notice valid at that hour)
    - `distance_to_vents` (from the SAM mask)
    - `land_fraction`
+   - `track_plume` (measured motion from SAM 3.1 video tracking)
 
    Typically it calls 7–11 tools over 3 rounds. It often re-computes a plume's upwind end after
    it has fetched the wind. **Every evidence line must cite a tool result** (`E1`, `E2`, …), and
@@ -81,6 +82,7 @@ On all four cases, the agent's verdicts matched or beat the fixed classifier's o
 | **Muse Spark** | Stage 5 | **Agent with native tool calling** (Responses API, `previous_response_id`): chooses tools, cites every result, classifies |
 | **Muse Spark** | Stage 7 | Five-language situation summaries and translations of fixed official guidance |
 | **SAM 3.1** (`sam-3.1`) | Stage 4 | Box and point prompts → pixel masks, streamed and parsed with `meta-sam-parser`, two-pass refinement |
+| **SAM 3.1 video** (`sam-3.1`, `input_video`) | Stage 4b | **Plume motion tracking**: a 3-hour, 10-minute GOES-West clip seeded with the plume box → per-frame masks → measured drift direction and speed and the trailing source end. The agent reads it with the `track_plume` tool and compares it with the wind. Kīlauea Oct 17: tracked 19/19 frames, drift toward 214° (fit R² 0.98), within 37° of the wind. $0.01 per clip |
 | **Muse Image** (`muse-image-1.0`) | Stage 7 | Text-free card backgrounds |
 
 **What we learned:** text prompts like "smoke", "haze" and "volcanic plume" returned no SAM
