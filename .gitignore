@@ -12,3 +12,4 @@ out/runs/
 site/data/live/
 site/data/index.json
 .wrangler/
+out/video/

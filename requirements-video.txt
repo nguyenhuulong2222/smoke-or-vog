@@ -1,0 +1,2 @@
+# Demo-video tooling only (scripts/video/); not needed for the pipeline or site.
+playwright==1.64.1
