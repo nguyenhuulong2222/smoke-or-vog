@@ -2,12 +2,12 @@
  "slug": "live",
  "case": "live",
  "mode": "live",
- "run_id": "live_20261104T021031Z",
+ "run_id": "live_20261105T215554Z",
  "title": {
   "en": "Live now",
   "vi": "Trực tiếp"
  },
- "image_time": "2026-11-04T01:40:00Z",
+ "image_time": "2026-11-05T21:00:00Z",
  "layer": "GOES-West_ABI_GeoColor",
  "verdict": {
   "class": "uncertain",
@@ -19,7 +19,7 @@
   "unconfirmed": []
  },
  "detection": "no_plume",
- "cost_usd": 0.013161,
+ "cost_usd": 0.006535,
  "models": [
   {
    "stage": "2 Localize",
@@ -52,7 +52,7 @@
    "src": "image.jpg",
    "full": "image_full.jpg",
    "layer": "GOES-West_ABI_GeoColor",
-   "time": "2026-11-04T01:40:00Z",
+   "time": "2026-11-05T21:00:00Z",
    "source": "NASA GIBS WMS"
   },
   "adp": {
@@ -66,11 +66,11 @@
   "spark": {
    "src": "spark_boxes.jpg",
    "full": "spark_boxes_full.jpg",
-   "scene": "True-color satellite view of the main Hawaiian Islands from Kauai in the northwest to Hawaii Island in the southeast. Extensive bright white cumulus, stratocumulus and frontal clouds cover much of the northern and southern parts of the scene and partly obscure Kauai, Oahu, Molokai, Maui and northern Hawaii Island. Central waters are dark open ocean with scattered thin white cloud streaks. Around Hawaii Island there are bright white orographic and low clouds to the west and south of the island, but no distinct gray, brown or off-white haze or streak separate from ordinary meteorological cloud is visible emanating from the island.",
-   "cloud_cover": "mostly",
+   "scene": "True-color satellite view of the main Hawaiian Islands with the large island in the southeast and the smaller island chain extending northwest. Scattered white cumulus and streaky cirrus clouds cover the western and northern portions and fringe the islands, with large areas of dark open ocean elsewhere. No distinct gray haze or linear smoke-like plume distinguishable from ordinary clouds is visible.",
+   "cloud_cover": "partly",
    "plumes": [],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.013161
+   "cost_usd": 0.006535
   },
   "sam": {
    "src": null,
@@ -93,14 +93,14 @@
     "source": "Open-Meteo forecast (current)",
     "sites": {
      "kilauea_summit": {
-      "time": "2026-11-04T02:00",
-      "speed_kmh": 22.8,
-      "from_deg": 26
+      "time": "2026-11-05T21:45",
+      "speed_kmh": 25.9,
+      "from_deg": 28
      },
      "mauna_loa_summit": {
-      "time": "2026-11-04T02:00",
-      "speed_kmh": 4.1,
-      "from_deg": 308
+      "time": "2026-11-05T21:45",
+      "speed_kmh": 0.9,
+      "from_deg": 180
      }
     }
    },
@@ -108,22 +108,22 @@
     "source": "Kahu Ola /api/firms/hotspots?include_volcanic=1 (VIIRS NOAA-20/21 NRT, rolling 24 h)",
     "fire_clusters": [],
     "volcanic_thermal_excluded": {
-     "kilauea-summit": 27
+     "kilauea-summit": 34
     }
    },
    "volcano_status": {
     "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
-    "valid_at": "2026-11-04T02:10:37.765164+00:00",
+    "valid_at": "2026-11-05T21:55:59.344662+00:00",
     "volcanoes": {
      "kilauea": {
       "alert_level": "WATCH",
       "aviation_color": "ORANGE",
       "erupting": "unknown",
-      "activity_summary": "Lava flows began erupting from the north vent within Halema'uma'u yesterday, November 2, and are continuing this morning. High fountaining remains a possibility today or anytime within the next few days. Overview: Lava flows began yesterday, November 2, from the north vent in Halemaʻumaʻu and are continuing this morning.",
+      "activity_summary": "Sporadic lava flows have continued from the north vent over the past day. High fountaining remains a possibility today or anytime within the next few days. Overview: Lava flows have occurred sporadically over the past day from the north vent, at Kīlauea summit.",
       "notice_type": "DU",
-      "notice_sent_utc": "2026-11-03 20:35:18",
-      "notice_id": "DOI-USGS-HVO-2026-11-03T17:31:38+00:00",
-      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-11-03T17:31:38+00:00"
+      "notice_sent_utc": "2026-11-05 19:22:47",
+      "notice_id": "DOI-USGS-HVO-2026-11-05T18:36:49+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-11-05T18:36:49+00:00"
      },
      "mauna_loa": {
       "alert_level": "NORMAL",
