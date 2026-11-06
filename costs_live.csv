@@ -24,3 +24,7 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-11-05T02:17:44+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261105T021713Z; box+point; outcome=completed
 2026-11-05T02:17:50+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261105T021713Z; box+point:pass2; outcome=completed
 2026-11-05T21:56:10+00:00,pipeline:localize,muse-spark-1.3,ok,2097,0,921,820,,0.006535,run=live_20261105T215554Z
+2026-11-06T02:16:16+00:00,pipeline:localize,muse-spark-1.3,ok,2114,0,2425,2251,,0.012949,run=live_20261106T021542Z
+2026-11-06T02:16:18+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261106T021542Z; box; outcome=completed
+2026-11-06T02:16:19+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261106T021542Z; box+point; outcome=completed
+2026-11-06T02:16:21+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261106T021542Z; box+point:pass2; outcome=completed
