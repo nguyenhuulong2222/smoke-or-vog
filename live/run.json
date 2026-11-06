@@ -2,12 +2,12 @@
  "slug": "live",
  "case": "live",
  "mode": "live",
- "run_id": "live_20261105T215554Z",
+ "run_id": "live_20261106T212650Z",
  "title": {
   "en": "Live now",
   "vi": "Trực tiếp"
  },
- "image_time": "2026-11-05T21:00:00Z",
+ "image_time": "2026-11-06T20:10:00Z",
  "layer": "GOES-West_ABI_GeoColor",
  "verdict": {
   "class": "uncertain",
@@ -19,7 +19,7 @@
   "unconfirmed": []
  },
  "detection": "no_plume",
- "cost_usd": 0.006535,
+ "cost_usd": 0.008775,
  "models": [
   {
    "stage": "2 Localize",
@@ -52,7 +52,7 @@
    "src": "image.jpg",
    "full": "image_full.jpg",
    "layer": "GOES-West_ABI_GeoColor",
-   "time": "2026-11-05T21:00:00Z",
+   "time": "2026-11-06T20:10:00Z",
    "source": "NASA GIBS WMS"
   },
   "adp": {
@@ -66,11 +66,11 @@
   "spark": {
    "src": "spark_boxes.jpg",
    "full": "spark_boxes_full.jpg",
-   "scene": "True-color satellite view of the main Hawaiian Islands with the large island in the southeast and the smaller island chain extending northwest. Scattered white cumulus and streaky cirrus clouds cover the western and northern portions and fringe the islands, with large areas of dark open ocean elsewhere. No distinct gray haze or linear smoke-like plume distinguishable from ordinary clouds is visible.",
-   "cloud_cover": "partly",
+   "scene": "True-color satellite view of the main Hawaiian Islands from northwest to southeast with dark blue ocean and widespread white cumulus and cirrus clouds, especially over and east of the large island in the southeast. The volcanic summit area on the large island is obscured by bright white clouds. No distinct gray haze, smoke, or linear plume is distinguishable from ordinary clouds, sun glint, and ocean.",
+   "cloud_cover": "mostly",
    "plumes": [],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.006535
+   "cost_usd": 0.008775
   },
   "sam": {
    "src": null,
@@ -93,14 +93,14 @@
     "source": "Open-Meteo forecast (current)",
     "sites": {
      "kilauea_summit": {
-      "time": "2026-11-05T21:45",
-      "speed_kmh": 25.9,
-      "from_deg": 28
+      "time": "2026-11-06T21:15",
+      "speed_kmh": 15.3,
+      "from_deg": 51
      },
      "mauna_loa_summit": {
-      "time": "2026-11-05T21:45",
-      "speed_kmh": 0.9,
-      "from_deg": 180
+      "time": "2026-11-06T21:15",
+      "speed_kmh": 5.5,
+      "from_deg": 289
      }
     }
    },
@@ -108,32 +108,33 @@
     "source": "Kahu Ola /api/firms/hotspots?include_volcanic=1 (VIIRS NOAA-20/21 NRT, rolling 24 h)",
     "fire_clusters": [],
     "volcanic_thermal_excluded": {
-     "kilauea-summit": 34
+     "kilauea-summit": 42,
+     "flagged": 1
     }
    },
    "volcano_status": {
     "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
-    "valid_at": "2026-11-05T21:55:59.344662+00:00",
+    "valid_at": "2026-11-06T21:26:55.635574+00:00",
     "volcanoes": {
      "kilauea": {
       "alert_level": "WATCH",
       "aviation_color": "ORANGE",
-      "erupting": "unknown",
-      "activity_summary": "Sporadic lava flows have continued from the north vent over the past day. High fountaining remains a possibility today or anytime within the next few days. Overview: Lava flows have occurred sporadically over the past day from the north vent, at Kīlauea summit.",
+      "erupting": "yes",
+      "activity_summary": "Episode 56 lava fountaining occurred yesterday afternoon with fountains reaching 660 feet (200 meters), and the summit is now reinflating. The next episode of lava fountaining is likely several weeks away. Overview: Episode 56 lava fountaining occurred yesterday between 12:10 p.m.",
       "notice_type": "DU",
-      "notice_sent_utc": "2026-11-05 19:22:47",
-      "notice_id": "DOI-USGS-HVO-2026-11-05T18:36:49+00:00",
-      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-11-05T18:36:49+00:00"
+      "notice_sent_utc": "2026-11-06 20:09:22",
+      "notice_id": "DOI-USGS-HVO-2026-11-06T18:16:51+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-11-06T18:16:51+00:00"
      },
      "mauna_loa": {
       "alert_level": "NORMAL",
       "aviation_color": "GREEN",
       "erupting": "no",
-      "activity_summary": "Mauna Loa earthquake counts decreased in September compared to August, and minor inflation continues. Mauna Loa had a decrease in seismic activity compared to the previous month; a total of 53 earthquakes were detected in Mauna Loa's summit region during the September reporting period, after 87 in August. Most earthquakes occurred deep beneath the upper Southwest Rift Zone or broadly scattered around the upper flanks.",
+      "activity_summary": "Mauna Loa earthquake counts were within typical levels in October, and minor inflation continues. Mauna Loa had a slight increase in seismic activity compared to the previous month; a total of 66 earthquakes were detected in Mauna Loa's summit region during the October reporting period, after 53 in September. These variations are within the typical range for the past two years.",
       "notice_type": "MU",
-      "notice_sent_utc": "2026-10-01 21:30:20",
-      "notice_id": "DOI-USGS-HVO-2026-10-01T01:33:14+00:00",
-      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-10-01T01:33:14+00:00"
+      "notice_sent_utc": "2026-11-06 04:04:33",
+      "notice_id": "DOI-USGS-HVO-2026-11-06T03:07:40+00:00",
+      "notice_url": "https://volcanoes.usgs.gov/hans-public/notice/DOI-USGS-HVO-2026-11-06T03:07:40+00:00"
      }
     }
    },
