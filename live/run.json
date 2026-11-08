@@ -2,12 +2,12 @@
  "slug": "live",
  "case": "live",
  "mode": "live",
- "run_id": "live_20261107T200944Z",
+ "run_id": "live_20261108T002636Z",
  "title": {
   "en": "Live now",
   "vi": "Trực tiếp"
  },
- "image_time": "2026-11-07T19:20:00Z",
+ "image_time": "2026-11-07T23:40:00Z",
  "layer": "GOES-West_ABI_GeoColor",
  "verdict": {
   "class": "uncertain",
@@ -19,7 +19,7 @@
   "unconfirmed": []
  },
  "detection": "no_plume",
- "cost_usd": 0.007819,
+ "cost_usd": 0.008711,
  "models": [
   {
    "stage": "2 Localize",
@@ -52,7 +52,7 @@
    "src": "image.jpg",
    "full": "image_full.jpg",
    "layer": "GOES-West_ABI_GeoColor",
-   "time": "2026-11-07T19:20:00Z",
+   "time": "2026-11-07T23:40:00Z",
    "source": "NASA GIBS WMS"
   },
   "adp": {
@@ -66,11 +66,11 @@
   "spark": {
    "src": "spark_boxes.jpg",
    "full": "spark_boxes_full.jpg",
-   "scene": "True-color satellite view of the main Hawaiian Islands with the large island in the southeast and smaller islands extending to the northwest. Scattered white cumulus and cirrus clouds cover parts of the ocean and hang over the windward sides of the islands, with large areas of dark open ocean visible in the center. No distinct gray haze, smoke, or volcanic plume clearly separable from ordinary white clouds is visible.",
+   "scene": "True-color satellite view of the main Hawaiian Islands from Kauai in the northwest to Hawaii Island in the southeast. Dark ocean with scattered white cumulus and thin cirrus streaks, plus larger bright white cloud masses over Kauai, over Oahu to Maui, and over northern and eastern Hawaii Island. No distinct gray haze streak separable from ordinary white clouds is visible downwind of the island summits.",
    "cloud_cover": "partly",
    "plumes": [],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.007819
+   "cost_usd": 0.008711
   },
   "sam": {
    "src": null,
@@ -93,27 +93,25 @@
     "source": "Open-Meteo forecast (current)",
     "sites": {
      "kilauea_summit": {
-      "time": "2026-11-07T20:00",
-      "speed_kmh": 23.9,
-      "from_deg": 33
+      "time": "2026-11-08T00:15",
+      "speed_kmh": 22.2,
+      "from_deg": 32
      },
      "mauna_loa_summit": {
-      "time": "2026-11-07T20:00",
-      "speed_kmh": 1.8,
-      "from_deg": 336
+      "time": "2026-11-08T00:15",
+      "speed_kmh": 2.6,
+      "from_deg": 348
      }
     }
    },
    "firms": {
     "source": "Kahu Ola /api/firms/hotspots?include_volcanic=1 (VIIRS NOAA-20/21 NRT, rolling 24 h)",
     "fire_clusters": [],
-    "volcanic_thermal_excluded": {
-     "kilauea-summit": 32
-    }
+    "volcanic_thermal_excluded": {}
    },
    "volcano_status": {
     "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
-    "valid_at": "2026-11-07T20:09:49.336397+00:00",
+    "valid_at": "2026-11-08T00:26:39.807349+00:00",
     "volcanoes": {
      "kilauea": {
       "alert_level": "ADVISORY",
