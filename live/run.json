@@ -2,12 +2,12 @@
  "slug": "live",
  "case": "live",
  "mode": "live",
- "run_id": "live_20261110T214711Z",
+ "run_id": "live_20261111T015136Z",
  "title": {
   "en": "Live now",
   "vi": "Trực tiếp"
  },
- "image_time": "2026-11-10T20:30:00Z",
+ "image_time": "2026-11-11T01:00:00Z",
  "layer": "GOES-West_ABI_GeoColor",
  "verdict": {
   "class": "uncertain",
@@ -19,7 +19,7 @@
   "unconfirmed": []
  },
  "detection": "no_plume",
- "cost_usd": 0.009935,
+ "cost_usd": 0.007916,
  "models": [
   {
    "stage": "2 Localize",
@@ -52,7 +52,7 @@
    "src": "image.jpg",
    "full": "image_full.jpg",
    "layer": "GOES-West_ABI_GeoColor",
-   "time": "2026-11-10T20:30:00Z",
+   "time": "2026-11-11T01:00:00Z",
    "source": "NASA GIBS WMS"
   },
   "adp": {
@@ -66,11 +66,11 @@
   "spark": {
    "src": "spark_boxes.jpg",
    "full": "spark_boxes_full.jpg",
-   "scene": "True-color satellite view of the main Hawaiian Islands from Kauai and Niihau in the northwest to the Big Island in the southeast. Dark blue open ocean dominates the central area with scattered to locally extensive white cumulus and cirrus clouds, with larger cloud bands in the northeast and southwest and orographic clouds banked against islands. No distinct gray or brown haze streak distinguishable from ordinary white clouds is visible.",
-   "cloud_cover": "partly",
+   "scene": "True-color satellite view of the main Hawaiian Islands from Kauai in the northwest to the Big Island in the southeast. Extensive white cumulus and cirrus clouds cover much of the ocean and obscure parts of the islands, especially to the north, east, south and around the Big Island. Central and west-central ocean areas are relatively clear dark water. No distinct gray, brown, or bluish haze streak separable from ordinary white clouds is visible.",
+   "cloud_cover": "mostly",
    "plumes": [],
    "model": "muse-spark-1.3",
-   "cost_usd": 0.009935
+   "cost_usd": 0.007916
   },
   "sam": {
    "src": null,
@@ -93,19 +93,19 @@
     "source": "Open-Meteo forecast (current)",
     "sites": {
      "kilauea_summit": {
-      "time": "2026-11-10T21:45",
-      "speed_kmh": 20.3,
-      "from_deg": 36
+      "time": "2026-11-11T01:45",
+      "speed_kmh": 20.0,
+      "from_deg": 30
      },
      "mauna_loa_summit": {
-      "time": "2026-11-10T21:45",
-      "speed_kmh": 2.8,
-      "from_deg": 15
+      "time": "2026-11-11T01:45",
+      "speed_kmh": 4.5,
+      "from_deg": 47
      },
      "fire_cluster_1": {
-      "time": "2026-11-10T21:45",
-      "speed_kmh": 19.5,
-      "from_deg": 81
+      "time": "2026-11-11T01:45",
+      "speed_kmh": 16.7,
+      "from_deg": 79
      }
     }
    },
@@ -121,12 +121,12 @@
      }
     ],
     "volcanic_thermal_excluded": {
-     "kilauea-summit": 77
+     "kilauea-summit": 90
     }
    },
    "volcano_status": {
     "source": "USGS Hawaiian Volcano Observatory notices via HANS public API (https://volcanoes.usgs.gov/hans-public/api/search/search)",
-    "valid_at": "2026-11-10T21:47:18.923924+00:00",
+    "valid_at": "2026-11-11T01:51:45.385388+00:00",
     "volcanoes": {
      "kilauea": {
       "alert_level": "ADVISORY",
