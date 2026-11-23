@@ -76,3 +76,4 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-11-22T02:06:30+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261122T020555Z; box+point; outcome=completed
 2026-11-22T02:06:37+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261122T020555Z; box+point:pass2; outcome=completed
 2026-11-22T21:42:02+00:00,pipeline:localize,muse-spark-1.3,ok,2117,0,1776,1659,,0.010194,run=live_20261122T214140Z
+2026-11-23T02:32:57+00:00,pipeline:localize,muse-spark-1.3,ok,2137,0,1342,1237,,0.008375,run=live_20261123T023236Z
