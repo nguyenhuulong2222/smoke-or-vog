@@ -86,3 +86,7 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-11-26T00:13:23+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261126T001244Z; box; outcome=completed
 2026-11-26T00:13:26+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261126T001244Z; box+point; outcome=completed
 2026-11-26T00:13:31+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261126T001244Z; box+point:pass2; outcome=completed
+2026-11-27T00:31:11+00:00,pipeline:localize,muse-spark-1.3,ok,2114,0,5967,5770,,0.028002,run=live_20261127T003011Z
+2026-11-27T00:31:13+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261127T003011Z; box; outcome=completed
+2026-11-27T00:31:15+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261127T003011Z; box+point; outcome=completed
+2026-11-27T00:31:19+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261127T003011Z; box+point:pass2; outcome=completed
