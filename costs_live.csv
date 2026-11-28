@@ -90,3 +90,4 @@ timestamp_utc,script,model,status,input_tokens,cached_tokens,output_tokens,reaso
 2026-11-27T00:31:13+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261127T003011Z; box; outcome=completed
 2026-11-27T00:31:15+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261127T003011Z; box+point; outcome=completed
 2026-11-27T00:31:19+00:00,pipeline:sam,sam-3.1,ok,,,,,1 image,0.002500,run=live_20261127T003011Z; box+point:pass2; outcome=completed
+2026-11-28T00:00:15+00:00,pipeline:localize,muse-spark-1.3,ok,2096,0,2935,2812,,0.015094,run=live_20261127T235941Z
